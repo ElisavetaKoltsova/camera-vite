@@ -1,4 +1,4 @@
-import { Camera } from '../types/cameras';
+import { Camera } from '../types/camera';
 
 export const cameras: Camera[] = [
   {

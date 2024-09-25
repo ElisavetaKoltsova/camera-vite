@@ -1,15 +1,16 @@
 import { Link } from 'react-router-dom';
-import { Camera } from '../../types/cameras';
+import { Camera } from '../../types/camera';
 import { convertNumberIntoMoneyFormat } from '../../utils/list';
+import { AppRoute } from '../../const';
+import ProductRating from '../product-rating/product-rating';
 
 type CatalogCardItemProps = {
   camera: Camera;
 }
 
-const stars = [1, 2, 3, 4, 5];
-
 export default function CatalogCardItem({camera}: CatalogCardItemProps): JSX.Element {
   const {
+    id,
     name,
     previewImg,
     previewImg2x,
@@ -32,18 +33,7 @@ export default function CatalogCardItem({camera}: CatalogCardItemProps): JSX.Ele
       </div>
       <div className="product-card__info">
         <div className="rate product-card__rate">
-          {
-            stars.map((star) => {
-              const classOfStar = star <= rating ? '#icon-full-star' : '#icon-star';
-              return (
-                <svg width="17" height="16" aria-hidden="true" key={star}>
-                  <use xlinkHref={classOfStar}></use>
-                </svg>
-              );
-            })
-          }
-          <p className="visually-hidden">Рейтинг: {rating}</p>
-          <p className="rate__count"><span className="visually-hidden">Всего оценок:</span>{reviewCount}</p>
+          <ProductRating rating={rating} reviewCount={reviewCount} />
         </div>
         <p className="product-card__title">{name}</p>
         <p className="product-card__price"><span className="visually-hidden">Цена:</span>{convertedPrice} ₽
@@ -52,7 +42,7 @@ export default function CatalogCardItem({camera}: CatalogCardItemProps): JSX.Ele
       <div className="product-card__buttons">
         <button className="btn btn--purple product-card__btn" type="button">Купить
         </button>
-        <Link className="btn btn--transparent" to="#">
+        <Link className="btn btn--transparent" to={`${AppRoute.Product}/${id}`}>
           Подробнее
         </Link>
       </div>
