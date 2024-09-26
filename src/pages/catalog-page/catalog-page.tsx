@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Banner from '../../components/banner/banner';
 import Header from '../../components/header/header';
 import { AppRoute } from '../../const';
@@ -9,10 +9,16 @@ import Footer from '../../components/footer/footer';
 import { getCameras, getCamerasDataLoadingStatus } from '../../store/product-data/selectors';
 import { useAppSelector } from '../../hooks';
 import Loader from '../../components/loader/loader';
+import { useEffect } from 'react';
 
 export default function CatalogPage(): JSX.Element {
   const cameras = useAppSelector(getCameras);
   const isCamerasDataLoading = useAppSelector(getCamerasDataLoadingStatus);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <div className="wrapper">

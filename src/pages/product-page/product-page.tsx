@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import Header from '../../components/header/header';
 import NotFoundPage from '../not-found-page/not-found-page';
 import Footer from '../../components/footer/footer';
@@ -8,22 +8,32 @@ import { convertNumberIntoMoneyFormat } from '../../utils/list';
 import ReviewList from '../../components/review-list/review-list';
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { fetchCurrentCameraAction } from '../../store/api-action';
+import { fetchCurrentCameraAction, fetchReviewsAction } from '../../store/api-action';
 import { getCamerasDataLoadingStatus, getCurrentCamera } from '../../store/product-data/selectors';
 import Loader from '../../components/loader/loader';
+import { getReviews, getReviewsDataLoadingStatus } from '../../store/review-data/selectors';
 
 export default function ProductPage(): JSX.Element {
   const { id: currentId } = useParams();
   const dispatch = useAppDispatch();
+  const { pathname } = useLocation();
 
   useEffect(() => {
     if (currentId) {
       dispatch(fetchCurrentCameraAction(currentId));
+      dispatch(fetchReviewsAction(currentId));
     }
   }, [currentId, dispatch]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   const currentProduct = useAppSelector(getCurrentCamera);
+  const reviews = useAppSelector(getReviews);
+
   const isCameraDataLoading = useAppSelector(getCamerasDataLoadingStatus);
+  const isReviewsDataLoading = useAppSelector(getReviewsDataLoadingStatus);
 
   if (isCameraDataLoading) {
     return <Loader />;
@@ -133,9 +143,11 @@ export default function ProductPage(): JSX.Element {
                 <div className="container">
                   <div className="page-content__headed">
                     <h2 className="title title--h3">Отзывы</h2>
-                    {/* <!--<button className="btn" type="button">Оставить свой отзыв</button>--> */}
+                    <button className="btn" type="button">Оставить свой отзыв</button>
                   </div>
-                  <ReviewList />
+                  {
+                    isReviewsDataLoading ? <Loader /> : <ReviewList reviews={reviews} />
+                  }
                   <div className="review-block__buttons">
                     <button className="btn btn--purple" type="button">Показать больше отзывов
                     </button>

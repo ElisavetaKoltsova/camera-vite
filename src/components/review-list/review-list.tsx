@@ -1,7 +1,11 @@
-import { reviews } from '../../mock/reviews';
+import { Review } from '../../types/review';
 import ReviewItem from '../review-item/review-item';
 
-export default function ReviewList(): JSX.Element {
+type ReviewListProps = {
+  reviews: Review[];
+}
+
+export default function ReviewList({reviews}: ReviewListProps): JSX.Element {
   return (
     <ul className="review-block__list">
       {reviews.map((review) => <ReviewItem review={review} key={review.id}/>)}

@@ -1,7 +1,15 @@
+import { useLocation } from 'react-router-dom';
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
+import { useEffect } from 'react';
 
 export default function BasketPage(): JSX.Element {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <div className="wrapper">
       <Header />

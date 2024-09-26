@@ -11,9 +11,11 @@ export enum AppRoute {
 }
 
 export enum APIRoute {
-  Cameras = '/cameras'
+  Cameras = '/cameras',
+  Reviews = '/reviews'
 }
 
 export enum NameSpace {
-  Product = 'PRODUCT'
+  Product = 'PRODUCT',
+  Review = 'REVIEW'
 }
