@@ -12,11 +12,20 @@ export default function CallItemPopup({selectedCamera, onClick}: CallItemPopupPr
   const { disableScroll, enableScroll } = useScroll();
 
   useEffect(() => {
+    const handleEscKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClick();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscKeyDown);
+
     disableScroll();
     return () => {
       enableScroll();
+      document.removeEventListener('keydown', handleEscKeyDown);
     };
-  }, [disableScroll, enableScroll]);
+  }, [disableScroll, enableScroll, onClick]);
 
 
   if (selectedCamera) {
