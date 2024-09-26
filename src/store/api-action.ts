@@ -8,7 +8,8 @@ import { Review } from '../types/review';
 export const APIAction = {
   FETCH_CAMERAS: 'cameras/getCameras',
   FETCH_CURRENT_CAMERA: 'cameras/getCurrentCamera',
-  FETCH_REVIEWS: 'cameras/getReviews'
+  FETCH_REVIEWS: 'cameras/getReviews',
+  FETCH_PROMO: 'cameras/getPromo'
 };
 
 export const fetchCamerasAction = createAsyncThunk<Camera[], undefined, {
@@ -46,3 +47,17 @@ export const fetchReviewsAction = createAsyncThunk<Review[], string, {
     return data;
   }
 );
+
+
+// ==================== Купоны если понадобятся ====================== //
+// export const fetchPromoAction = createAsyncThunk<Promo[], undefined, {
+//   dispatch: AppDispatch;
+//   state: State;
+//   extra: AxiosInstance;
+// }>(
+//   APIAction.FETCH_PROMO,
+//   async (_arg, {extra: api}) => {
+//     const { data } = await api.get<Promo[]>(APIRoute.Promo);
+//     return data;
+//   }
+// );

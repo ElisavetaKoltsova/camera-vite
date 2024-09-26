@@ -6,9 +6,10 @@ import ProductRating from '../product-rating/product-rating';
 
 type CatalogCardItemProps = {
   camera: Camera;
+  onClick: (id: number) => void;
 }
 
-export default function CatalogCardItem({camera}: CatalogCardItemProps): JSX.Element {
+export default function CatalogCardItem({camera, onClick}: CatalogCardItemProps): JSX.Element {
   const {
     id,
     name,
@@ -40,7 +41,8 @@ export default function CatalogCardItem({camera}: CatalogCardItemProps): JSX.Ele
         </p>
       </div>
       <div className="product-card__buttons">
-        <button className="btn btn--purple product-card__btn" type="button">Купить
+        <button className="btn btn--purple product-card__btn" type="button" onClick={() => onClick(id)}>
+          Купить
         </button>
         <Link className="btn btn--transparent" to={`${AppRoute.Product}/${id}`}>
           Подробнее

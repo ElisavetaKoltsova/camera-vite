@@ -9,16 +9,34 @@ import Footer from '../../components/footer/footer';
 import { getCameras, getCamerasDataLoadingStatus } from '../../store/product-data/selectors';
 import { useAppSelector } from '../../hooks';
 import Loader from '../../components/loader/loader';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import CallItemPopup from '../../components/call-item-popup/call-item-popup';
+import { Camera } from '../../types/camera';
 
 export default function CatalogPage(): JSX.Element {
   const cameras = useAppSelector(getCameras);
   const isCamerasDataLoading = useAppSelector(getCamerasDataLoadingStatus);
   const { pathname } = useLocation();
 
+  const [popupOpenStatus, setPopupOpenStatus] = useState<boolean>(false);
+  const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
+
+  const handlePopupButtonOpenClick = (id: number) => {
+    const currentCamera = cameras.find((camera) => camera.id === id);
+
+    if (currentCamera) {
+      setSelectedCamera(currentCamera);
+      setPopupOpenStatus(true);
+    }
+  };
+
+  const handlePopupButtonCloseClick = () => {
+    setPopupOpenStatus(false);
+  };
 
   return (
     <div className="wrapper">
@@ -54,7 +72,7 @@ export default function CatalogPage(): JSX.Element {
                   {
                     isCamerasDataLoading
                       ? <Loader />
-                      : <CatalogCardList cameras={cameras} />
+                      : <CatalogCardList cameras={cameras} onClick={handlePopupButtonOpenClick} />
                   }
                   {/* <!--<div className="pagination">
                     <ul className="pagination__list">
@@ -73,6 +91,7 @@ export default function CatalogPage(): JSX.Element {
             </div>
           </section>
         </div>
+        { popupOpenStatus ? <CallItemPopup selectedCamera={selectedCamera} onClick={handlePopupButtonCloseClick} /> : ''}
       </main>
       <Footer />
     </div>
