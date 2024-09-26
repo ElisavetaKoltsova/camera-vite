@@ -3,6 +3,7 @@ import { Camera } from './camera';
 
 export type ProductData = {
   cameras: Camera[];
+  currentCamera: Camera | null;
   isCamerasDataLoading: boolean;
 };
 

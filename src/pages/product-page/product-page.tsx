@@ -1,17 +1,33 @@
 import { Link, useParams } from 'react-router-dom';
 import Header from '../../components/header/header';
-import { cameras } from '../../mock/cameras';
 import NotFoundPage from '../not-found-page/not-found-page';
 import Footer from '../../components/footer/footer';
 import { AppRoute } from '../../const';
 import ProductRating from '../../components/product-rating/product-rating';
 import { convertNumberIntoMoneyFormat } from '../../utils/list';
 import ReviewList from '../../components/review-list/review-list';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { fetchCurrentCameraAction } from '../../store/api-action';
+import { getCamerasDataLoadingStatus, getCurrentCamera } from '../../store/product-data/selectors';
+import Loader from '../../components/loader/loader';
 
 export default function ProductPage(): JSX.Element {
   const { id: currentId } = useParams();
+  const dispatch = useAppDispatch();
 
-  const currentProduct = cameras.find((camera) => camera.id === Number(currentId));
+  useEffect(() => {
+    if (currentId) {
+      dispatch(fetchCurrentCameraAction(currentId));
+    }
+  }, [currentId, dispatch]);
+
+  const currentProduct = useAppSelector(getCurrentCamera);
+  const isCameraDataLoading = useAppSelector(getCamerasDataLoadingStatus);
+
+  if (isCameraDataLoading) {
+    return <Loader />;
+  }
 
   if (currentProduct) {
     const {
