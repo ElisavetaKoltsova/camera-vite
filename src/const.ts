@@ -9,3 +9,11 @@ export enum AppRoute {
   ProductId = ':id',
   Basket = '/basket'
 }
+
+export enum APIRoute {
+  Cameras = '/cameras'
+}
+
+export enum NameSpace {
+  Product = 'PRODUCT'
+}
