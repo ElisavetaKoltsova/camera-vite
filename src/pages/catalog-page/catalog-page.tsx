@@ -6,8 +6,14 @@ import CatalogFilter from '../../components/catalog-filter/catalog-filter';
 import CatalogSort from '../../components/catalog-sort/catalog-sort';
 import CatalogCardList from '../../components/catalog-card-list/catalog-card-list';
 import Footer from '../../components/footer/footer';
+import { getCameras, getCamerasDataLoadingStatus } from '../../store/product-data/selectors';
+import { useAppSelector } from '../../hooks';
+import Loader from '../../components/loader/loader';
 
 export default function CatalogPage(): JSX.Element {
+  const cameras = useAppSelector(getCameras);
+  const isCamerasDataLoading = useAppSelector(getCamerasDataLoadingStatus);
+
   return (
     <div className="wrapper">
       <Header />
@@ -39,7 +45,11 @@ export default function CatalogPage(): JSX.Element {
                 </div>
                 <div className="catalog__content">
                   <CatalogSort />
-                  <CatalogCardList />
+                  {
+                    isCamerasDataLoading
+                      ? <Loader />
+                      : <CatalogCardList cameras={cameras} />
+                  }
                   {/* <!--<div className="pagination">
                     <ul className="pagination__list">
                       <li className="pagination__item"><a className="pagination__link pagination__link&#45;&#45;active" href="1">1</a>

@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './components/app/app';
-import { BrowserRouter } from 'react-router-dom';
 import { store } from './store';
 import { fetchCamerasAction } from './store/api-action';
+import { Provider } from 'react-redux';
+import HistoryRouter from './components/history-router/history-router';
+import browserHistory from './browser-history';
 
 store.dispatch(fetchCamerasAction());
 
@@ -13,8 +15,10 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <Provider store={store}>
+      <HistoryRouter history={browserHistory}>
+        <App />
+      </HistoryRouter>
+    </Provider>
   </React.StrictMode>
 );
