@@ -24,8 +24,8 @@ export default function BasketPage(): JSX.Element {
 
   const camerasInBasket = useAppSelector(getCamerasInBasket);
 
-  const isRemoveItemPopupOpenStatus = useAppSelector(getRemoveItemPopupOpenStatus);
-  const isOrderSuccessPopupOpenStatus = useAppSelector(getOrderSuccessPopupOpenStatus);
+  const removeItemPopupOpenStatus = useAppSelector(getRemoveItemPopupOpenStatus);
+  const orderSuccessPopupOpenStatus = useAppSelector(getOrderSuccessPopupOpenStatus);
 
   const handleRemoveItemPopupOpenClick = (id: number) => {
     const currentCamera = camerasInBasket.find((camera) => camera.id === id);
@@ -91,7 +91,7 @@ export default function BasketPage(): JSX.Element {
           </section>
         </div>
         {
-          isRemoveItemPopupOpenStatus
+          removeItemPopupOpenStatus
             ?
             <RemoveItemPopup selectedCamera={selectedCamera} onCloseClick={handleRemoveItemPopupCloseClick} />
             :
@@ -99,7 +99,7 @@ export default function BasketPage(): JSX.Element {
         }
 
         {
-          isOrderSuccessPopupOpenStatus
+          orderSuccessPopupOpenStatus
             ?
             <OrderSuccessPopup onCloseClick={handleOrderSuccessPopupClick} />
             :

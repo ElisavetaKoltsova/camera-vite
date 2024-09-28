@@ -6,17 +6,24 @@ import { AppRoute } from '../../const';
 import ProductRating from '../../components/product-rating/product-rating';
 import { convertNumberIntoMoneyFormat } from '../../utils/list';
 import ReviewList from '../../components/review-list/review-list';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { fetchCurrentCameraAction, fetchReviewsAction } from '../../store/api-action';
 import { getCamerasDataLoadingStatus, getCurrentCamera } from '../../store/product-data/selectors';
 import Loader from '../../components/loader/loader';
 import { getReviews, getReviewsDataLoadingStatus } from '../../store/review-data/selectors';
+import { toggleReviewPopupOpen, toggleReviewSuccessPopupOpen } from '../../store/popup-process/popup-process';
+import ReviewPopup from '../../components/popups/review-popup/review-popup';
+import { getReviewPopupOpenStatus, getReviewSuccessPopupOpenStatus } from '../../store/popup-process/selectors';
+import ReviewSuccessPopup from '../../components/popups/review-success/review-success-popup';
 
 export default function ProductPage(): JSX.Element {
   const { id: currentId } = useParams();
   const dispatch = useAppDispatch();
   const { pathname } = useLocation();
+
+  const [characteristicsStatus, setCharacteristicsStatus] = useState<boolean>(false);
+  const [descriptionStatus, setDescriptionStatus] = useState<boolean>(true);
 
   useEffect(() => {
     if (currentId) {
@@ -29,11 +36,27 @@ export default function ProductPage(): JSX.Element {
     window.scrollTo(0, 0);
   }, [pathname]);
 
+  const handleTabButtonClick = () => {
+    setCharacteristicsStatus(!characteristicsStatus);
+    setDescriptionStatus(!descriptionStatus);
+  };
+
   const currentProduct = useAppSelector(getCurrentCamera);
   const reviews = useAppSelector(getReviews);
 
   const isCameraDataLoading = useAppSelector(getCamerasDataLoadingStatus);
   const isReviewsDataLoading = useAppSelector(getReviewsDataLoadingStatus);
+
+  const reviewPopupOpenStatus = useAppSelector(getReviewPopupOpenStatus);
+  const reviewSuccessPopupOpenStatus = useAppSelector(getReviewSuccessPopupOpenStatus);
+
+  const handlePopupButtonOpenToggleClick = () => {
+    dispatch(toggleReviewPopupOpen());
+  };
+
+  const handleSuccessPopupButtonToggleClick = () => {
+    dispatch(toggleReviewSuccessPopupOpen());
+  };
 
   if (isCameraDataLoading) {
     return <Loader />;
@@ -107,11 +130,11 @@ export default function ProductPage(): JSX.Element {
                     </button>
                     <div className="tabs product__tabs">
                       <div className="tabs__controls product__tabs-controls">
-                        <button className="tabs__control" type="button">Характеристики</button>
-                        <button className="tabs__control is-active" type="button">Описание</button>
+                        <button className={`tabs__control ${characteristicsStatus ? 'is-active' : ''}`} type="button" onClick={handleTabButtonClick}>Характеристики</button>
+                        <button className={`tabs__control ${descriptionStatus ? 'is-active' : ''}`} type="button" onClick={handleTabButtonClick}>Описание</button>
                       </div>
                       <div className="tabs__content">
-                        <div className="tabs__element">
+                        <div className={`tabs__element ${characteristicsStatus ? 'is-active' : ''}`}>
                           <ul className="product__tabs-list">
                             <li className="item-list"><span className="item-list__title">Артикул:</span>
                               <p className="item-list__text">{vendorCode}</p>
@@ -127,7 +150,7 @@ export default function ProductPage(): JSX.Element {
                             </li>
                           </ul>
                         </div>
-                        <div className="tabs__element is-active">
+                        <div className={`tabs__element ${descriptionStatus ? 'is-active' : ''}`}>
                           <div className="product__tabs-text">
                             {description}
                           </div>
@@ -143,7 +166,7 @@ export default function ProductPage(): JSX.Element {
                 <div className="container">
                   <div className="page-content__headed">
                     <h2 className="title title--h3">Отзывы</h2>
-                    <button className="btn" type="button">Оставить свой отзыв</button>
+                    <button className="btn" type="button" onClick={handlePopupButtonOpenToggleClick}>Оставить свой отзыв</button>
                   </div>
                   {
                     isReviewsDataLoading ? <Loader /> : <ReviewList reviews={reviews} />
@@ -156,6 +179,21 @@ export default function ProductPage(): JSX.Element {
               </section>
             </div>
           </div>
+          {
+            reviewPopupOpenStatus
+              ?
+              <ReviewPopup onCloseClick={handlePopupButtonOpenToggleClick} />
+              :
+              ''
+          }
+
+          {
+            reviewSuccessPopupOpenStatus
+              ?
+              <ReviewSuccessPopup onCloseClick={handleSuccessPopupButtonToggleClick}/>
+              :
+              ''
+          }
         </main>
         <Link className="up-btn" to="#header">
           <svg width="12" height="18" aria-hidden="true">

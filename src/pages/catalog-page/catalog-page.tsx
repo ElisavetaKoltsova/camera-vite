@@ -24,9 +24,9 @@ export default function CatalogPage(): JSX.Element {
   const cameras = useAppSelector(getCameras);
   const isCamerasDataLoading = useAppSelector(getCamerasDataLoadingStatus);
 
-  const isCallItemPopupOpenStatus = useAppSelector(getCallItemPopupOpenStatus);
-  const isAddItemPopupOpenStatus = useAppSelector(getAddItemPopupOpenStatus);
-  const isAddItemSuccessPopupOpenStatus = useAppSelector(getAddItemSuccessPopupOpenStatus);
+  const callItemPopupOpenStatus = useAppSelector(getCallItemPopupOpenStatus);
+  const addItemPopupOpenStatus = useAppSelector(getAddItemPopupOpenStatus);
+  const addItemSuccessPopupOpenStatus = useAppSelector(getAddItemSuccessPopupOpenStatus);
 
   const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
 
@@ -109,7 +109,7 @@ export default function CatalogPage(): JSX.Element {
           </section>
         </div>
         {
-          isCallItemPopupOpenStatus
+          callItemPopupOpenStatus
             ?
             <CallItemPopup
               selectedCamera={selectedCamera}
@@ -121,7 +121,7 @@ export default function CatalogPage(): JSX.Element {
         }
 
         {
-          isAddItemPopupOpenStatus
+          addItemPopupOpenStatus
             ?
             <AddItemPopup
               selectedCamera={selectedCamera}
@@ -133,7 +133,7 @@ export default function CatalogPage(): JSX.Element {
         }
 
         {
-          isAddItemSuccessPopupOpenStatus
+          addItemSuccessPopupOpenStatus
             ?
             <AddItemSuccessPopup
               onCloseClick={handlePopupButtonAddToBasketToggleClick}

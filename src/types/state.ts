@@ -20,7 +20,6 @@ export type PopupProcess = {
   isAddItemSuccessPopupOpen: boolean;
   isReviewPopupOpen: boolean;
   isReviewSuccessPopupOpen: boolean;
-  isReviewErrorPopupOpen: boolean;
   isRemoveItemPopupOpen: boolean;
   isOrderSuccessPopupOpen: boolean;
 }

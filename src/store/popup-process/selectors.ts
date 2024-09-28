@@ -17,5 +17,3 @@ export const getReviewPopupOpenStatus = (state: Pick<State, NameSpace.Popup>) =>
   state[NameSpace.Popup].isReviewPopupOpen;
 export const getReviewSuccessPopupOpenStatus = (state: Pick<State, NameSpace.Popup>) =>
   state[NameSpace.Popup].isReviewSuccessPopupOpen;
-export const getReviewErrorPopupOpenStatus = (state: Pick<State, NameSpace.Popup>) =>
-  state[NameSpace.Popup].isReviewErrorPopupOpen;

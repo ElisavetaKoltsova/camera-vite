@@ -8,7 +8,6 @@ const initialState: PopupProcess = {
   isAddItemSuccessPopupOpen: false,
   isReviewPopupOpen: false,
   isReviewSuccessPopupOpen: false,
-  isReviewErrorPopupOpen: false,
   isRemoveItemPopupOpen: false,
   isOrderSuccessPopupOpen: false
 };
@@ -24,7 +23,6 @@ export const popupProcess = createSlice({
       state.isAddItemSuccessPopupOpen = false;
       state.isRemoveItemPopupOpen = false;
       state.isOrderSuccessPopupOpen = false;
-      state.isReviewErrorPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isReviewPopupOpen = false;
     },
@@ -35,7 +33,6 @@ export const popupProcess = createSlice({
       state.isAddItemSuccessPopupOpen = false;
       state.isRemoveItemPopupOpen = false;
       state.isOrderSuccessPopupOpen = false;
-      state.isReviewErrorPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isReviewPopupOpen = false;
     },
@@ -46,7 +43,6 @@ export const popupProcess = createSlice({
       state.isAddItemPopupOpen = false;
       state.isRemoveItemPopupOpen = false;
       state.isOrderSuccessPopupOpen = false;
-      state.isReviewErrorPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isReviewPopupOpen = false;
     },
@@ -57,7 +53,6 @@ export const popupProcess = createSlice({
       state.isAddItemPopupOpen = false;
       state.isAddItemSuccessPopupOpen = false;
       state.isOrderSuccessPopupOpen = false;
-      state.isReviewErrorPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isReviewPopupOpen = false;
     },
@@ -68,9 +63,28 @@ export const popupProcess = createSlice({
       state.isAddItemPopupOpen = false;
       state.isAddItemSuccessPopupOpen = false;
       state.isRemoveItemPopupOpen = false;
-      state.isReviewErrorPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isReviewPopupOpen = false;
+    },
+    toggleReviewPopupOpen(state) {
+      state.isReviewPopupOpen = !state.isReviewPopupOpen;
+
+      state.isCallItemPopupOpen = false;
+      state.isAddItemPopupOpen = false;
+      state.isAddItemSuccessPopupOpen = false;
+      state.isRemoveItemPopupOpen = false;
+      state.isReviewSuccessPopupOpen = false;
+      state.isOrderSuccessPopupOpen = false;
+    },
+    toggleReviewSuccessPopupOpen(state) {
+      state.isOrderSuccessPopupOpen = !state.isReviewSuccessPopupOpen;
+
+      state.isCallItemPopupOpen = false;
+      state.isAddItemPopupOpen = false;
+      state.isAddItemSuccessPopupOpen = false;
+      state.isRemoveItemPopupOpen = false;
+      state.isReviewPopupOpen = false;
+      state.isOrderSuccessPopupOpen = false;
     }
   }
 });
@@ -80,5 +94,7 @@ export const {
   toggleAddItemSuccessPopupOpenStatus,
   toggleCallItemPopupOpenStatus,
   toggleRemoveItemPopupOpenStatus,
-  toggleOrderSuccessPopupOpen
+  toggleOrderSuccessPopupOpen,
+  toggleReviewPopupOpen,
+  toggleReviewSuccessPopupOpen
 } = popupProcess.actions;
