@@ -23,6 +23,28 @@ export const productData = createSlice({
     },
     clearBasket(state) {
       state.camerasInBasket = [];
+    },
+    increaseCountOfCamerasInBasket(state, action: PayloadAction<number>) {
+      const seekedCamera = state.camerasInBasket.find((camera) => camera.id === action.payload);
+
+      if (seekedCamera) {
+        const indexOfCamera = state.camerasInBasket.indexOf(seekedCamera);
+
+        if (state.camerasInBasket[indexOfCamera].countInBasket) {
+          ++state.camerasInBasket[indexOfCamera].countInBasket;
+        }
+      }
+    },
+    decreaseCountOfCamerasInBasket(state, action: PayloadAction<number>) {
+      const seekedCamera = state.camerasInBasket.find((camera) => camera.id === action.payload);
+
+      if (seekedCamera) {
+        const indexOfCamera = state.camerasInBasket.indexOf(seekedCamera);
+
+        if (state.camerasInBasket[indexOfCamera].countInBasket) {
+          --state.camerasInBasket[indexOfCamera].countInBasket;
+        }
+      }
     }
   },
   extraReducers(builder) {
@@ -32,6 +54,10 @@ export const productData = createSlice({
       })
       .addCase(fetchCamerasAction.fulfilled, (state, action) => {
         state.cameras = action.payload;
+        state.cameras.forEach((camera) => {
+          camera.countInBasket = 1;
+        });
+
         state.isCamerasDataLoading = false;
       })
       .addCase(fetchCurrentCameraAction.pending, (state) => {
@@ -44,4 +70,10 @@ export const productData = createSlice({
   }
 });
 
-export const { addCameraToBasket, removeCameraInBasket, clearBasket } = productData.actions;
+export const {
+  addCameraToBasket,
+  removeCameraInBasket,
+  clearBasket,
+  increaseCountOfCamerasInBasket,
+  decreaseCountOfCamerasInBasket
+} = productData.actions;
