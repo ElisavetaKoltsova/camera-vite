@@ -16,7 +16,19 @@ export const productData = createSlice({
   initialState,
   reducers: {
     addCameraToBasket(state, action: PayloadAction<Camera>) {
-      state.camerasInBasket.push(action.payload);
+      if (state.camerasInBasket.some((camera) => camera.id === action.payload.id)) {
+        const seekedCamera = state.camerasInBasket.find((camera) => camera.id === action.payload.id);
+
+        if (seekedCamera) {
+          const indexOfCamera = state.camerasInBasket.indexOf(seekedCamera);
+
+          if (state.camerasInBasket[indexOfCamera].countInBasket) {
+            ++state.camerasInBasket[indexOfCamera].countInBasket;
+          }
+        }
+      } else {
+        state.camerasInBasket.push(action.payload);
+      }
     },
     removeCameraInBasket(state, action: PayloadAction<number>) {
       state.camerasInBasket = state.camerasInBasket.filter((camera) => camera.id !== action.payload);
