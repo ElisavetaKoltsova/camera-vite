@@ -10,7 +10,7 @@ const initialState: PopupProcess = {
   isReviewSuccessPopupOpen: false,
   isReviewErrorPopupOpen: false,
   isRemoveItemPopupOpen: false,
-  isRemoveItemSuccessPopupOpen: false
+  isOrderSuccessPopupOpen: false
 };
 
 export const popupProcess = createSlice({
@@ -23,7 +23,7 @@ export const popupProcess = createSlice({
       state.isAddItemPopupOpen = false;
       state.isAddItemSuccessPopupOpen = false;
       state.isRemoveItemPopupOpen = false;
-      state.isRemoveItemSuccessPopupOpen = false;
+      state.isOrderSuccessPopupOpen = false;
       state.isReviewErrorPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isReviewPopupOpen = false;
@@ -34,7 +34,7 @@ export const popupProcess = createSlice({
       state.isCallItemPopupOpen = false;
       state.isAddItemSuccessPopupOpen = false;
       state.isRemoveItemPopupOpen = false;
-      state.isRemoveItemSuccessPopupOpen = false;
+      state.isOrderSuccessPopupOpen = false;
       state.isReviewErrorPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isReviewPopupOpen = false;
@@ -45,7 +45,7 @@ export const popupProcess = createSlice({
       state.isCallItemPopupOpen = false;
       state.isAddItemPopupOpen = false;
       state.isRemoveItemPopupOpen = false;
-      state.isRemoveItemSuccessPopupOpen = false;
+      state.isOrderSuccessPopupOpen = false;
       state.isReviewErrorPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isReviewPopupOpen = false;
@@ -56,13 +56,13 @@ export const popupProcess = createSlice({
       state.isCallItemPopupOpen = false;
       state.isAddItemPopupOpen = false;
       state.isAddItemSuccessPopupOpen = false;
-      state.isRemoveItemSuccessPopupOpen = false;
+      state.isOrderSuccessPopupOpen = false;
       state.isReviewErrorPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isReviewPopupOpen = false;
     },
-    toggleRemoveItemSuccessPopupOpen(state) {
-      state.isRemoveItemSuccessPopupOpen = !state.isRemoveItemSuccessPopupOpen;
+    toggleOrderSuccessPopupOpen(state) {
+      state.isOrderSuccessPopupOpen = !state.isOrderSuccessPopupOpen;
 
       state.isCallItemPopupOpen = false;
       state.isAddItemPopupOpen = false;
@@ -80,5 +80,5 @@ export const {
   toggleAddItemSuccessPopupOpenStatus,
   toggleCallItemPopupOpenStatus,
   toggleRemoveItemPopupOpenStatus,
-  toggleRemoveItemSuccessPopupOpen
+  toggleOrderSuccessPopupOpen
 } = popupProcess.actions;

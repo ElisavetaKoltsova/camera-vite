@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppRoute } from '../../../const';
 import { useAppDispatch } from '../../../hooks';
 import { toggleAddItemSuccessPopupOpenStatus } from '../../../store/popup-process/popup-process';
@@ -45,7 +45,7 @@ export default function AddItemSuccessPopup({onCloseClick}: AddItemSuccessPopupP
           <svg className="modal__icon" width="86" height="80" aria-hidden="true">
             <use xlinkHref="#icon-success"></use>
           </svg>
-          <div className="modal__buttons"><a className="btn btn--transparent modal__btn" href="#">Продолжить покупки</a>
+          <div className="modal__buttons"><Link className="btn btn--transparent modal__btn" to={AppRoute.Catalog} onClick={onCloseClick}>Продолжить покупки</Link>
             <button className="btn btn--purple modal__btn modal__btn--fit-width" onClick={handleToBasketButtonClick}>Перейти в корзину</button>
           </div>
           <button className="cross-btn" type="button" aria-label="Закрыть попап" onClick={onCloseClick}>

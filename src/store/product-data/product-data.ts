@@ -1,18 +1,27 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ProductData } from '../../types/state';
 import { NameSpace } from '../../const';
 import { fetchCamerasAction, fetchCurrentCameraAction } from '../api-action';
+import { Camera } from '../../types/camera';
 
 const initialState: ProductData = {
   cameras: [],
   currentCamera: null,
+  camerasInBasket: [],
   isCamerasDataLoading: false
 };
 
 export const productData = createSlice({
   name: NameSpace.Product,
   initialState,
-  reducers: {},
+  reducers: {
+    addCameraToBasket(state, action: PayloadAction<Camera>) {
+      state.camerasInBasket.push(action.payload);
+    },
+    removeCameraInBasket(state, action: PayloadAction<number>) {
+      state.camerasInBasket = state.camerasInBasket.filter((camera) => camera.id !== action.payload);
+    }
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchCamerasAction.pending, (state) => {
@@ -31,3 +40,5 @@ export const productData = createSlice({
       });
   }
 });
+
+export const { addCameraToBasket, removeCameraInBasket } = productData.actions;

@@ -2,15 +2,18 @@ import { useEffect } from 'react';
 import { useScroll } from '../../../hooks/use-scroll';
 import { Camera } from '../../../types/camera';
 import BasketShortItem from '../../basket-short-item/basket-short-item';
+import { useAppDispatch } from '../../../hooks';
+import { addCameraToBasket } from '../../../store/product-data/product-data';
 
 type AddItemPopupProps = {
   selectedCamera: Camera | null;
   onCloseClick: () => void;
-  onAddToCardClick: () => void;
+  onAddToBasketClick: () => void;
 }
 
-export default function AddItemPopup({selectedCamera, onCloseClick, onAddToCardClick}: AddItemPopupProps): JSX.Element {
+export default function AddItemPopup({selectedCamera, onCloseClick, onAddToBasketClick}: AddItemPopupProps): JSX.Element {
   const { disableScroll, enableScroll } = useScroll();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const handleEscKeyDown = (event: KeyboardEvent) => {
@@ -28,6 +31,13 @@ export default function AddItemPopup({selectedCamera, onCloseClick, onAddToCardC
     };
   }, [disableScroll, enableScroll, onCloseClick]);
 
+  const handleAddToBasketButtonClick = () => {
+    if (selectedCamera) {
+      dispatch(addCameraToBasket(selectedCamera));
+      onAddToBasketClick();
+    }
+  };
+
   if (selectedCamera) {
     return (
       <div className="modal is-active">
@@ -37,7 +47,7 @@ export default function AddItemPopup({selectedCamera, onCloseClick, onAddToCardC
             <p className="title title--h4">Добавить товар в корзину</p>
             <BasketShortItem selectedCamera={selectedCamera} />
             <div className="modal__buttons">
-              <button className="btn btn--purple modal__btn modal__btn--fit-width" type="button" onClick={onAddToCardClick}>
+              <button className="btn btn--purple modal__btn modal__btn--fit-width" type="button" onClick={handleAddToBasketButtonClick}>
                 <svg width="24" height="16" aria-hidden="true">
                   <use xlinkHref="#icon-add-basket"></use>
                 </svg>Добавить в корзину

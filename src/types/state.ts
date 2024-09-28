@@ -5,6 +5,7 @@ import { Review } from './review';
 export type ProductData = {
   cameras: Camera[];
   currentCamera: Camera | null;
+  camerasInBasket: Camera[];
   isCamerasDataLoading: boolean;
 };
 
@@ -21,7 +22,7 @@ export type PopupProcess = {
   isReviewSuccessPopupOpen: boolean;
   isReviewErrorPopupOpen: boolean;
   isRemoveItemPopupOpen: boolean;
-  isRemoveItemSuccessPopupOpen: boolean;
+  isOrderSuccessPopupOpen: boolean;
 }
 
 export type State = ReturnType<typeof store.getState>;

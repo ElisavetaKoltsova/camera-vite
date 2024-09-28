@@ -51,7 +51,7 @@ export default function CatalogPage(): JSX.Element {
     dispatch(toggleAddItemPopupOpenStatus());
   };
 
-  const handlePopupButtonAddToCardToggleClick = () => {
+  const handlePopupButtonAddToBasketToggleClick = () => {
     dispatch(toggleAddItemSuccessPopupOpenStatus());
   };
 
@@ -126,7 +126,7 @@ export default function CatalogPage(): JSX.Element {
             <AddItemPopup
               selectedCamera={selectedCamera}
               onCloseClick={handlePopupButtonOrderToggleClick}
-              onAddToCardClick={handlePopupButtonAddToCardToggleClick}
+              onAddToBasketClick={handlePopupButtonAddToBasketToggleClick}
             />
             :
             ''
@@ -136,7 +136,7 @@ export default function CatalogPage(): JSX.Element {
           isAddItemSuccessPopupOpenStatus
             ?
             <AddItemSuccessPopup
-              onCloseClick={handlePopupButtonAddToCardToggleClick}
+              onCloseClick={handlePopupButtonAddToBasketToggleClick}
             />
             :
             ''
