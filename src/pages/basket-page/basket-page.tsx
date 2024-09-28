@@ -6,9 +6,10 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import { getCamerasInBasket } from '../../store/product-data/selectors';
 import BasketList from '../../components/basket-list/basket-list';
 import { Camera } from '../../types/camera';
-import { toggleRemoveItemPopupOpenStatus } from '../../store/popup-process/popup-process';
-import { getRemoveItemPopupOpenStatus } from '../../store/popup-process/selectors';
+import { toggleOrderSuccessPopupOpen, toggleRemoveItemPopupOpenStatus } from '../../store/popup-process/popup-process';
+import { getOrderSuccessPopupOpenStatus, getRemoveItemPopupOpenStatus } from '../../store/popup-process/selectors';
 import RemoveItemPopup from '../../components/popups/remove-item-popup/remove-item-popup';
+import OrderSuccessPopup from '../../components/popups/order-success-popup/order-success-popup';
 
 export default function BasketPage(): JSX.Element {
   const { pathname } = useLocation();
@@ -23,6 +24,7 @@ export default function BasketPage(): JSX.Element {
   const camerasInBasket = useAppSelector(getCamerasInBasket);
 
   const isRemoveItemPopupOpenStatus = useAppSelector(getRemoveItemPopupOpenStatus);
+  const isOrderSuccessPopupOpenStatus = useAppSelector(getOrderSuccessPopupOpenStatus);
 
   const handleRemoveItemPopupOpenClick = (id: number) => {
     const currentCamera = camerasInBasket.find((camera) => camera.id === id);
@@ -35,6 +37,10 @@ export default function BasketPage(): JSX.Element {
 
   const handleRemoveItemPopupCloseClick = () => {
     dispatch(toggleRemoveItemPopupOpenStatus());
+  };
+
+  const handleOrderSuccessPopupClick = () => {
+    dispatch(toggleOrderSuccessPopupOpen());
   };
 
   return (
@@ -89,7 +95,7 @@ export default function BasketPage(): JSX.Element {
                   <p className="basket__summary-item"><span className="basket__summary-text">Всего:</span><span className="basket__summary-value">111 390 ₽</span></p>
                   <p className="basket__summary-item"><span className="basket__summary-text">Скидка:</span><span className="basket__summary-value basket__summary-value--bonus">0 ₽</span></p>
                   <p className="basket__summary-item"><span className="basket__summary-text basket__summary-text--total">К оплате:</span><span className="basket__summary-value basket__summary-value--total">111 390 ₽</span></p>
-                  <button className="btn btn--purple" type="submit">Оформить заказ
+                  <button className="btn btn--purple" type="submit" onClick={handleOrderSuccessPopupClick}>Оформить заказ
                   </button>
                 </div>
               </div>
@@ -100,6 +106,14 @@ export default function BasketPage(): JSX.Element {
           isRemoveItemPopupOpenStatus
             ?
             <RemoveItemPopup selectedCamera={selectedCamera} onCloseClick={handleRemoveItemPopupCloseClick} />
+            :
+            ''
+        }
+
+        {
+          isOrderSuccessPopupOpenStatus
+            ?
+            <OrderSuccessPopup onCloseClick={handleOrderSuccessPopupClick} />
             :
             ''
         }

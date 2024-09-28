@@ -20,6 +20,9 @@ export const productData = createSlice({
     },
     removeCameraInBasket(state, action: PayloadAction<number>) {
       state.camerasInBasket = state.camerasInBasket.filter((camera) => camera.id !== action.payload);
+    },
+    clearBasket(state) {
+      state.camerasInBasket = [];
     }
   },
   extraReducers(builder) {
@@ -41,4 +44,4 @@ export const productData = createSlice({
   }
 });
 
-export const { addCameraToBasket, removeCameraInBasket } = productData.actions;
+export const { addCameraToBasket, removeCameraInBasket, clearBasket } = productData.actions;
