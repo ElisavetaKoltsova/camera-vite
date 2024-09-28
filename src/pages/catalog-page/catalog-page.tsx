@@ -7,18 +7,27 @@ import CatalogSort from '../../components/catalog-sort/catalog-sort';
 import CatalogCardList from '../../components/catalog-card-list/catalog-card-list';
 import Footer from '../../components/footer/footer';
 import { getCameras, getCamerasDataLoadingStatus } from '../../store/product-data/selectors';
-import { useAppSelector } from '../../hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import Loader from '../../components/loader/loader';
 import { useEffect, useState } from 'react';
-import CallItemPopup from '../../components/call-item-popup/call-item-popup';
+import CallItemPopup from '../../components/popups/call-item-popup/call-item-popup';
 import { Camera } from '../../types/camera';
+import { toggleAddItemPopupOpenStatus, toggleAddItemSuccessPopupOpenStatus, toggleCallItemPopupOpenStatus } from '../../store/popup-process/popup-process';
+import { getAddItemPopupOpenStatus, getAddItemSuccessPopupOpenStatus, getCallItemPopupOpenStatus } from '../../store/popup-process/selectors';
+import AddItemPopup from '../../components/popups/add-item-popup/add-item-popup';
+import AddItemSuccessPopup from '../../components/popups/add-item-success-popup/add-item-success-popup';
 
 export default function CatalogPage(): JSX.Element {
+  const { pathname } = useLocation();
+  const dispatch = useAppDispatch();
+
   const cameras = useAppSelector(getCameras);
   const isCamerasDataLoading = useAppSelector(getCamerasDataLoadingStatus);
-  const { pathname } = useLocation();
 
-  const [popupOpenStatus, setPopupOpenStatus] = useState<boolean>(false);
+  const isCallItemPopupOpenStatus = useAppSelector(getCallItemPopupOpenStatus);
+  const isAddItemPopupOpenStatus = useAppSelector(getAddItemPopupOpenStatus);
+  const isAddItemSuccessPopupOpenStatus = useAppSelector(getAddItemSuccessPopupOpenStatus);
+
   const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
 
   useEffect(() => {
@@ -30,12 +39,20 @@ export default function CatalogPage(): JSX.Element {
 
     if (currentCamera) {
       setSelectedCamera(currentCamera);
-      setPopupOpenStatus(true);
+      dispatch(toggleCallItemPopupOpenStatus());
     }
   };
 
   const handlePopupButtonCloseClick = () => {
-    setPopupOpenStatus(false);
+    dispatch(toggleCallItemPopupOpenStatus());
+  };
+
+  const handlePopupButtonOrderToggleClick = () => {
+    dispatch(toggleAddItemPopupOpenStatus());
+  };
+
+  const handlePopupButtonAddToCardToggleClick = () => {
+    dispatch(toggleAddItemSuccessPopupOpenStatus());
   };
 
   return (
@@ -91,7 +108,39 @@ export default function CatalogPage(): JSX.Element {
             </div>
           </section>
         </div>
-        { popupOpenStatus ? <CallItemPopup selectedCamera={selectedCamera} onClick={handlePopupButtonCloseClick} /> : ''}
+        {
+          isCallItemPopupOpenStatus
+            ?
+            <CallItemPopup
+              selectedCamera={selectedCamera}
+              onCloseClick={handlePopupButtonCloseClick}
+              onOrderClick={handlePopupButtonOrderToggleClick}
+            />
+            :
+            ''
+        }
+
+        {
+          isAddItemPopupOpenStatus
+            ?
+            <AddItemPopup
+              selectedCamera={selectedCamera}
+              onCloseClick={handlePopupButtonOrderToggleClick}
+              onAddToCardClick={handlePopupButtonAddToCardToggleClick}
+            />
+            :
+            ''
+        }
+
+        {
+          isAddItemSuccessPopupOpenStatus
+            ?
+            <AddItemSuccessPopup
+              onCloseClick={handlePopupButtonAddToCardToggleClick}
+            />
+            :
+            ''
+        }
       </main>
       <Footer />
     </div>
