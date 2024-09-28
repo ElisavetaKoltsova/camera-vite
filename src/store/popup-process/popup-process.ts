@@ -49,6 +49,28 @@ export const popupProcess = createSlice({
       state.isReviewErrorPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isReviewPopupOpen = false;
+    },
+    toggleRemoveItemPopupOpenStatus(state) {
+      state.isRemoveItemPopupOpen = !state.isRemoveItemPopupOpen;
+
+      state.isCallItemPopupOpen = false;
+      state.isAddItemPopupOpen = false;
+      state.isAddItemSuccessPopupOpen = false;
+      state.isRemoveItemSuccessPopupOpen = false;
+      state.isReviewErrorPopupOpen = false;
+      state.isReviewSuccessPopupOpen = false;
+      state.isReviewPopupOpen = false;
+    },
+    toggleRemoveItemSuccessPopupOpen(state) {
+      state.isRemoveItemSuccessPopupOpen = !state.isRemoveItemSuccessPopupOpen;
+
+      state.isCallItemPopupOpen = false;
+      state.isAddItemPopupOpen = false;
+      state.isAddItemSuccessPopupOpen = false;
+      state.isRemoveItemPopupOpen = false;
+      state.isReviewErrorPopupOpen = false;
+      state.isReviewSuccessPopupOpen = false;
+      state.isReviewPopupOpen = false;
     }
   }
 });
@@ -56,5 +78,7 @@ export const popupProcess = createSlice({
 export const {
   toggleAddItemPopupOpenStatus,
   toggleAddItemSuccessPopupOpenStatus,
-  toggleCallItemPopupOpenStatus
+  toggleCallItemPopupOpenStatus,
+  toggleRemoveItemPopupOpenStatus,
+  toggleRemoveItemSuccessPopupOpen
 } = popupProcess.actions;

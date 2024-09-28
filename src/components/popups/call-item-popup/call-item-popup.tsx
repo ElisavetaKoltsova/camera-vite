@@ -2,6 +2,9 @@ import { useEffect } from 'react';
 import { useScroll } from '../../../hooks/use-scroll';
 import { Camera } from '../../../types/camera';
 import BasketShortItem from '../../basket-short-item/basket-short-item';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { Telephone } from '../../../types/telephone';
+import { useHookFormMask } from 'use-mask-input';
 
 type CallItemPopupProps = {
   selectedCamera: Camera | null;
@@ -11,6 +14,8 @@ type CallItemPopupProps = {
 
 export default function CallItemPopup({selectedCamera, onCloseClick, onOrderClick}: CallItemPopupProps): JSX.Element {
   const { disableScroll, enableScroll } = useScroll();
+  const { register, handleSubmit, formState: {errors} } = useForm<Telephone>();
+  const registerWithMask = useHookFormMask(register);
 
   useEffect(() => {
     const handleEscKeyDown = (event: KeyboardEvent) => {
@@ -28,6 +33,16 @@ export default function CallItemPopup({selectedCamera, onCloseClick, onOrderClic
     };
   }, [disableScroll, enableScroll, onCloseClick]);
 
+  const onSubmit: SubmitHandler<Telephone> = () => {
+    onOrderClick();
+  };
+
+  const checkCorrectnessOfPhone = (value: string) => {
+    const phoneReg = /[+]*[7-8]{1}\s?[(]*9[0-9]{2}[)]*\s?\d{3}[-]*\d{2}[-]*\d{2}/;
+    const isPhoneValid = phoneReg.test(value);
+
+    return isPhoneValid ? isPhoneValid : 'Телефон введён неверно';
+  };
 
   if (selectedCamera) {
     return (
@@ -37,19 +52,33 @@ export default function CallItemPopup({selectedCamera, onCloseClick, onOrderClic
           <div className="modal__content">
             <p className="title title--h4">Свяжитесь со мной</p>
             <BasketShortItem selectedCamera={selectedCamera}/>
-            <div className="custom-input form-review__item">
+            <div
+              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+              className={`custom-input form-review__item ${errors.telephone && 'is-invalid'}`}
+            >
               <label>
                 <span className="custom-input__label">Телефон
                   <svg width="9" height="9" aria-hidden="true">
                     <use xlinkHref="#icon-snowflake"></use>
                   </svg>
                 </span>
-                <input type="tel" name="user-tel" placeholder="Введите ваш номер" required />
+                <input
+                  type="tel"
+                  placeholder="Введите ваш номер"
+                  {...registerWithMask('telephone', ['+79999999999'], {
+                    required: {value: true, message: 'Телефон обязателен для ввода'},
+                    validate: checkCorrectnessOfPhone
+                  })}
+                />
+                {errors.telephone && <p className="custom-input__error">{errors.telephone.message}</p>}
               </label>
-              <p className="custom-input__error">Нужно указать номер</p>
+
             </div>
             <div className="modal__buttons">
-              <button className="btn btn--purple modal__btn modal__btn--fit-width" type="button" onClick={onOrderClick}>
+              <button className="btn btn--purple modal__btn modal__btn--fit-width" type="button"
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                onClick={handleSubmit(onSubmit)}
+              >
                 <svg width="24" height="16" aria-hidden="true">
                   <use xlinkHref="#icon-add-basket"></use>
                 </svg>Заказать
