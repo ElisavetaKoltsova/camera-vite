@@ -16,6 +16,7 @@ import { toggleAddItemPopupOpenStatus, toggleAddItemSuccessPopupOpenStatus, togg
 import { getAddItemPopupOpenStatus, getAddItemSuccessPopupOpenStatus, getCallItemPopupOpenStatus } from '../../store/popup-process/selectors';
 import AddItemPopup from '../../components/popups/add-item-popup/add-item-popup';
 import AddItemSuccessPopup from '../../components/popups/add-item-success-popup/add-item-success-popup';
+import { navigateToUpOfPage } from '../../utils/list';
 
 export default function CatalogPage(): JSX.Element {
   const { pathname } = useLocation();
@@ -31,7 +32,7 @@ export default function CatalogPage(): JSX.Element {
   const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    navigateToUpOfPage();
   }, [pathname]);
 
   const handlePopupButtonOpenClick = (id: number) => {

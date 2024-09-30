@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Review } from '../../types/review';
 import ReviewItem from '../review-item/review-item';
 
@@ -7,16 +7,30 @@ type ReviewListProps = {
 }
 
 export default function ReviewList({reviews}: ReviewListProps): JSX.Element {
-  const [visibleReviews, setVisibleReviews] = useState(3);
+  const [visibleReviews, setVisibleReviews] = useState<number>(3);
 
   const handleShowMoreReviewsButtonClick = () => {
     setVisibleReviews((prevCount) => prevCount + 3);
   };
 
+  const handleScroll = () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+      handleShowMoreReviewsButtonClick();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   const countReviews = visibleReviews <= reviews.length ? visibleReviews : reviews.length;
 
   return (
-    <section className="review-block">
+    <section className="review-block" onScroll={handleScroll}>
       <div className="container">
         <div className="page-content__headed">
           <h2 className="title title--h3">Отзывы</h2>

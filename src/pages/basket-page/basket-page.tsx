@@ -11,6 +11,7 @@ import { getOrderSuccessPopupOpenStatus, getRemoveItemPopupOpenStatus } from '..
 import RemoveItemPopup from '../../components/popups/remove-item-popup/remove-item-popup';
 import OrderSuccessPopup from '../../components/popups/order-success-popup/order-success-popup';
 import SummaryOrder from '../../components/summary-order/summary-order';
+import { navigateToUpOfPage } from '../../utils/list';
 
 export default function BasketPage(): JSX.Element {
   const { pathname } = useLocation();
@@ -19,7 +20,7 @@ export default function BasketPage(): JSX.Element {
   const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    navigateToUpOfPage();
   }, [pathname]);
 
   const camerasInBasket = useAppSelector(getCamerasInBasket);

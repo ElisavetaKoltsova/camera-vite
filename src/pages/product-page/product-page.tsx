@@ -4,7 +4,7 @@ import NotFoundPage from '../not-found-page/not-found-page';
 import Footer from '../../components/footer/footer';
 import { AppRoute } from '../../const';
 import ProductRating from '../../components/product-rating/product-rating';
-import { convertNumberIntoMoneyFormat } from '../../utils/list';
+import { convertNumberIntoMoneyFormat, navigateToUpOfPage } from '../../utils/list';
 import ReviewList from '../../components/review-list/review-list';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
@@ -33,7 +33,7 @@ export default function ProductPage(): JSX.Element {
   }, [currentId, dispatch]);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    navigateToUpOfPage();
   }, [pathname]);
 
   const handleTabButtonClick = () => {
@@ -183,7 +183,7 @@ export default function ProductPage(): JSX.Element {
               ''
           }
         </main>
-        <Link className="up-btn" to="#header">
+        <Link className="up-btn" onClick={navigateToUpOfPage} to='#header'>
           <svg width="12" height="18" aria-hidden="true">
             <use xlinkHref="#icon-arrow2"></use>
           </svg>
