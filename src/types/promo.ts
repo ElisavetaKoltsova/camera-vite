@@ -1,3 +1,5 @@
+import { CouponName } from '../const';
+
 export type Promo = {
   id: number;
   name: string;
@@ -6,3 +8,7 @@ export type Promo = {
   previewImgWebp: string;
   previewImgWebp2x: string;
 };
+
+export type Coupon = {
+  coupon: CouponName;
+}

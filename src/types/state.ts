@@ -27,6 +27,8 @@ export type PopupProcess = {
 
 export type PromoData = {
   promos: Promo[];
+  couponDiscount: number;
+  isCouponDiscountDataLoading: boolean;
 }
 
 export type State = ReturnType<typeof store.getState>;

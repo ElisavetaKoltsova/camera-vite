@@ -3,6 +3,12 @@ export const months = [
   'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
 ];
 
+export enum CouponName {
+  Coupon333 = 'camera-333',
+  Coupon444 = 'camera-444',
+  Coupon555 = 'camera-555'
+}
+
 export enum AppRoute {
   Catalog = '/',
   Product = '/cameras',
@@ -13,7 +19,8 @@ export enum AppRoute {
 export enum APIRoute {
   Cameras = '/cameras',
   Reviews = '/reviews',
-  Promo = '/promo'
+  Promo = '/promo',
+  Coupon = '/coupons'
 }
 
 export enum NameSpace {
