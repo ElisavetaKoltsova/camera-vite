@@ -1,4 +1,5 @@
 import { months } from '../const';
+import { Review } from '../types/review';
 
 export const convertNumberIntoMoneyFormat = (value: number) => Math.round(value).toLocaleString('ru-RU');
 
@@ -20,3 +21,5 @@ export const formatDateToDayMonth = (oldDate: string) => {
 
   return `${day} ${month}`;
 };
+
+export const sortReviewsByDate = (reviewA: Review, reviewB: Review) => new Date(reviewB.createAt).getTime() - new Date(reviewA.createAt).getTime();
