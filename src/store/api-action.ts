@@ -5,13 +5,15 @@ import { AxiosInstance } from 'axios';
 import { APIRoute } from '../const';
 import { Review } from '../types/review';
 import { Coupon, Promo } from '../types/promo';
+import { Order } from '../types/order';
 
 export const APIAction = {
   FETCH_CAMERAS: 'cameras/getCameras',
   FETCH_CURRENT_CAMERA: 'cameras/getCurrentCamera',
   FETCH_REVIEWS: 'cameras/getReviews',
   FETCH_PROMO: 'cameras/getPromo',
-  POST_COUPON: 'cameras/postCoupon'
+  POST_COUPON: 'cameras/postCoupon',
+  POST_ORDER: 'cameras/postORDER'
 };
 
 export const fetchCamerasAction = createAsyncThunk<Camera[], undefined, {
@@ -59,6 +61,17 @@ export const fetchPromosAction = createAsyncThunk<Promo[], undefined, {
   async (_arg, {extra: api}) => {
     const { data } = await api.get<Promo[]>(APIRoute.Promo);
     return data;
+  }
+);
+
+export const postOrderAction = createAsyncThunk<void, Order, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  APIAction.POST_ORDER,
+  async (order, {extra: api}) => {
+    await api.post(APIRoute.Orders, order);
   }
 );
 

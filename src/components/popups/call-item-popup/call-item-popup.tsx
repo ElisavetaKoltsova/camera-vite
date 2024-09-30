@@ -5,6 +5,9 @@ import BasketShortItem from '../../basket-short-item/basket-short-item';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Telephone } from '../../../types/telephone';
 import { useHookFormMask } from 'use-mask-input';
+import { useAppDispatch } from '../../../hooks';
+import { postOrderAction } from '../../../store/api-action';
+import { Order } from '../../../types/order';
 
 type CallItemPopupProps = {
   selectedCamera: Camera | null;
@@ -13,6 +16,7 @@ type CallItemPopupProps = {
 }
 
 export default function CallItemPopup({selectedCamera, onCloseClick, onOrderClick}: CallItemPopupProps): JSX.Element {
+  const dispatch = useAppDispatch();
   const { disableScroll, enableScroll } = useScroll();
   const { register, handleSubmit, formState: {errors} } = useForm<Telephone>();
   const registerWithMask = useHookFormMask(register);
@@ -33,7 +37,20 @@ export default function CallItemPopup({selectedCamera, onCloseClick, onOrderClic
     };
   }, [disableScroll, enableScroll, onCloseClick]);
 
-  const onSubmit: SubmitHandler<Telephone> = () => {
+  const onSubmit: SubmitHandler<Telephone> = (data) => {
+    if (selectedCamera) {
+      const camerasIdsInOrder = [];
+      camerasIdsInOrder.push(selectedCamera.id);
+
+      const order: Order = {
+        camerasIds: camerasIdsInOrder,
+        coupon: null,
+        tel: data.telephone
+      };
+
+      dispatch(postOrderAction(order));
+    }
+
     onOrderClick();
   };
 
