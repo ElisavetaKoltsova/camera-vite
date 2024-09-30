@@ -4,6 +4,7 @@ import { AppDispatch, State } from '../types/state';
 import { AxiosInstance } from 'axios';
 import { APIRoute } from '../const';
 import { Review } from '../types/review';
+import { Promo } from '../types/promo';
 
 export const APIAction = {
   FETCH_CAMERAS: 'cameras/getCameras',
@@ -48,16 +49,14 @@ export const fetchReviewsAction = createAsyncThunk<Review[], string, {
   }
 );
 
-
-// ==================== Купоны если понадобятся ====================== //
-// export const fetchPromoAction = createAsyncThunk<Promo[], undefined, {
-//   dispatch: AppDispatch;
-//   state: State;
-//   extra: AxiosInstance;
-// }>(
-//   APIAction.FETCH_PROMO,
-//   async (_arg, {extra: api}) => {
-//     const { data } = await api.get<Promo[]>(APIRoute.Promo);
-//     return data;
-//   }
-// );
+export const fetchPromosAction = createAsyncThunk<Promo[], undefined, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  APIAction.FETCH_PROMO,
+  async (_arg, {extra: api}) => {
+    const { data } = await api.get<Promo[]>(APIRoute.Promo);
+    return data;
+  }
+);

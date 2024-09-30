@@ -1,5 +1,6 @@
 import { store } from '../store';
 import { Camera } from './camera';
+import { Promo } from './promo';
 import { Review } from './review';
 
 export type ProductData = {
@@ -22,6 +23,10 @@ export type PopupProcess = {
   isReviewSuccessPopupOpen: boolean;
   isRemoveItemPopupOpen: boolean;
   isOrderSuccessPopupOpen: boolean;
+}
+
+export type PromoData = {
+  promos: Promo[];
 }
 
 export type State = ReturnType<typeof store.getState>;
