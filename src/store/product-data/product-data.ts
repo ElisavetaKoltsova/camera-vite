@@ -1,12 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ProductData } from '../../types/state';
 import { NameSpace } from '../../const';
-import { fetchCamerasAction, fetchCurrentCameraAction } from '../api-action';
+import { fetchCamerasAction, fetchCurrentCameraAction, fetchSimilarCamerasAction } from '../api-action';
 import { Camera } from '../../types/camera';
 
 const initialState: ProductData = {
   cameras: [],
   currentCamera: null,
+  similarCameras: [],
   camerasInBasket: [],
   isCamerasDataLoading: false
 };
@@ -77,6 +78,13 @@ export const productData = createSlice({
       })
       .addCase(fetchCurrentCameraAction.fulfilled, (state, action) => {
         state.currentCamera = action.payload;
+        state.isCamerasDataLoading = false;
+      })
+      .addCase(fetchSimilarCamerasAction.pending, (state) => {
+        state.isCamerasDataLoading = true;
+      })
+      .addCase(fetchSimilarCamerasAction.fulfilled, (state, action) => {
+        state.similarCameras = action.payload;
         state.isCamerasDataLoading = false;
       });
   }

@@ -10,6 +10,7 @@ import { Order } from '../types/order';
 export const APIAction = {
   FETCH_CAMERAS: 'cameras/getCameras',
   FETCH_CURRENT_CAMERA: 'cameras/getCurrentCamera',
+  FETCH_SIMILAR_CAMERAS: 'cameras/getSimilarCameras',
   FETCH_REVIEWS: 'cameras/getReviews',
   FETCH_PROMO: 'cameras/getPromo',
   POST_COUPON: 'cameras/postCoupon',
@@ -60,6 +61,18 @@ export const fetchPromosAction = createAsyncThunk<Promo[], undefined, {
   APIAction.FETCH_PROMO,
   async (_arg, {extra: api}) => {
     const { data } = await api.get<Promo[]>(APIRoute.Promo);
+    return data;
+  }
+);
+
+export const fetchSimilarCamerasAction = createAsyncThunk<Camera[], string, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  APIAction.FETCH_SIMILAR_CAMERAS,
+  async (id, {extra: api}) => {
+    const { data } = await api.get<Camera[]>(`${APIRoute.Cameras}/${id}${APIRoute.Similar}`);
     return data;
   }
 );

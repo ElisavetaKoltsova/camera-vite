@@ -8,14 +8,15 @@ import { convertNumberIntoMoneyFormat, navigateToUpOfPage } from '../../utils/li
 import ReviewList from '../../components/review-list/review-list';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { fetchCurrentCameraAction, fetchReviewsAction } from '../../store/api-action';
-import { getCamerasDataLoadingStatus, getCurrentCamera } from '../../store/product-data/selectors';
+import { fetchCurrentCameraAction, fetchReviewsAction, fetchSimilarCamerasAction } from '../../store/api-action';
+import { getCamerasDataLoadingStatus, getCurrentCamera, getSimilarCameras } from '../../store/product-data/selectors';
 import Loader from '../../components/loader/loader';
 import { getReviews, getReviewsDataLoadingStatus } from '../../store/review-data/selectors';
-import { toggleReviewPopupOpen, toggleReviewSuccessPopupOpen } from '../../store/popup-process/popup-process';
+import { toggleCallItemPopupOpenStatus, toggleReviewPopupOpen, toggleReviewSuccessPopupOpen } from '../../store/popup-process/popup-process';
 import ReviewPopup from '../../components/popups/review-popup/review-popup';
 import { getReviewPopupOpenStatus, getReviewSuccessPopupOpenStatus } from '../../store/popup-process/selectors';
 import ReviewSuccessPopup from '../../components/popups/review-success/review-success-popup';
+import ProductSimilarList from '../../components/product-similar-list/product-similar-list';
 
 export default function ProductPage(): JSX.Element {
   const { id: currentId } = useParams();
@@ -29,6 +30,7 @@ export default function ProductPage(): JSX.Element {
     if (currentId) {
       dispatch(fetchCurrentCameraAction(currentId));
       dispatch(fetchReviewsAction(currentId));
+      dispatch(fetchSimilarCamerasAction(currentId));
     }
   }, [currentId, dispatch]);
 
@@ -36,13 +38,9 @@ export default function ProductPage(): JSX.Element {
     navigateToUpOfPage();
   }, [pathname]);
 
-  const handleTabButtonClick = () => {
-    setCharacteristicsStatus(!characteristicsStatus);
-    setDescriptionStatus(!descriptionStatus);
-  };
-
   const currentProduct = useAppSelector(getCurrentCamera);
   const reviews = useAppSelector(getReviews);
+  const similarCameras = useAppSelector(getSimilarCameras);
 
   const isCameraDataLoading = useAppSelector(getCamerasDataLoadingStatus);
   const isReviewsDataLoading = useAppSelector(getReviewsDataLoadingStatus);
@@ -50,12 +48,23 @@ export default function ProductPage(): JSX.Element {
   const reviewPopupOpenStatus = useAppSelector(getReviewPopupOpenStatus);
   const reviewSuccessPopupOpenStatus = useAppSelector(getReviewSuccessPopupOpenStatus);
 
-  const handlePopupButtonOpenToggleClick = () => {
+  const handleTabButtonClick = () => {
+    setCharacteristicsStatus(!characteristicsStatus);
+    setDescriptionStatus(!descriptionStatus);
+  };
+
+  const handleReviewPopupButtonOpenToggleClick = () => {
     dispatch(toggleReviewPopupOpen());
   };
 
-  const handleSuccessPopupButtonToggleClick = () => {
+  const handleReviewSuccessPopupButtonToggleClick = () => {
     dispatch(toggleReviewSuccessPopupOpen());
+  };
+
+  const handleBuyPopupButtonToggleClick = () => {
+    if (currentProduct) {
+      dispatch(toggleCallItemPopupOpenStatus());
+    }
   };
 
   if (isCameraDataLoading) {
@@ -162,6 +171,9 @@ export default function ProductPage(): JSX.Element {
               </section>
             </div>
             <div className="page-content__section">
+              <ProductSimilarList onClick={handleBuyPopupButtonToggleClick} similarCameras={similarCameras} />
+            </div>
+            <div className="page-content__section">
               {
                 isReviewsDataLoading ? <Loader /> : <ReviewList reviews={reviews} />
               }
@@ -170,7 +182,7 @@ export default function ProductPage(): JSX.Element {
           {
             reviewPopupOpenStatus
               ?
-              <ReviewPopup onCloseClick={handlePopupButtonOpenToggleClick} />
+              <ReviewPopup onCloseClick={handleReviewPopupButtonOpenToggleClick} />
               :
               ''
           }
@@ -178,7 +190,7 @@ export default function ProductPage(): JSX.Element {
           {
             reviewSuccessPopupOpenStatus
               ?
-              <ReviewSuccessPopup onCloseClick={handleSuccessPopupButtonToggleClick}/>
+              <ReviewSuccessPopup onCloseClick={handleReviewSuccessPopupButtonToggleClick}/>
               :
               ''
           }

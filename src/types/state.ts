@@ -6,6 +6,7 @@ import { Review } from './review';
 export type ProductData = {
   cameras: Camera[];
   currentCamera: Camera | null;
+  similarCameras: Camera[];
   camerasInBasket: Camera[];
   isCamerasDataLoading: boolean;
 };

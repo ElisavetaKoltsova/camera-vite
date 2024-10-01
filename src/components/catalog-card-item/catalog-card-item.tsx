@@ -6,10 +6,11 @@ import ProductRating from '../product-rating/product-rating';
 
 type CatalogCardItemProps = {
   camera: Camera;
-  onClick: (id: number) => void;
+  onClick: (id?: number) => void;
+  isActiveClass?: string;
 }
 
-export default function CatalogCardItem({camera, onClick}: CatalogCardItemProps): JSX.Element {
+export default function CatalogCardItem({camera, onClick, isActiveClass = ''}: CatalogCardItemProps): JSX.Element {
   const {
     id,
     name,
@@ -25,11 +26,11 @@ export default function CatalogCardItem({camera, onClick}: CatalogCardItemProps)
   const convertedPrice = convertNumberIntoMoneyFormat(price);
 
   return (
-    <div className="product-card">
+    <div className={`product-card ${isActiveClass}`}>
       <div className="product-card__img">
         <picture>
-          <source type="image/webp" srcSet={`${previewImgWebp}, ${previewImgWebp2x}`} />
-          <img src={previewImg} srcSet={`${previewImg2x} 2x`} width="280" height="240" alt={name} />
+          <source type="image/webp" srcSet={`/${previewImgWebp}, /${previewImgWebp2x}`} />
+          <img src={`/${previewImg}`} srcSet={`/${previewImg2x} 2x`} width="280" height="240" alt={name} />
         </picture>
       </div>
       <div className="product-card__info">
