@@ -16,7 +16,7 @@ export default function Banner(): JSX.Element {
   const promos = useAppSelector(getPromos);
 
   return (
-    <div className="banner">
+    <div className="banner" data-testid="banner">
       <Swiper
         modules={[Autoplay, Pagination]}
         slidesPerView={1}

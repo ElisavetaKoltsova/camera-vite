@@ -4,7 +4,7 @@ import App from './components/app/app';
 import { store } from './store';
 import { fetchCamerasAction, fetchPromosAction } from './store/api-action';
 import { Provider } from 'react-redux';
-import HistoryRouter from './components/history-router/history-router';
+import HistoryRouter from './components/history-route/history-route';
 import browserHistory from './browser-history';
 
 store.dispatch(fetchCamerasAction());

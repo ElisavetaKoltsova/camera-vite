@@ -3,7 +3,7 @@ import { AppRoute } from '../../const';
 
 export default function Footer(): JSX.Element {
   return (
-    <footer className="footer">
+    <footer className="footer" data-testid="footer">
       <div className="container">
         <div className="footer__info">
           <Link className="footer__logo" to={AppRoute.Catalog} aria-label="Переход на главную">

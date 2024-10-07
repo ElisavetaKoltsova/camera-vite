@@ -20,7 +20,7 @@ export default function ProductRating({rating, reviewCount}: ProductRatingProps)
           );
         })
       }
-      <p className="visually-hidden">Рейтинг: {rating}</p>
+      <p className="visually-hidden" data-testid="product-rating">Рейтинг: {rating}</p>
       <p className="rate__count"><span className="visually-hidden">Всего оценок:</span>{reviewCount}</p>
     </React.Fragment>
   );

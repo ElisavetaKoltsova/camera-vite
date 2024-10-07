@@ -8,7 +8,7 @@ type CatalogCardListProps = {
 
 export default function CatalogCardList({cameras, onClick}: CatalogCardListProps): JSX.Element {
   return (
-    <div className="cards catalog__cards">
+    <div className="cards catalog__cards" data-testid="catalog-card-list">
       {cameras.map((camera) => <CatalogCardItem camera={camera} onClick={onClick} key={camera.id + camera.price} />)}
     </div>
   );

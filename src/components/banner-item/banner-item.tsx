@@ -20,7 +20,7 @@ export default function BannerItem({promo}: BannerItemProps): JSX.Element {
 
   return (
     <React.Fragment>
-      <picture>
+      <picture data-testid="banner-item">
         <source type="image/webp" srcSet={`/${previewImgWebp}, /${previewImgWebp2x}`} />
         <img src={`/${previewImg}`} srcSet={`/${previewImg2x} 2x`}width="1280" height="280" alt={name} />
       </picture>

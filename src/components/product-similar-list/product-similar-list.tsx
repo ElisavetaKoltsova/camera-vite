@@ -20,7 +20,7 @@ export default function ProductSimilarList({onClick, similarCameras}: ProductSim
   };
 
   return (
-    <section className="product-similar">
+    <section className="product-similar" data-testid="product-similar-list">
       <div className="container">
         <h2 className="title title&#45;&#45;h3">Похожие товары</h2>
         <div className="product-similar__slider">

@@ -2,7 +2,7 @@ import './loader.css';
 
 function Loader(): JSX.Element {
   return (
-    <span className="loader"></span>
+    <span className="loader" data-testid="loader"></span>
   );
 }
 

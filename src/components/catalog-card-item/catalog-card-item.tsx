@@ -26,7 +26,7 @@ export default function CatalogCardItem({camera, onClick, isActiveClass = ''}: C
   const convertedPrice = convertNumberIntoMoneyFormat(price);
 
   return (
-    <div className={`product-card ${isActiveClass}`}>
+    <div className={`product-card ${isActiveClass}`} data-testid="catalog-card-item">
       <div className="product-card__img">
         <picture>
           <source type="image/webp" srcSet={`/${previewImgWebp}, /${previewImgWebp2x}`} />

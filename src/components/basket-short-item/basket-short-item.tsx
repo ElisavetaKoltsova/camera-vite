@@ -22,7 +22,7 @@ export default function BasketShortItem({selectedCamera}: BasketShortItemProps):
   const convertedPrice = convertNumberIntoMoneyFormat(price);
 
   return (
-    <div className="basket-item basket-item--short">
+    <div className="basket-item basket-item--short" data-testid="basket-short-item">
       <div className="basket-item__img">
         <picture>
           <source type="image/webp" srcSet={`/${previewImgWebp}, /${previewImgWebp2x}`} />

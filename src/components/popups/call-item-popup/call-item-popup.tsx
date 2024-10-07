@@ -62,9 +62,9 @@ export default function CallItemPopup({selectedCamera, onCloseClick}: CallItemPo
 
   if (selectedCamera) {
     return (
-      <div className="modal is-active">
+      <div className="modal is-active" data-testid="call-item-popup">
         <div className="modal__wrapper">
-          <div className="modal__overlay" onClick={onCloseClick}></div>
+          <div className="modal__overlay" onClick={onCloseClick} data-testid="overlay-darkened"></div>
           <div className="modal__content">
             <p className="title title--h4">Свяжитесь со мной</p>
             <BasketShortItem selectedCamera={selectedCamera}/>
