@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 type ProductSimilarListProps = {
   similarCameras: Camera[];
-  onClick: () => void;
+  onClick: (id: number) => void;
 }
 
 export default function ProductSimilarList({onClick, similarCameras}: ProductSimilarListProps): JSX.Element {

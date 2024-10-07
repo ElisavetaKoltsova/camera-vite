@@ -4,6 +4,8 @@ import { Camera } from '../../../types/camera';
 import BasketShortItem from '../../basket-short-item/basket-short-item';
 import { removeCameraInBasket } from '../../../store/product-data/product-data';
 import { useAppDispatch } from '../../../hooks';
+import { Link } from 'react-router-dom';
+import { AppRoute } from '../../../const';
 
 type RemoveItemPopupProps = {
   selectedCamera: Camera | null;
@@ -46,8 +48,8 @@ export default function RemoveItemPopup({selectedCamera, onCloseClick}: RemoveIt
             <div className="modal__buttons">
               <button className="btn btn--purple modal__btn modal__btn--half-width" type="button" onClick={() => handleDeleteButtonClick(selectedCamera.id)}>Удалить
               </button>
-              <a className="btn btn--transparent modal__btn modal__btn--half-width" href="#">Продолжить покупки
-              </a>
+              <Link className="btn btn--transparent modal__btn modal__btn--half-width" to={AppRoute.Catalog}>Продолжить покупки
+              </Link>
             </div>
             <button className="cross-btn" type="button" aria-label="Закрыть попап" onClick={onCloseClick}>
               <svg width="10" height="10" aria-hidden="true">

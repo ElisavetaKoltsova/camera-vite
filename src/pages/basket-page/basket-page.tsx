@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
 import { useEffect, useState } from 'react';
@@ -12,6 +12,7 @@ import RemoveItemPopup from '../../components/popups/remove-item-popup/remove-it
 import OrderSuccessPopup from '../../components/popups/order-success-popup/order-success-popup';
 import SummaryOrder from '../../components/summary-order/summary-order';
 import { navigateToUpOfPage } from '../../utils/list';
+import { AppRoute } from '../../const';
 
 export default function BasketPage(): JSX.Element {
   const { pathname } = useLocation();
@@ -54,18 +55,18 @@ export default function BasketPage(): JSX.Element {
             <div className="container">
               <ul className="breadcrumbs__list">
                 <li className="breadcrumbs__item">
-                  <a className="breadcrumbs__link" href="index.html">Главная
+                  <Link className="breadcrumbs__link" to={AppRoute.Catalog}>Главная
                     <svg width="5" height="8" aria-hidden="true">
                       <use xlinkHref="#icon-arrow-mini"></use>
                     </svg>
-                  </a>
+                  </Link>
                 </li>
                 <li className="breadcrumbs__item">
-                  <a className="breadcrumbs__link" href="catalog.html">Каталог
+                  <Link className="breadcrumbs__link" to={AppRoute.Catalog}>Каталог
                     <svg width="5" height="8" aria-hidden="true">
                       <use xlinkHref="#icon-arrow-mini"></use>
                     </svg>
-                  </a>
+                  </Link>
                 </li>
                 <li className="breadcrumbs__item"><span className="breadcrumbs__link breadcrumbs__link--active">Корзина</span>
                 </li>

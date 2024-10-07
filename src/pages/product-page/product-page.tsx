@@ -9,14 +9,17 @@ import ReviewList from '../../components/review-list/review-list';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { fetchCurrentCameraAction, fetchReviewsAction, fetchSimilarCamerasAction } from '../../store/api-action';
-import { getCamerasDataLoadingStatus, getCurrentCamera, getSimilarCameras } from '../../store/product-data/selectors';
+import { getCameras, getCamerasDataLoadingStatus, getCurrentCamera, getSimilarCameras } from '../../store/product-data/selectors';
 import Loader from '../../components/loader/loader';
 import { getReviews, getReviewsDataLoadingStatus } from '../../store/review-data/selectors';
-import { toggleCallItemPopupOpenStatus, toggleReviewPopupOpen, toggleReviewSuccessPopupOpen } from '../../store/popup-process/popup-process';
+import { toggleAddItemSuccessPopupOpenStatus, toggleCallItemPopupOpenStatus, toggleReviewPopupOpen, toggleReviewSuccessPopupOpen } from '../../store/popup-process/popup-process';
 import ReviewPopup from '../../components/popups/review-popup/review-popup';
-import { getReviewPopupOpenStatus, getReviewSuccessPopupOpenStatus } from '../../store/popup-process/selectors';
+import { getAddItemSuccessPopupOpenStatus, getCallItemPopupOpenStatus, getReviewPopupOpenStatus, getReviewSuccessPopupOpenStatus } from '../../store/popup-process/selectors';
 import ReviewSuccessPopup from '../../components/popups/review-success/review-success-popup';
 import ProductSimilarList from '../../components/product-similar-list/product-similar-list';
+import AddItemSuccessPopup from '../../components/popups/add-item-success-popup/add-item-success-popup';
+import CallItemPopup from '../../components/popups/call-item-popup/call-item-popup';
+import { Camera } from '../../types/camera';
 
 export default function ProductPage(): JSX.Element {
   const { id: currentId } = useParams();
@@ -25,6 +28,8 @@ export default function ProductPage(): JSX.Element {
 
   const [characteristicsStatus, setCharacteristicsStatus] = useState<boolean>(false);
   const [descriptionStatus, setDescriptionStatus] = useState<boolean>(true);
+
+  const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
 
   useEffect(() => {
     if (currentId) {
@@ -41,12 +46,16 @@ export default function ProductPage(): JSX.Element {
   const currentProduct = useAppSelector(getCurrentCamera);
   const reviews = useAppSelector(getReviews);
   const similarCameras = useAppSelector(getSimilarCameras);
+  const cameras = useAppSelector(getCameras);
 
   const isCameraDataLoading = useAppSelector(getCamerasDataLoadingStatus);
   const isReviewsDataLoading = useAppSelector(getReviewsDataLoadingStatus);
 
   const reviewPopupOpenStatus = useAppSelector(getReviewPopupOpenStatus);
   const reviewSuccessPopupOpenStatus = useAppSelector(getReviewSuccessPopupOpenStatus);
+
+  const orderSuccessOpenStatus = useAppSelector(getAddItemSuccessPopupOpenStatus);
+  const callItemPopupOpenStatus = useAppSelector(getCallItemPopupOpenStatus);
 
   const handleTabButtonClick = () => {
     setCharacteristicsStatus(!characteristicsStatus);
@@ -61,9 +70,22 @@ export default function ProductPage(): JSX.Element {
     dispatch(toggleReviewSuccessPopupOpen());
   };
 
-  const handleBuyPopupButtonToggleClick = () => {
-    if (currentProduct) {
+  const handleBuyPopupButtonOpenClick = (id: number) => {
+    const currentCamera = cameras.find((camera) => camera.id === id);
+
+    if (currentCamera) {
+      setSelectedCamera(currentCamera);
       dispatch(toggleCallItemPopupOpenStatus());
+    }
+  };
+
+  const handleBuyPopupButtonCloseClick = () => {
+    dispatch(toggleCallItemPopupOpenStatus());
+  };
+
+  const handleAddItemSuccessPopupButtonToggleClick = () => {
+    if (currentProduct) {
+      dispatch(toggleAddItemSuccessPopupOpenStatus());
     }
   };
 
@@ -132,7 +154,7 @@ export default function ProductPage(): JSX.Element {
                       <ProductRating rating={rating} reviewCount={reviewCount} />
                     </div>
                     <p className="product__price"><span className="visually-hidden">Цена:</span>{convertedPrice} ₽</p>
-                    <button className="btn btn--purple" type="button">
+                    <button className="btn btn--purple" type="button" onClick={handleAddItemSuccessPopupButtonToggleClick}>
                       <svg width="24" height="16" aria-hidden="true">
                         <use xlinkHref="#icon-add-basket"></use>
                       </svg>Добавить в корзину
@@ -171,7 +193,7 @@ export default function ProductPage(): JSX.Element {
               </section>
             </div>
             <div className="page-content__section">
-              <ProductSimilarList onClick={handleBuyPopupButtonToggleClick} similarCameras={similarCameras} />
+              <ProductSimilarList onClick={handleBuyPopupButtonOpenClick} similarCameras={similarCameras} />
             </div>
             <div className="page-content__section">
               {
@@ -191,6 +213,22 @@ export default function ProductPage(): JSX.Element {
             reviewSuccessPopupOpenStatus
               ?
               <ReviewSuccessPopup onCloseClick={handleReviewSuccessPopupButtonToggleClick}/>
+              :
+              ''
+          }
+
+          {
+            callItemPopupOpenStatus
+              ?
+              <CallItemPopup onCloseClick={handleBuyPopupButtonCloseClick} selectedCamera={selectedCamera} />
+              :
+              ''
+          }
+
+          {
+            orderSuccessOpenStatus
+              ?
+              <AddItemSuccessPopup onCloseClick={handleAddItemSuccessPopupButtonToggleClick} />
               :
               ''
           }

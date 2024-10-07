@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import SearchForm from '../search-form/search-form';
 import { AppRoute } from '../../const';
 
 export default function Header(): JSX.Element {
@@ -27,7 +26,7 @@ export default function Header(): JSX.Element {
             </li>
           </ul>
         </nav>
-        <SearchForm />
+        {/* <SearchForm /> */}
       </div>
     </header>
   );

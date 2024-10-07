@@ -12,10 +12,9 @@ import { Order } from '../../../types/order';
 type CallItemPopupProps = {
   selectedCamera: Camera | null;
   onCloseClick: () => void;
-  onOrderClick: () => void;
 }
 
-export default function CallItemPopup({selectedCamera, onCloseClick, onOrderClick}: CallItemPopupProps): JSX.Element {
+export default function CallItemPopup({selectedCamera, onCloseClick}: CallItemPopupProps): JSX.Element {
   const dispatch = useAppDispatch();
   const { disableScroll, enableScroll } = useScroll();
   const { register, handleSubmit, formState: {errors} } = useForm<Telephone>();
@@ -51,11 +50,11 @@ export default function CallItemPopup({selectedCamera, onCloseClick, onOrderClic
       dispatch(postOrderAction(order));
     }
 
-    onOrderClick();
+    onCloseClick();
   };
 
   const checkCorrectnessOfPhone = (value: string) => {
-    const phoneReg = /[+]*[7-8]{1}\s?[(]*9[0-9]{2}[)]*\s?\d{3}[-]*\d{2}[-]*\d{2}/;
+    const phoneReg = /[+]*[7-8]{1}\s?[(]*[1-9][0-9]{2}[)]*\s?\d{3}[-]*\d{2}[-]*\d{2}/;
     const isPhoneValid = phoneReg.test(value);
 
     return isPhoneValid ? isPhoneValid : 'Телефон введён неверно';
@@ -82,6 +81,7 @@ export default function CallItemPopup({selectedCamera, onCloseClick, onOrderClic
                 <input
                   type="tel"
                   placeholder="Введите ваш номер"
+                  autoFocus
                   {...registerWithMask('telephone', ['+79999999999'], {
                     required: {value: true, message: 'Телефон обязателен для ввода'},
                     validate: checkCorrectnessOfPhone

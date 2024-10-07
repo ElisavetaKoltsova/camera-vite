@@ -6,7 +6,7 @@ import ProductRating from '../product-rating/product-rating';
 
 type CatalogCardItemProps = {
   camera: Camera;
-  onClick: (id?: number) => void;
+  onClick: (id: number) => void;
   isActiveClass?: string;
 }
 
