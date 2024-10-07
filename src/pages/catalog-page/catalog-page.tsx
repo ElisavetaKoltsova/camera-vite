@@ -51,7 +51,7 @@ export default function CatalogPage(): JSX.Element {
   // };
 
   return (
-    <div className="wrapper">
+    <div className="wrapper" data-testid="catalog-page">
       <Header />
       <main>
         <Banner />

@@ -113,7 +113,7 @@ export default function ProductPage(): JSX.Element {
     const convertedPrice = convertNumberIntoMoneyFormat(price);
 
     return (
-      <div className="wrapper">
+      <div className="wrapper" data-testid="product-page">
         <Header />
         <main>
           <div className="page-content">

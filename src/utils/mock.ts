@@ -7,35 +7,6 @@ import { Camera } from '../types/camera';
 
 export type AppThunkDispatch = ThunkDispatch<State, ReturnType<typeof createAPI>, Action>;
 
-export const makeFakeStore = (initialState?: Partial<State>): State => ({
-  PRODUCT: {
-    cameras: [],
-    currentCamera: null,
-    similarCameras: [],
-    camerasInBasket: [],
-    isCamerasDataLoading: false
-  },
-  PROMO: {
-    promos: [],
-    couponDiscount: 0,
-    isCouponDiscountDataLoading: false
-  },
-  POPUP: {
-    isCallItemPopupOpen: false,
-    isAddItemPopupOpen: false,
-    isAddItemSuccessPopupOpen: false,
-    isReviewPopupOpen: false,
-    isReviewSuccessPopupOpen: false,
-    isRemoveItemPopupOpen: false,
-    isOrderSuccessPopupOpen: false
-  },
-  REVIEW: {
-    reviews: [],
-    isReviewsDataLoading: false
-  },
-  ...initialState ?? {}
-});
-
 export const makeFakePromo = (): Promo => ({
   id: datatype.number(),
   name: name.firstName(),
@@ -60,4 +31,33 @@ export const makeFakeCamera = (): Camera => ({
   previewImg2x: internet.avatar(),
   previewImgWebp: internet.avatar(),
   previewImgWebp2x: internet.avatar()
+});
+
+export const makeFakeStore = (initialState?: Partial<State>): State => ({
+  PRODUCT: {
+    cameras: [],
+    currentCamera: makeFakeCamera(),
+    similarCameras: [],
+    camerasInBasket: [],
+    isCamerasDataLoading: false
+  },
+  PROMO: {
+    promos: [],
+    couponDiscount: 0,
+    isCouponDiscountDataLoading: false
+  },
+  POPUP: {
+    isCallItemPopupOpen: false,
+    isAddItemPopupOpen: false,
+    isAddItemSuccessPopupOpen: false,
+    isReviewPopupOpen: false,
+    isReviewSuccessPopupOpen: false,
+    isRemoveItemPopupOpen: false,
+    isOrderSuccessPopupOpen: false
+  },
+  REVIEW: {
+    reviews: [],
+    isReviewsDataLoading: false
+  },
+  ...initialState ?? {}
 });
