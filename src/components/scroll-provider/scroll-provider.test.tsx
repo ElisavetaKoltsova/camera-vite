@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { ScrollContext } from './scroll-provider';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { withHistory, withScrollProvider, withStore } from '../../utils/mock-components';
 import { makeFakeStore } from '../../utils/mock';
 
@@ -32,7 +32,9 @@ describe('Component: ScrollProvider', () => {
     render(withStoreComponent);
 
     const disableScrollButton = screen.getByText('Disable Scroll');
-    disableScrollButton.click();
+    act(() => {
+      disableScrollButton.click();
+    });
 
     await waitFor(() => {
       expect(document.body.style.overflow).toBe('hidden');
@@ -54,12 +56,18 @@ describe('Component: ScrollProvider', () => {
     const disableScrollButton = screen.getByText('Disable Scroll');
     const enableScrollButton = screen.getByText('Enable Scroll');
 
-    disableScrollButton.click();
+    act(() => {
+      disableScrollButton.click();
+    });
+
     await waitFor(() => {
       expect(document.body.style.overflow).toBe('hidden');
     });
 
-    enableScrollButton.click();
+    act(() => {
+      enableScrollButton.click();
+    });
+
     await waitFor(() => {
       expect(document.body.style.overflow).toBe('');
     });
@@ -78,7 +86,10 @@ describe('Component: ScrollProvider', () => {
     const { unmount } = render(withStoreComponent);
 
     const disableScrollButton = screen.getByText('Disable Scroll');
-    disableScrollButton.click();
+
+    act(() => {
+      disableScrollButton.click();
+    });
 
     await waitFor(() => {
       expect(document.body.style.overflow).toBe('hidden');

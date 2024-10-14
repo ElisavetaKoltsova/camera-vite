@@ -4,6 +4,11 @@ import { withHistory, withScrollProvider, withStore } from '../../utils/mock-com
 import CatalogPage from './catalog-page';
 
 describe('Page: CatalogPage', () => {
+  beforeAll(() => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    window.scrollTo = vi.fn(() => {});
+  });
+
   it('should render correctly', () => {
     const expectedTestId = 'catalog-page';
     const { withStoreComponent } = withStore(

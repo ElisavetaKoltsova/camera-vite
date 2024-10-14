@@ -8,6 +8,11 @@ import { render, screen } from '@testing-library/react';
 describe('Application Routing', () => {
   let mockHistory: MemoryHistory;
 
+  beforeAll(() => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    window.scrollTo = vi.fn(() => {});
+  });
+
   beforeEach(() => {
     mockHistory = createMemoryHistory();
   });
