@@ -1,0 +1,12 @@
+.error {
+  color: #ba3939;
+  background: #ffe0e0;
+  border: 2px solid #a33a3a;
+  border-radius: 25px;
+  text-align: center;
+  margin: 10px;
+  font-size: large;
+  z-index: 1000;
+  position: fixed;
+  width: 50%;
+}

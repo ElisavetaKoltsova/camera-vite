@@ -4,10 +4,12 @@ import { productData } from './product-data/product-data';
 import { reviewData } from './review-data/review-data';
 import { popupProcess } from './popup-process/popup-process';
 import { promoData } from './promo-data/promo-data';
+import { errorProcess } from './error-peocess/error-process';
 
 export const rootReducer = combineReducers({
   [NameSpace.Product]: productData.reducer,
   [NameSpace.Review]: reviewData.reducer,
   [NameSpace.Popup]: popupProcess.reducer,
-  [NameSpace.Promo]: promoData.reducer
+  [NameSpace.Promo]: promoData.reducer,
+  [NameSpace.Error]: errorProcess.reducer
 });

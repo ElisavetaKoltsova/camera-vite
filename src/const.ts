@@ -29,5 +29,6 @@ export enum NameSpace {
   Product = 'PRODUCT',
   Review = 'REVIEW',
   Popup = 'POPUP',
-  Promo = 'PROMO'
+  Promo = 'PROMO',
+  Error = 'ERROR'
 }

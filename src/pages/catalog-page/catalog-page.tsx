@@ -42,14 +42,6 @@ export default function CatalogPage(): JSX.Element {
     dispatch(toggleCallItemPopupOpenStatus());
   };
 
-  // const handlePopupButtonOrderToggleClick = () => {
-  //   dispatch(toggleAddItemPopupOpenStatus());
-  // };
-
-  // const handlePopupButtonAddToBasketToggleClick = () => {
-  //   dispatch(toggleAddItemSuccessPopupOpenStatus());
-  // };
-
   return (
     <div className="wrapper" data-testid="catalog-page">
       <Header />
@@ -113,29 +105,6 @@ export default function CatalogPage(): JSX.Element {
             :
             ''
         }
-
-        {/* На будущее для добавления в корзину */}
-        {/* {
-          addItemPopupOpenStatus
-            ?
-            <AddItemPopup
-              selectedCamera={selectedCamera}
-              onCloseClick={handlePopupButtonOrderToggleClick}
-              onAddToBasketClick={handlePopupButtonAddToBasketToggleClick}
-            />
-            :
-            ''
-        }
-
-        {
-          addItemSuccessPopupOpenStatus
-            ?
-            <AddItemSuccessPopup
-              onCloseClick={handlePopupButtonAddToBasketToggleClick}
-            />
-            :
-            ''
-        } */}
       </main>
       <Footer />
     </div>
