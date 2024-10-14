@@ -68,7 +68,7 @@ export const productData = createSlice({
       .addCase(fetchCamerasAction.fulfilled, (state, action) => {
         state.cameras = action.payload;
         state.cameras.forEach((camera) => {
-          camera.countInBasket = 1;
+          camera.countInBasket = 0;
         });
 
         state.isCamerasDataLoading = false;

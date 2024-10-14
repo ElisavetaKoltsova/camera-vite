@@ -77,7 +77,7 @@ export const popupProcess = createSlice({
       state.isOrderSuccessPopupOpen = false;
     },
     toggleReviewSuccessPopupOpen(state) {
-      state.isOrderSuccessPopupOpen = !state.isReviewSuccessPopupOpen;
+      state.isReviewSuccessPopupOpen = !state.isReviewSuccessPopupOpen;
 
       state.isCallItemPopupOpen = false;
       state.isAddItemPopupOpen = false;

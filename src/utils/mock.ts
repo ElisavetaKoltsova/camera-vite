@@ -4,8 +4,11 @@ import { createAPI } from '../services/api';
 import { Promo } from '../types/promo';
 import { datatype, internet, name } from 'faker';
 import { Camera } from '../types/camera';
+import { Review } from '../types/review';
 
 export type AppThunkDispatch = ThunkDispatch<State, ReturnType<typeof createAPI>, Action>;
+
+export const extractActionsTypes = (actions: Action<string>[]) => actions.map(({type}) => type);
 
 export const makeFakePromo = (): Promo => ({
   id: datatype.number(),
@@ -14,6 +17,17 @@ export const makeFakePromo = (): Promo => ({
   previewImg2x: internet.avatar(),
   previewImgWebp: internet.avatar(),
   previewImgWebp2x: internet.avatar()
+});
+
+export const makeFakeReview = (): Review => ({
+  id: name.title(),
+  createAt: String(new Date()),
+  cameraId: datatype.number(),
+  userName: name.firstName(),
+  advantage: name.title(),
+  disadvantage: name.title(),
+  review: name.title(),
+  rating: datatype.number()
 });
 
 export const makeFakeCamera = (): Camera => ({
@@ -32,6 +46,18 @@ export const makeFakeCamera = (): Camera => ({
   previewImgWebp: internet.avatar(),
   previewImgWebp2x: internet.avatar()
 });
+
+export const makeFakeCameras =
+  (countOfElements: number): Camera[] =>
+    new Array(countOfElements).fill(null).map(() => makeFakeCamera());
+
+export const makeFakePromos =
+  (countOfElements: number): Promo[] =>
+    new Array(countOfElements).fill(null).map(() => makeFakePromo());
+
+export const makeFakeReviews =
+  (countOfElements: number): Review[] =>
+    new Array(countOfElements).fill(null).map(() => makeFakeReview());
 
 export const makeFakeStore = (initialState?: Partial<State>): State => ({
   PRODUCT: {
