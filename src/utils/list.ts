@@ -22,8 +22,8 @@ export const formatDateToDayMonth = (oldDate: string) => {
   return `${day} ${month}`;
 };
 
-export const navigateToUpOfPage = () => {
-  window.scrollTo(0, 0);
+export const navigateToUpOfPage = (behavior?: string) => {
+  window.scrollTo({top: 0, behavior: behavior ? 'smooth' : 'auto'});
 };
 
 export const sortReviewsByDate = (reviewA: Review, reviewB: Review) => new Date(reviewB.createAt).getTime() - new Date(reviewA.createAt).getTime();

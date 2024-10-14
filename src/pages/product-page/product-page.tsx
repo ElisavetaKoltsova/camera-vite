@@ -233,7 +233,7 @@ export default function ProductPage(): JSX.Element {
               ''
           }
         </main>
-        <Link className="up-btn" onClick={navigateToUpOfPage} to='#header'>
+        <Link className="up-btn" onClick={() => navigateToUpOfPage('smooth')} to='#header'>
           <svg width="12" height="18" aria-hidden="true">
             <use xlinkHref="#icon-arrow2"></use>
           </svg>

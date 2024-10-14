@@ -25,6 +25,7 @@ export default function ReviewList({reviews}: ReviewListProps): JSX.Element {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const countReviews = visibleReviews <= reviews.length ? visibleReviews : reviews.length;
