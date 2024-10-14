@@ -86,7 +86,7 @@ export const makeFakeStore = (initialState?: Partial<State>): State => ({
     isReviewsDataLoading: false
   },
   ERROR: {
-    errorMessage: null
+    errorMessage: 'Some error'
   },
   ...initialState ?? {}
 });

@@ -1,4 +1,4 @@
-import { setError } from '../store/error-peocess/error-process';
+import { setError } from '../store/error-process/error-process';
 import { AppDispatch } from '../types/state';
 
 const TIMEOUT_SHOW_ERROR = 2000;

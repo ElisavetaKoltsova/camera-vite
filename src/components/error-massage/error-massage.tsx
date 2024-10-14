@@ -1,5 +1,5 @@
 import { useAppSelector } from '../../hooks';
-import { getErrorMessage } from '../../store/error-peocess/selectors';
+import { getErrorMessage } from '../../store/error-process/selectors';
 import './error-massage.css';
 
 export default function ErrorMessage(): JSX.Element {
@@ -7,11 +7,11 @@ export default function ErrorMessage(): JSX.Element {
 
   if (errorMessage) {
     return (
-      <div className="error">
+      <div className="error" data-testid="error-massage-visible">
         {errorMessage}
       </div>
     );
   }
 
-  return <div></div>;
+  return <div data-testid="error-massage-invisible"></div>;
 }
