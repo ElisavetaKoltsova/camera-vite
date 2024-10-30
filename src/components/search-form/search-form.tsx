@@ -2,7 +2,6 @@ import React, { FormEvent, useEffect, useState } from 'react';
 import { useAppSelector } from '../../hooks';
 import { getCameras } from '../../store/product-data/selectors';
 import { Camera } from '../../types/camera';
-import './serach-form.css';
 import { Link } from 'react-router-dom';
 import { AppRoute } from '../../const';
 
