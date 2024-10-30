@@ -13,6 +13,8 @@ import { Camera } from '../../types/camera';
 import { toggleCallItemPopupOpenStatus } from '../../store/popup-process/popup-process';
 import { getCallItemPopupOpenStatus } from '../../store/popup-process/selectors';
 import { navigateToUpOfPage } from '../../utils/list';
+import CatalogFilter from '../../components/catalog-filter/catalog-filter';
+import CatalogSort from '../../components/catalog-sort/catalog-sort';
 
 export default function CatalogPage(): JSX.Element {
   const { pathname } = useLocation();
@@ -68,11 +70,11 @@ export default function CatalogPage(): JSX.Element {
               <h1 className="title title--h2">Каталог фото- и видеотехники</h1>
               <div className="page-content__columns">
                 <div className="catalog__aside">
-                  <img src="img/banner.png" />
-                  {/* <CatalogFilter /> */}
+                  {/* <img src="img/banner.png" /> */}
+                  <CatalogFilter />
                 </div>
                 <div className="catalog__content">
-                  {/* <CatalogSort /> */}
+                  <CatalogSort />
                   {
                     isCamerasDataLoading
                       ? <Loader />
