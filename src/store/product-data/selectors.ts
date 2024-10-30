@@ -13,3 +13,5 @@ export const getSimilarCameras = (state: Pick<State, NameSpace.Product>) =>
 export const getCamerasDataLoadingStatus = (state: Pick<State, NameSpace.Product>) =>
   state[NameSpace.Product].isCamerasDataLoading;
 
+export const getSort = (state: Pick<State, NameSpace.Product>) =>
+  state[NameSpace.Product].sort;

@@ -9,6 +9,7 @@ export type ProductData = {
   similarCameras: Camera[];
   camerasInBasket: Camera[];
   isCamerasDataLoading: boolean;
+  sort: string;
 };
 
 export type ReviewData = {

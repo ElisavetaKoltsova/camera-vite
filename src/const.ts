@@ -3,6 +3,23 @@ export const months = [
   'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
 ];
 
+export const Sorts = {
+  POPULAR_LOW_TO_HIGH: 'sortPopular up',
+  POPULAR_HIGH_TO_LOW: 'sortPopular down',
+  PRICE_LOW_TO_HIGH: 'sortPrice up',
+  PRICE_HIGH_TO_LOW: 'sortPrice down'
+};
+
+export const SortType = {
+  PRICE: 'sortPrice',
+  POPULAR: 'sortPopular'
+};
+
+export const SortOrder = {
+  UP: 'up',
+  DOWN: 'down'
+};
+
 export enum CouponName {
   Coupon333 = 'camera-333',
   Coupon444 = 'camera-444',

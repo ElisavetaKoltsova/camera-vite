@@ -1,21 +1,27 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ProductData } from '../../types/state';
-import { NameSpace } from '../../const';
+import { NameSpace, Sorts } from '../../const';
 import { fetchCamerasAction, fetchCurrentCameraAction, fetchSimilarCamerasAction } from '../api-action';
 import { Camera } from '../../types/camera';
+import { sort } from '../../utils/sort';
 
 const initialState: ProductData = {
   cameras: [],
   currentCamera: null,
   similarCameras: [],
   camerasInBasket: [],
-  isCamerasDataLoading: false
+  isCamerasDataLoading: false,
+  sort: Sorts.PRICE_LOW_TO_HIGH
 };
 
 export const productData = createSlice({
   name: NameSpace.Product,
   initialState,
   reducers: {
+    sortCameras(state, action: PayloadAction<string>) {
+      state.cameras = sort[action.payload]([...state.cameras]);
+      state.sort = action.payload;
+    },
     addCameraToBasket(state, action: PayloadAction<Camera>) {
       if (state.camerasInBasket.some((camera) => camera.id === action.payload.id)) {
         const seekedCamera = state.camerasInBasket.find((camera) => camera.id === action.payload.id);
@@ -66,7 +72,7 @@ export const productData = createSlice({
         state.isCamerasDataLoading = true;
       })
       .addCase(fetchCamerasAction.fulfilled, (state, action) => {
-        state.cameras = action.payload;
+        state.cameras = sort[state.sort]([...action.payload]);
         state.cameras.forEach((camera) => {
           camera.countInBasket = 0;
         });
@@ -95,5 +101,6 @@ export const {
   removeCameraInBasket,
   clearBasket,
   increaseCountOfCamerasInBasket,
-  decreaseCountOfCamerasInBasket
+  decreaseCountOfCamerasInBasket,
+  sortCameras
 } = productData.actions;

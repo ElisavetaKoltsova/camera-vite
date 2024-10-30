@@ -1,4 +1,5 @@
 import { months } from '../const';
+import { Camera } from '../types/camera';
 import { Review } from '../types/review';
 
 export const convertNumberIntoMoneyFormat = (value: number) => Math.round(value).toLocaleString('ru-RU');
@@ -26,4 +27,18 @@ export const navigateToUpOfPage = (behavior?: string) => {
   window.scrollTo({top: 0, behavior: behavior ? 'smooth' : 'auto'});
 };
 
-export const sortReviewsByDate = (reviewA: Review, reviewB: Review) => new Date(reviewB.createAt).getTime() - new Date(reviewA.createAt).getTime();
+export const sortReviewsByDate = (reviewA: Review, reviewB: Review) =>
+  new Date(reviewB.createAt).getTime() - new Date(reviewA.createAt).getTime();
+
+export const sortByDescendingPrice = (cameraA: Camera, cameraB: Camera) =>
+  cameraB.price - cameraA.price;
+
+export const sortByAscendingPrice = (cameraA: Camera, cameraB: Camera) =>
+  cameraA.price - cameraB.price;
+
+export const sortByDescendingRating = (cameraA: Camera, cameraB: Camera) =>
+  cameraB.rating - cameraA.rating;
+
+export const sortByAscendingRating = (cameraA: Camera, cameraB: Camera) =>
+  cameraA.rating - cameraB.rating;
+
