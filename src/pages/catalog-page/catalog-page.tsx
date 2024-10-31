@@ -4,7 +4,7 @@ import Header from '../../components/header/header';
 import { AppRoute } from '../../const';
 import CatalogCardList from '../../components/catalog-card-list/catalog-card-list';
 import Footer from '../../components/footer/footer';
-import { getCameras, getCamerasDataLoadingStatus } from '../../store/product-data/selectors';
+import { getCameras, getCamerasDataLoadingStatus, getCategoryFilter, getFilteredCameras, getLevelFilter, getPriceFilter, getTypeFilter } from '../../store/product-data/selectors';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import Loader from '../../components/loader/loader';
 import { useEffect, useState } from 'react';
@@ -21,11 +21,23 @@ export default function CatalogPage(): JSX.Element {
   const dispatch = useAppDispatch();
 
   const cameras = useAppSelector(getCameras);
+  const filteredCameras = useAppSelector(getFilteredCameras);
   const isCamerasDataLoading = useAppSelector(getCamerasDataLoadingStatus);
+
+  const priceFilter = useAppSelector(getPriceFilter);
+  const categoryFilter = useAppSelector(getCategoryFilter);
+  const typeFilter = useAppSelector(getTypeFilter);
+  const levelFilter = useAppSelector(getLevelFilter);
 
   const callItemPopupOpenStatus = useAppSelector(getCallItemPopupOpenStatus);
 
   const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
+
+  let usedCameras: Camera[] = [...cameras];
+
+  if (categoryFilter || priceFilter || typeFilter.length > 0 || levelFilter.length > 0) {
+    usedCameras = [...filteredCameras];
+  }
 
   useEffect(() => {
     navigateToUpOfPage();
@@ -78,7 +90,7 @@ export default function CatalogPage(): JSX.Element {
                   {
                     isCamerasDataLoading
                       ? <Loader />
-                      : <CatalogCardList cameras={cameras} onClick={handlePopupButtonOpenClick} />
+                      : <CatalogCardList cameras={usedCameras} onClick={handlePopupButtonOpenClick} />
                   }
                   {/* <Pagination /> */}
                 </div>

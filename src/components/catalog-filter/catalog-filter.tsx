@@ -1,6 +1,51 @@
+import { useEffect, useState } from 'react';
 import { CameraCategory, CameraLevel, CameraType } from '../../const';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { filterCamerasCategory, filterCamerasLevel, filterCamerasType, resetFilters } from '../../store/product-data/product-data';
+import { getCategoryFilter } from '../../store/product-data/selectors';
 
 export default function CatalogFilter(): JSX.Element {
+  const dispatch = useAppDispatch();
+
+  const [selectedTypes, setSelectedTypes] = useState<CameraType[]>([]);
+  const [selectedLevels, setSelectedLevels] = useState<CameraLevel[]>([]);
+
+  useEffect(() => {
+    dispatch(resetFilters());
+  }, [dispatch]);
+
+  const categoryFilter = useAppSelector(getCategoryFilter);
+
+  // const handleFilterPriceInputChange = (priceFrom: number | null, priceTo: number | null, type: CameraFilterPrice) => {
+  //   dispatch(filterCamerasPrice({priceFrom, priceTo, type}));
+  // };
+
+  const handleFilterCategoryInputChange = (category: CameraCategory) => {
+    dispatch(filterCamerasCategory(category));
+  };
+
+  const handleFilterTypeInputChange = (type: CameraType) => {
+    const updatedTypes =
+      selectedTypes.includes(type)
+        ? selectedTypes.filter((t) => t !== type)
+        : [...selectedTypes, type];
+
+    setSelectedTypes(updatedTypes);
+    dispatch(filterCamerasType(updatedTypes));
+  };
+
+  const handleFilterLevelInputChange = (level: CameraLevel) => {
+    const updatedLevels =
+      selectedLevels.includes(level)
+        ? selectedLevels.filter((l) => l !== level)
+        : [...selectedLevels, level];
+
+    setSelectedLevels(updatedLevels);
+    dispatch(filterCamerasLevel(updatedLevels));
+  };
+
+  //console.log(priceFilter);
+
   return (
     <div className="catalog-filter">
       <form action="#">
@@ -10,12 +55,20 @@ export default function CatalogFilter(): JSX.Element {
           <div className="catalog-filter__price-range">
             <div className="custom-input">
               <label>
-                <input type="number" name="price" placeholder="от" />
+                <input
+                  type="number"
+                  name="price"
+                  placeholder="от"
+                />
               </label>
             </div>
             <div className="custom-input">
               <label>
-                <input type="number" name="priceUp" placeholder="до" />
+                <input
+                  type="number"
+                  name="priceUp"
+                  placeholder="до"
+                />
               </label>
             </div>
           </div>
@@ -23,12 +76,18 @@ export default function CatalogFilter(): JSX.Element {
         <fieldset className="catalog-filter__block">
           <legend className="title title&#45;&#45;h5">Категория</legend>
           {
-            Object.entries(CameraCategory).map((category) => (
-              <div className="custom-radio catalog-filter__item" key={category[0]}>
+            Object.entries(CameraCategory).map(([key, value]) => (
+              <div className="custom-radio catalog-filter__item" key={key}>
                 <label>
-                  <input type="radio" name="category" value={category[0]} />
+                  <input
+                    type="radio"
+                    name="category"
+                    value={key}
+                    checked={value === categoryFilter}
+                    onChange={() => handleFilterCategoryInputChange(value)}
+                  />
                   <span className="custom-radio__icon" ></span>
-                  <span className="custom-radio__label">{category[1]}</span>
+                  <span className="custom-radio__label">{value}</span>
                 </label>
               </div>
             ))
@@ -37,13 +96,18 @@ export default function CatalogFilter(): JSX.Element {
         <fieldset className="catalog-filter__block">
           <legend className="title title&#45;&#45;h5">Тип камеры</legend>
           {
-            // disabled если отключена
-            Object.entries(CameraType).map((type) => (
-              <div className="custom-checkbox catalog-filter__item" key={type[0]}>
+            Object.entries(CameraType).map(([key, value]) => (
+              <div className="custom-checkbox catalog-filter__item" key={key}>
                 <label>
-                  <input type="checkbox" name={type[0]} />
+                  <input
+                    type="checkbox"
+                    name={key}
+                    disabled={categoryFilter === CameraCategory.videocamera && (value === CameraType.film || value === CameraType.snapshot)}
+                    checked={selectedTypes.includes(value)}
+                    onChange={() => handleFilterTypeInputChange(value)}
+                  />
                   <span className="custom-checkbox__icon"></span>
-                  <span className="custom-checkbox__label">{type[1]}</span>
+                  <span className="custom-checkbox__label">{value}</span>
                 </label>
               </div>
             ))
@@ -52,12 +116,16 @@ export default function CatalogFilter(): JSX.Element {
         <fieldset className="catalog-filter__block">
           <legend className="title title&#45;&#45;h5">Уровень</legend>
           {
-            Object.entries(CameraLevel).map((level) => (
-              <div className="custom-checkbox catalog-filter__item" key={level[1]}>
+            Object.entries(CameraLevel).map(([key, value]) => (
+              <div className="custom-checkbox catalog-filter__item" key={value}>
                 <label>
-                  <input type="checkbox" name={level[1]} />
+                  <input
+                    type="checkbox"
+                    name={value}
+                    onChange={() => handleFilterLevelInputChange(value)}
+                  />
                   <span className="custom-checkbox__icon"></span>
-                  <span className="custom-checkbox__label">{level[0]}</span>
+                  <span className="custom-checkbox__label">{key}</span>
                 </label>
               </div>
             ))

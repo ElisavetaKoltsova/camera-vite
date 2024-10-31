@@ -7,7 +7,7 @@ const Level = {
   PROFESSIONAL: 'Профессиональный'
 };
 
-export const resetFilters = (cameras: Camera[]) => cameras;
+const PHOTOCAMERA_CATEGORY = 'Фотоаппарат';
 
 export const filterPrice = {
   [CameraFilterPrice.From]: (cameras: Camera[], priceFrom: number) => cameras.filter((camera) => camera.price >= priceFrom),
@@ -16,7 +16,7 @@ export const filterPrice = {
 
 export const filterCategory = {
   [CameraCategory.photocamera]: (cameras: Camera[]) =>
-    cameras.filter((camera) => camera.category === CameraCategory.photocamera),
+    cameras.filter((camera) => camera.category === PHOTOCAMERA_CATEGORY),
   [CameraCategory.videocamera]: (cameras: Camera[]) =>
     cameras.filter((camera) => camera.category === CameraCategory.videocamera)
 };
@@ -39,4 +39,52 @@ export const filterLevel = {
     cameras.filter((camera) => camera.level === Level.NON_PROFESSIONAL),
   [CameraLevel.Профессиональный]: (cameras: Camera[]) =>
     cameras.filter((camera) => camera.level === Level.PROFESSIONAL),
+};
+
+export const applyFilters = (
+  cameras: Camera[],
+  filterOfPrice: CameraFilterPrice | null,
+  filterOfCategory: CameraCategory | null,
+  filterOfTypes: CameraType[],
+  filterOfLevels: CameraLevel[],
+  priceFrom: number | null,
+  priceTo: number | null
+) => {
+  let filteredCameras: Camera[] = cameras;
+  if (filterOfPrice) {
+    if (priceFrom) {
+      filteredCameras = filterPrice[filterOfPrice]([...filteredCameras], priceFrom);
+    }
+    if (priceTo) {
+      filteredCameras = filterPrice[filterOfPrice]([...filteredCameras], priceTo);
+    }
+  }
+
+  if (filterOfCategory) {
+    filteredCameras = filterCategory[filterOfCategory]([...filteredCameras]);
+  }
+
+  if (filterOfTypes.length > 0) {
+    filteredCameras = filterOfTypes.reduce((filtered, type) => {
+      const typeFiltered = filterType[type](filteredCameras);
+      return filtered.concat(
+        typeFiltered.filter(
+          (camera) => !filtered.includes(camera)
+        )
+      );
+    }, [] as Camera[]);
+  }
+
+  if (filterOfLevels.length > 0) {
+    filteredCameras = filterOfLevels.reduce((filtered, level) => {
+      const levelFiltered = filterLevel[level](filteredCameras);
+      return filtered.concat(
+        levelFiltered.filter(
+          (camera) => !filtered.includes(camera)
+        )
+      );
+    }, [] as Camera[]);
+  }
+
+  return filteredCameras;
 };

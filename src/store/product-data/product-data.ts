@@ -1,17 +1,25 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ProductData } from '../../types/state';
-import { NameSpace, Sorts } from '../../const';
+import { CameraCategory, CameraFilterPrice, CameraLevel, CameraType, NameSpace, Sorts } from '../../const';
 import { fetchCamerasAction, fetchCurrentCameraAction, fetchSimilarCamerasAction } from '../api-action';
 import { Camera } from '../../types/camera';
 import { sort } from '../../utils/sort';
+import { applyFilters } from '../../utils/filter';
 
 const initialState: ProductData = {
   cameras: [],
+  filteredCameras: [],
   currentCamera: null,
   similarCameras: [],
   camerasInBasket: [],
   isCamerasDataLoading: false,
-  sort: Sorts.PRICE_LOW_TO_HIGH
+  sort: Sorts.PRICE_LOW_TO_HIGH,
+  priceFrom: null,
+  priceTo: null,
+  filterOfPrice: null,
+  filterOfCategory: null,
+  filterOfTypes: [],
+  filterOfLevels: []
 };
 
 export const productData = createSlice({
@@ -19,8 +27,71 @@ export const productData = createSlice({
   initialState,
   reducers: {
     sortCameras(state, action: PayloadAction<string>) {
-      state.cameras = sort[action.payload]([...state.cameras]);
-      state.sort = action.payload;
+      if (state.filteredCameras.length > 0) {
+        state.filteredCameras = sort[action.payload]([...state.filteredCameras]);
+        state.sort = action.payload;
+      } else {
+        state.cameras = sort[action.payload]([...state.cameras]);
+        state.sort = action.payload;
+      }
+    },
+    filterCamerasPrice(state, action: PayloadAction<{priceFrom: number | null; priceTo: number | null; type: CameraFilterPrice}>) {
+      state.filterOfPrice = action.payload.type;
+      state.priceFrom = action.payload.priceFrom;
+      state.priceTo = action.payload.priceTo;
+
+      state.filteredCameras = applyFilters(
+        state.cameras,
+        state.filterOfPrice,
+        state.filterOfCategory,
+        state.filterOfTypes,
+        state.filterOfLevels,
+        state.priceFrom,
+        state.priceTo);
+    },
+    filterCamerasCategory(state, action: PayloadAction<CameraCategory>) {
+      state.filterOfCategory = action.payload;
+
+      state.filteredCameras = applyFilters(
+        state.cameras,
+        state.filterOfPrice,
+        state.filterOfCategory,
+        state.filterOfTypes,
+        state.filterOfLevels,
+        state.priceFrom,
+        state.priceTo);
+    },
+    filterCamerasType(state, action: PayloadAction<CameraType[]>) {
+      state.filterOfTypes = action.payload;
+
+      state.filteredCameras = applyFilters(
+        state.cameras,
+        state.filterOfPrice,
+        state.filterOfCategory,
+        state.filterOfTypes,
+        state.filterOfLevels,
+        state.priceFrom,
+        state.priceTo);
+    },
+    filterCamerasLevel(state, action: PayloadAction<CameraLevel[]>) {
+      state.filterOfLevels = action.payload;
+
+      state.filteredCameras = applyFilters(
+        state.cameras,
+        state.filterOfPrice,
+        state.filterOfCategory,
+        state.filterOfTypes,
+        state.filterOfLevels,
+        state.priceFrom,
+        state.priceTo);
+    },
+    resetFilters(state) {
+      state.filteredCameras = state.cameras;
+
+      state.filterOfCategory = null;
+      state.filterOfLevels = [];
+      state.filterOfPrice = null;
+      state.filterOfTypes = [];
     },
     addCameraToBasket(state, action: PayloadAction<Camera>) {
       if (state.camerasInBasket.some((camera) => camera.id === action.payload.id)) {
@@ -102,5 +173,10 @@ export const {
   clearBasket,
   increaseCountOfCamerasInBasket,
   decreaseCountOfCamerasInBasket,
-  sortCameras
+  sortCameras,
+  filterCamerasCategory,
+  filterCamerasLevel,
+  filterCamerasPrice,
+  filterCamerasType,
+  resetFilters
 } = productData.actions;

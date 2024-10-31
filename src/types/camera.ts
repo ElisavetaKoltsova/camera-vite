@@ -5,7 +5,7 @@ export type Camera = {
   name: string;
   vendorCode: string;
   type: CameraType;
-  category: CameraCategory;
+  category: CameraCategory | 'Фотоаппарат';
   description: string;
   level: CameraLevel;
   price: number;
