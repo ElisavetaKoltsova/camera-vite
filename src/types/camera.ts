@@ -1,16 +1,13 @@
-
-export type Type = 'Коллекционная' | 'Моментальная' | 'Цифровая' | 'Плёночная';
-export type Category = 'Видеокамера' | 'Фотоаппарат';
-export type Level = 'Нулевой' | 'Любительский' | 'Профессиональный';
+import { CameraCategory, CameraLevel, CameraType } from '../const';
 
 export type Camera = {
   id: number;
   name: string;
   vendorCode: string;
-  type: Type;
-  category: Category;
+  type: CameraType;
+  category: CameraCategory;
   description: string;
-  level: Level;
+  level: CameraLevel;
   price: number;
   rating: number;
   reviewCount: number;

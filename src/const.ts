@@ -20,6 +20,29 @@ export const SortOrder = {
   DOWN: 'down'
 };
 
+export enum CameraFilterPrice {
+  From = 'price',
+  To = 'priceUp'
+}
+
+export enum CameraCategory {
+  photocamera = 'Фотокамера',
+  videocamera = 'Видеокамера'
+}
+
+export enum CameraType {
+  digital = 'Цифровая',
+  film = 'Плёночная',
+  snapshot = 'Моментальная',
+  collection = 'Коллекционная'
+}
+
+export enum CameraLevel {
+  Нулевой = 'zero',
+  Любительский = 'non-professional',
+  Профессиональный = 'professional'
+}
+
 export enum CouponName {
   Coupon333 = 'camera-333',
   Coupon444 = 'camera-444',
