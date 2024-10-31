@@ -6,6 +6,8 @@ type ReviewListProps = {
   reviews: Review[];
 }
 
+const SCROLL_TO_UP_VALUE = 100;
+
 export default function ReviewList({reviews}: ReviewListProps): JSX.Element {
   const [visibleReviews, setVisibleReviews] = useState<number>(3);
 
@@ -14,7 +16,7 @@ export default function ReviewList({reviews}: ReviewListProps): JSX.Element {
   };
 
   const handleScroll = () => {
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - SCROLL_TO_UP_VALUE) {
       handleShowMoreReviewsButtonClick();
     }
   };
