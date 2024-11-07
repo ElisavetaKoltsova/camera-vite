@@ -27,3 +27,8 @@ export const getLevelFilter = (state: Pick<State, NameSpace.Product>) =>
   state[NameSpace.Product].filterOfLevels;
 export const getPriceFilter = (state: Pick<State, NameSpace.Product>) =>
   state[NameSpace.Product].filterOfPrice;
+
+export const getPriceFrom = (state: Pick<State, NameSpace.Product>) =>
+  state[NameSpace.Product].priceFrom;
+export const getPriceTo = (state: Pick<State, NameSpace.Product>) =>
+  state[NameSpace.Product].priceTo;

@@ -2,6 +2,9 @@ import { months } from '../const';
 import { Camera } from '../types/camera';
 import { Review } from '../types/review';
 
+const PRICE_FROM = 0;
+const PRICE_TO = 1000000;
+
 export const convertNumberIntoMoneyFormat = (value: number) => Math.round(value).toLocaleString('ru-RU');
 
 export const formatDateToYearMonthDay = (oldDate: string) => {
@@ -41,4 +44,28 @@ export const sortByDescendingRating = (cameraA: Camera, cameraB: Camera) =>
 
 export const sortByAscendingRating = (cameraA: Camera, cameraB: Camera) =>
   cameraA.rating - cameraB.rating;
+
+export const findMinimalPrice = (cameras: Camera[]) => {
+  let minimalPrice = PRICE_TO;
+
+  cameras.forEach((camera) => {
+    if (minimalPrice >= camera.price) {
+      minimalPrice = camera.price;
+    }
+  });
+
+  return minimalPrice;
+};
+
+export const findMaximalPrice = (cameras: Camera[]) => {
+  let maximalPrice = PRICE_FROM;
+
+  cameras.forEach((camera) => {
+    if (maximalPrice <= camera.price) {
+      maximalPrice = camera.price;
+    }
+  });
+
+  return maximalPrice;
+};
 

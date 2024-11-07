@@ -10,8 +10,9 @@ const Level = {
 const PHOTOCAMERA_CATEGORY = 'Фотоаппарат';
 
 export const filterPrice = {
-  [CameraFilterPrice.From]: (cameras: Camera[], priceFrom: number) => cameras.filter((camera) => camera.price >= priceFrom),
-  [CameraFilterPrice.To]: (cameras: Camera[], priceTo: number) => cameras.filter((camera) => camera.price <= priceTo)
+  [CameraFilterPrice.From]:
+    (cameras: Camera[], priceFrom: number) =>
+      cameras.filter((camera) => camera.price >= priceFrom)
 };
 
 export const filterCategory = {
@@ -52,11 +53,11 @@ export const applyFilters = (
 ) => {
   let filteredCameras: Camera[] = cameras;
   if (filterOfPrice) {
-    if (priceFrom) {
-      filteredCameras = filterPrice[filterOfPrice]([...filteredCameras], priceFrom);
+    if (priceFrom && priceTo) {
+      filteredCameras = [...filteredCameras].filter((camera) => camera.price >= priceFrom && camera.price <= priceTo);
     }
-    if (priceTo) {
-      filteredCameras = filterPrice[filterOfPrice]([...filteredCameras], priceTo);
+    if(priceFrom && !priceTo) {
+      filteredCameras = filterPrice[CameraFilterPrice.From]([...filteredCameras], priceFrom);
     }
   }
 

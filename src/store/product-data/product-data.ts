@@ -5,6 +5,7 @@ import { fetchCamerasAction, fetchCurrentCameraAction, fetchSimilarCamerasAction
 import { Camera } from '../../types/camera';
 import { sort } from '../../utils/sort';
 import { applyFilters } from '../../utils/filter';
+import { findMaximalPrice, findMinimalPrice } from '../../utils/list';
 
 const initialState: ProductData = {
   cameras: [],
@@ -35,7 +36,7 @@ export const productData = createSlice({
         state.sort = action.payload;
       }
     },
-    filterCamerasPrice(state, action: PayloadAction<{priceFrom: number | null; priceTo: number | null; type: CameraFilterPrice}>) {
+    filterCamerasPrice(state, action: PayloadAction<{priceFrom: number | null; priceTo: number | null; type: CameraFilterPrice | null}>) {
       state.filterOfPrice = action.payload.type;
       state.priceFrom = action.payload.priceFrom;
       state.priceTo = action.payload.priceTo;
@@ -47,7 +48,8 @@ export const productData = createSlice({
         state.filterOfTypes,
         state.filterOfLevels,
         state.priceFrom,
-        state.priceTo);
+        state.priceTo
+      );
     },
     filterCamerasCategory(state, action: PayloadAction<CameraCategory>) {
       state.filterOfCategory = action.payload;
@@ -59,7 +61,11 @@ export const productData = createSlice({
         state.filterOfTypes,
         state.filterOfLevels,
         state.priceFrom,
-        state.priceTo);
+        state.priceTo
+      );
+
+      state.priceFrom = findMinimalPrice(state.filteredCameras);
+      state.priceTo = findMaximalPrice(state.filteredCameras);
     },
     filterCamerasType(state, action: PayloadAction<CameraType[]>) {
       state.filterOfTypes = action.payload;
@@ -71,7 +77,11 @@ export const productData = createSlice({
         state.filterOfTypes,
         state.filterOfLevels,
         state.priceFrom,
-        state.priceTo);
+        state.priceTo
+      );
+
+      state.priceFrom = findMinimalPrice(state.filteredCameras);
+      state.priceTo = findMaximalPrice(state.filteredCameras);
     },
     filterCamerasLevel(state, action: PayloadAction<CameraLevel[]>) {
       state.filterOfLevels = action.payload;
@@ -83,7 +93,11 @@ export const productData = createSlice({
         state.filterOfTypes,
         state.filterOfLevels,
         state.priceFrom,
-        state.priceTo);
+        state.priceTo
+      );
+
+      state.priceFrom = findMinimalPrice(state.filteredCameras);
+      state.priceTo = findMaximalPrice(state.filteredCameras);
     },
     resetFilters(state) {
       state.filteredCameras = state.cameras;
@@ -92,6 +106,9 @@ export const productData = createSlice({
       state.filterOfLevels = [];
       state.filterOfPrice = null;
       state.filterOfTypes = [];
+
+      state.priceFrom = findMinimalPrice(state.cameras);
+      state.priceTo = findMaximalPrice(state.cameras);
     },
     addCameraToBasket(state, action: PayloadAction<Camera>) {
       if (state.camerasInBasket.some((camera) => camera.id === action.payload.id)) {
@@ -144,6 +161,10 @@ export const productData = createSlice({
       })
       .addCase(fetchCamerasAction.fulfilled, (state, action) => {
         state.cameras = sort[state.sort]([...action.payload]);
+
+        state.priceFrom = findMinimalPrice(state.cameras);
+        state.priceTo = findMaximalPrice(state.cameras);
+
         state.cameras.forEach((camera) => {
           camera.countInBasket = 0;
         });
