@@ -15,6 +15,7 @@ import { getCallItemPopupOpenStatus } from '../../store/popup-process/selectors'
 import { navigateToUpOfPage } from '../../utils/list';
 import CatalogFilter from '../../components/catalog-filter/catalog-filter';
 import CatalogSort from '../../components/catalog-sort/catalog-sort';
+import { resetFilters } from '../../store/product-data/product-data';
 
 export default function CatalogPage(): JSX.Element {
   const { pathname } = useLocation();
@@ -41,7 +42,8 @@ export default function CatalogPage(): JSX.Element {
 
   useEffect(() => {
     navigateToUpOfPage();
-  }, [pathname]);
+    dispatch(resetFilters());
+  }, [dispatch, pathname]);
 
   const handlePopupButtonOpenClick = (id: number) => {
     const currentCamera = cameras.find((camera) => camera.id === id);

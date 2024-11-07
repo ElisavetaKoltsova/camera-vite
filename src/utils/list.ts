@@ -48,6 +48,11 @@ export const sortByAscendingRating = (cameraA: Camera, cameraB: Camera) =>
 export const findMinimalPrice = (cameras: Camera[]) => {
   let minimalPrice = PRICE_TO;
 
+  if (cameras.length === 0) {
+    minimalPrice = 0;
+    return minimalPrice;
+  }
+
   cameras.forEach((camera) => {
     if (minimalPrice >= camera.price) {
       minimalPrice = camera.price;
@@ -59,6 +64,11 @@ export const findMinimalPrice = (cameras: Camera[]) => {
 
 export const findMaximalPrice = (cameras: Camera[]) => {
   let maximalPrice = PRICE_FROM;
+
+  if (cameras.length === 0) {
+    maximalPrice = 0;
+    return maximalPrice;
+  }
 
   cameras.forEach((camera) => {
     if (maximalPrice <= camera.price) {

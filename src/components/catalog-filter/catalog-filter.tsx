@@ -2,10 +2,9 @@ import { FormEvent, useEffect, useState } from 'react';
 import { CameraCategory, CameraFilterPrice, CameraLevel, CameraType } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { filterCamerasCategory, filterCamerasLevel, filterCamerasPrice, filterCamerasType, resetFilters } from '../../store/product-data/product-data';
-import { getCameras, getCategoryFilter, getFilteredCameras, getLevelFilter, getPriceFilter, getPriceFrom, getPriceTo, getTypeFilter } from '../../store/product-data/selectors';
+import { getCameras, getCategoryFilter, getPriceFrom, getPriceTo } from '../../store/product-data/selectors';
 import { findMinimalPrice, findMaximalPrice } from '../../utils/list';
 import { useDebounce } from 'use-debounce';
-import { Camera } from '../../types/camera';
 
 const DEBOUNCE_TIMEOUT = 1000;
 
@@ -13,12 +12,7 @@ export default function CatalogFilter(): JSX.Element {
   const dispatch = useAppDispatch();
 
   const cameras = useAppSelector(getCameras);
-  const filteredCameras = useAppSelector(getFilteredCameras);
-
-  const priceFilter = useAppSelector(getPriceFilter);
   const categoryFilter = useAppSelector(getCategoryFilter);
-  const typeFilter = useAppSelector(getTypeFilter);
-  const levelFilter = useAppSelector(getLevelFilter);
 
   const Price = {
     MIN_PRICE: findMinimalPrice(cameras),
@@ -37,12 +31,6 @@ export default function CatalogFilter(): JSX.Element {
   const [debouncedPriceFrom] = useDebounce(minPrice, DEBOUNCE_TIMEOUT);
   const [debouncedPriceTo] = useDebounce(priceTo, DEBOUNCE_TIMEOUT);
 
-  let usedCameras: Camera[] = [...cameras];
-
-  if (categoryFilter || priceFilter || typeFilter.length > 0 || levelFilter.length > 0) {
-    usedCameras = [...filteredCameras];
-  }
-
   useEffect(() => {
     setPriceFrom(minPrice);
     setPriceTo(maxPrice);
@@ -51,7 +39,6 @@ export default function CatalogFilter(): JSX.Element {
   useEffect(() => {
     dispatch(resetFilters());
   }, [dispatch]);
-
 
   useEffect(() => {
     if (debouncedPriceFrom && debouncedPriceFrom < Price.MIN_PRICE) {
@@ -62,10 +49,6 @@ export default function CatalogFilter(): JSX.Element {
     }
     if (debouncedPriceTo && debouncedPriceTo > Price.MAX_PRICE) {
       setPriceTo(maxPrice);
-    }
-    if (usedCameras.length === 0) {
-      setPriceFrom(0);
-      setPriceTo(0);
     }
 
     dispatch(
