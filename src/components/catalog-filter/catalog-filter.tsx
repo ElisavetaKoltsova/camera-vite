@@ -74,7 +74,7 @@ export default function CatalogFilter(): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedPriceFrom, debouncedPriceTo, dispatch, priceFrom, priceTo, selectedPriceTypeFilter]);
 
-  const handleFilterPriceInputChange = (evt: FormEvent<HTMLInputElement>) => {
+  const handleFilterPriceInputInput = (evt: FormEvent<HTMLInputElement>) => {
 
     const type = evt.currentTarget.name as CameraFilterPrice;
     const value = Number(evt.currentTarget.value);
@@ -90,6 +90,13 @@ export default function CatalogFilter(): JSX.Element {
   };
 
   const handleFilterCategoryInputChange = (category: CameraCategory) => {
+    if (category === CameraCategory.videocamera) {
+      const updatedTypes: CameraType[] = selectedTypes.filter((type) => type !== CameraType.film && type !== CameraType.snapshot);
+
+      setSelectedTypes(updatedTypes);
+      dispatch(filterCamerasType(updatedTypes));
+    }
+
     dispatch(filterCamerasCategory(category));
   };
 
@@ -147,7 +154,7 @@ export default function CatalogFilter(): JSX.Element {
                   name="price"
                   placeholder="от"
                   value={price}
-                  onInput={handleFilterPriceInputChange}
+                  onInput={handleFilterPriceInputInput}
                 />
               </label>
             </div>
@@ -158,7 +165,7 @@ export default function CatalogFilter(): JSX.Element {
                   name="priceUp"
                   placeholder="до"
                   value={priceUp}
-                  onInput={handleFilterPriceInputChange}
+                  onInput={handleFilterPriceInputInput}
                 />
               </label>
             </div>
