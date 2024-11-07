@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { CameraCategory, CameraFilterPrice, CameraLevel, CameraType } from '../../const';
+import { CameraCategory, CameraFilterPrice, CameraLevel, CameraType, PRICE_FROM, PRICE_TO } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { filterCamerasCategory, filterCamerasLevel, filterCamerasPrice, filterCamerasType, resetFilters } from '../../store/product-data/product-data';
 import { getCameras, getCategoryFilter, getFilteredCameras, getLevelFilter, getPriceFilter, getPriceFrom, getPriceTo, getTypeFilter } from '../../store/product-data/selectors';
@@ -122,6 +122,17 @@ export default function CatalogFilter(): JSX.Element {
     dispatch(resetFilters());
   };
 
+  let price: number | string = priceFrom ?? '';
+  let priceUp: number | string = priceTo ?? '';
+
+  if (priceFrom === PRICE_FROM) {
+    price = '';
+  }
+
+  if (priceTo === PRICE_TO) {
+    priceUp = '';
+  }
+
   return (
     <div className="catalog-filter">
       <form action="#">
@@ -135,7 +146,7 @@ export default function CatalogFilter(): JSX.Element {
                   type="number"
                   name="price"
                   placeholder="от"
-                  value={priceFrom ?? ''}
+                  value={price}
                   onInput={handleFilterPriceInputChange}
                 />
               </label>
@@ -146,7 +157,7 @@ export default function CatalogFilter(): JSX.Element {
                   type="number"
                   name="priceUp"
                   placeholder="до"
-                  value={priceTo ?? ''}
+                  value={priceUp}
                   onInput={handleFilterPriceInputChange}
                 />
               </label>

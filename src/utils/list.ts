@@ -1,9 +1,6 @@
-import { months } from '../const';
+import { months, PRICE_FROM, PRICE_TO } from '../const';
 import { Camera } from '../types/camera';
 import { Review } from '../types/review';
-
-const PRICE_FROM = 0;
-const PRICE_TO = 1000000;
 
 export const convertNumberIntoMoneyFormat = (value: number) => Math.round(value).toLocaleString('ru-RU');
 
@@ -66,7 +63,7 @@ export const findMaximalPrice = (cameras: Camera[]) => {
   let maximalPrice = PRICE_FROM;
 
   if (cameras.length === 0) {
-    maximalPrice = 199999;
+    maximalPrice = PRICE_TO;
     return maximalPrice;
   }
 
