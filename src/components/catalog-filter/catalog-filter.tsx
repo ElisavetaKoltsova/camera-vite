@@ -43,6 +43,17 @@ export default function CatalogFilter(): JSX.Element {
   const [debouncedPriceFrom] = useDebounce(minPrice, DEBOUNCE_TIMEOUT);
   const [debouncedPriceTo] = useDebounce(priceTo, DEBOUNCE_TIMEOUT);
 
+  let price: number | string = priceFrom ?? '';
+  let priceUp: number | string = priceTo ?? '';
+
+  if (priceFrom === PRICE_FROM) {
+    price = '';
+  }
+
+  if (priceTo === PRICE_TO) {
+    priceUp = '';
+  }
+
   useEffect(() => {
     setPriceFrom(minPrice);
     setPriceTo(maxPrice);
@@ -128,17 +139,6 @@ export default function CatalogFilter(): JSX.Element {
 
     dispatch(resetFilters());
   };
-
-  let price: number | string = priceFrom ?? '';
-  let priceUp: number | string = priceTo ?? '';
-
-  if (priceFrom === PRICE_FROM) {
-    price = '';
-  }
-
-  if (priceTo === PRICE_TO) {
-    priceUp = '';
-  }
 
   return (
     <div className="catalog-filter">

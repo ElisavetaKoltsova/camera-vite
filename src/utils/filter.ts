@@ -52,14 +52,6 @@ export const applyFilters = (
   priceTo: number | null
 ) => {
   let filteredCameras: Camera[] = cameras;
-  if (filterOfPrice) {
-    if (priceFrom && priceTo) {
-      filteredCameras = [...filteredCameras].filter((camera) => camera.price >= priceFrom && camera.price <= priceTo);
-    }
-    if(priceFrom && !priceTo) {
-      filteredCameras = filterPrice[CameraFilterPrice.From]([...filteredCameras], priceFrom);
-    }
-  }
 
   if (filterOfCategory) {
     filteredCameras = filterCategory[filterOfCategory]([...filteredCameras]);
@@ -85,6 +77,15 @@ export const applyFilters = (
         )
       );
     }, [] as Camera[]);
+  }
+
+  if (filterOfPrice) {
+    if (priceFrom && priceTo) {
+      filteredCameras = [...filteredCameras].filter((camera) => camera.price >= priceFrom && camera.price <= priceTo);
+    }
+    if(priceFrom && !priceTo) {
+      filteredCameras = filterPrice[CameraFilterPrice.From]([...filteredCameras], priceFrom);
+    }
   }
 
   return filteredCameras;

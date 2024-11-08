@@ -2,21 +2,27 @@ import React, { FormEvent, useEffect, useState } from 'react';
 import { useAppSelector } from '../../hooks';
 import { getCameras } from '../../store/product-data/selectors';
 import { Camera } from '../../types/camera';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppRoute } from '../../const';
+import './search-form.css';
+import { checkSearchQueryInCameras } from '../../utils/list';
 
 const START_LENGTH_OF_SEARCH_QUERY = 3;
 
 export default function SearchForm(): JSX.Element {
+  const navigate = useNavigate();
+
   const cameras = useAppSelector(getCameras);
   const [searchQuery, setSearchQuery] = useState('');
   const [foundCameras, setFoundCameras] = useState<Camera[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   useEffect(() => {
     if (searchQuery.length >= START_LENGTH_OF_SEARCH_QUERY) {
       setFoundCameras(cameras.filter((camera) =>
-        camera.name.toUpperCase().includes(searchQuery.toUpperCase())
+        checkSearchQueryInCameras(camera, searchQuery)
       ));
+      setSelectedIndex(null);
     } else {
       setFoundCameras([]);
     }
@@ -30,6 +36,27 @@ export default function SearchForm(): JSX.Element {
   const handleResetSearchButtonClick = () => {
     setSearchQuery('');
     setFoundCameras([]);
+    setSelectedIndex(null);
+  };
+
+  const handleInputKeyDown = (evt: React.KeyboardEvent) => {
+    if (foundCameras.length === 0) {
+      return;
+    }
+
+    if (evt.key === 'ArrowDown') {
+      setSelectedIndex((prevIndex) =>
+        prevIndex === null || prevIndex === foundCameras.length - 1 ? 0 : prevIndex + 1
+      );
+    } else if (evt.key === 'ArrowUp') {
+      setSelectedIndex((prevIndex) =>
+        prevIndex === null || prevIndex === 0 ? foundCameras.length - 1 : prevIndex - 1
+      );
+    } else if (evt.key === 'Enter' && selectedIndex !== null) {
+      evt.preventDefault();
+      const selectedCamera = foundCameras[selectedIndex];
+      navigate(`${AppRoute.Product}/${selectedCamera.id}`);
+    }
   };
 
   return (
@@ -46,15 +73,16 @@ export default function SearchForm(): JSX.Element {
               placeholder="Поиск по сайту"
               value={searchQuery}
               onInput={handleSearchInputInput}
+              onKeyDown={handleInputKeyDown}
             />
           </label>
           <ul className="form-search__select-list">
             {
-              foundCameras.map((camera) =>
+              foundCameras.map((camera, index) =>
                 (
                   <li
-                    className="form-search__select-item"
-                    tabIndex={foundCameras.indexOf(camera)}
+                    className={`form-search__select-item ${selectedIndex === index ? 'hover' : ''}`}
+                    tabIndex={index}
                     key={camera.id}
                   >
                     <Link to={`${AppRoute.Product}/${camera.id}`}>
@@ -70,7 +98,7 @@ export default function SearchForm(): JSX.Element {
           className="form-search__reset"
           type="button"
           onClick={handleResetSearchButtonClick}
-          style={{ display: searchQuery.length > 0 ? 'flex' : 'none' }} // Управляем видимостью
+          style={{ display: searchQuery.length > 0 ? 'flex' : 'none' }}
         >
           <svg width="10" height="10" aria-hidden="true">
             <use xlinkHref="#icon-close"></use>

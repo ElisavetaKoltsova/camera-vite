@@ -76,3 +76,13 @@ export const findMaximalPrice = (cameras: Camera[]) => {
   return maximalPrice;
 };
 
+export const checkSearchQueryInCameras = (camera: Camera, searchQuery: string) => {
+  const queries = searchQuery.split(' ');
+  let successQuery = true;
+
+  queries.map((query) => {
+    successQuery = successQuery && camera.name.toUpperCase().includes(query.toUpperCase());
+  });
+
+  return successQuery;
+};

@@ -4,7 +4,7 @@ import Header from '../../components/header/header';
 import { AppRoute } from '../../const';
 import CatalogCardList from '../../components/catalog-card-list/catalog-card-list';
 import Footer from '../../components/footer/footer';
-import { getCameras, getCamerasDataLoadingStatus, getCategoryFilter, getFilteredCameras, getLevelFilter, getPriceFilter, getTypeFilter } from '../../store/product-data/selectors';
+import { getCameras, getCamerasDataLoadingStatus, getCategoryFilter, getFilteredCameras, getLevelFilter, getPriceFilter, getSort, getTypeFilter } from '../../store/product-data/selectors';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import Loader from '../../components/loader/loader';
 import { useEffect, useState } from 'react';
@@ -16,6 +16,7 @@ import { navigateToUpOfPage } from '../../utils/list';
 import CatalogFilter from '../../components/catalog-filter/catalog-filter';
 import CatalogSort from '../../components/catalog-sort/catalog-sort';
 import { resetFilters } from '../../store/product-data/product-data';
+import { sort } from '../../utils/sort';
 
 export default function CatalogPage(): JSX.Element {
   const { pathname } = useLocation();
@@ -30,6 +31,8 @@ export default function CatalogPage(): JSX.Element {
   const typeFilter = useAppSelector(getTypeFilter);
   const levelFilter = useAppSelector(getLevelFilter);
 
+  const currentSort = useAppSelector(getSort);
+
   const callItemPopupOpenStatus = useAppSelector(getCallItemPopupOpenStatus);
 
   const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
@@ -39,6 +42,8 @@ export default function CatalogPage(): JSX.Element {
   if (categoryFilter || priceFilter || typeFilter.length > 0 || levelFilter.length > 0) {
     usedCameras = [...filteredCameras];
   }
+
+  usedCameras = sort[currentSort]([...usedCameras]);
 
   useEffect(() => {
     navigateToUpOfPage();
