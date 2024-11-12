@@ -10,7 +10,9 @@ export default function CatalogSort(): JSX.Element {
   const currentSort = useAppSelector(getSort);
 
   const [searchParams, setSearchParams] = useSearchParams();
+
   const urlSort = searchParams.get(URLParam.Sort) || Sorts.PRICE_LOW_TO_HIGH;
+  const isCorrectUrl = Object.values(Sorts).includes(urlSort);
 
   const [sortType, setSortType] = useState(currentSort.split(' ')[0]);
   const [sortOrder, setSortOrder] = useState(currentSort.split(' ')[1]);
@@ -20,13 +22,15 @@ export default function CatalogSort(): JSX.Element {
   }, [dispatch, sortType, sortOrder]);
 
   useEffect(() => {
-    const [urlSortType, urlSortOrder] = urlSort.split(' ');
+    if (isCorrectUrl) {
+      const [urlSortType, urlSortOrder] = urlSort.split(' ');
 
-    if (urlSortType !== sortType || urlSortOrder !== sortOrder) {
-      setSortType(urlSortType);
-      setSortOrder(urlSortOrder);
+      if (urlSortType !== sortType || urlSortOrder !== sortOrder) {
+        setSortType(urlSortType);
+        setSortOrder(urlSortOrder);
+      }
     }
-  }, [urlSort, sortType, sortOrder]);
+  }, [urlSort, sortType, sortOrder, isCorrectUrl]);
 
   const handleSortInputChange = (evt: FormEvent<HTMLInputElement>) => {
     const checkedSort = evt.currentTarget.id;
