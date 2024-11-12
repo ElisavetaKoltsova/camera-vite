@@ -58,6 +58,9 @@ export const productData = createSlice({
         state.filterOfLevels,
       );
 
+      state.priceFrom = findMinimalPrice(state.cameras);
+      state.priceTo = findMaximalPrice(state.cameras);
+
       const {filteredCameras, priceFrom, priceTo} = changeFiltersByPrice(state.filteredCameras, state.priceFrom, state.priceTo);
       state.filteredCameras = filteredCameras;
       state.priceFrom = priceFrom;
@@ -73,6 +76,9 @@ export const productData = createSlice({
         state.filterOfLevels,
       );
 
+      state.priceFrom = findMinimalPrice(state.cameras);
+      state.priceTo = findMaximalPrice(state.cameras);
+
       const {filteredCameras, priceFrom, priceTo} = changeFiltersByPrice(state.filteredCameras, state.priceFrom, state.priceTo);
       state.filteredCameras = filteredCameras;
       state.priceFrom = priceFrom;
@@ -87,6 +93,9 @@ export const productData = createSlice({
         state.filterOfTypes,
         state.filterOfLevels,
       );
+
+      state.priceFrom = findMinimalPrice(state.cameras);
+      state.priceTo = findMaximalPrice(state.cameras);
 
       const {filteredCameras, priceFrom, priceTo} = changeFiltersByPrice(state.filteredCameras, state.priceFrom, state.priceTo);
       state.filteredCameras = filteredCameras;

@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { CameraCategory, CameraFilterPrice, CameraLevel, CameraType, PRICE_FROM, PRICE_TO } from '../../const';
+import { CameraCategory, CameraFilterPrice, CameraLevel, CameraType, PRICE_FROM, PRICE_TO, URLParam } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { filterCamerasCategory, filterCamerasLevel, filterCamerasPrice, filterCamerasType, resetFilters } from '../../store/product-data/product-data';
 import { getCameras, getCategoryFilter, getFilteredCameras, getLevelFilter, getPriceFrom, getPriceTo, getTypeFilter } from '../../store/product-data/selectors';
@@ -7,6 +7,7 @@ import { findMinimalPrice, findMaximalPrice } from '../../utils/list';
 import { useDebounce } from 'use-debounce';
 import { Camera } from '../../types/camera';
 import { filterPrice } from '../../utils/filter';
+import { useSearchParams } from 'react-router-dom';
 
 const DEBOUNCE_TIMEOUT = 1000;
 
@@ -34,6 +35,9 @@ export default function CatalogFilter(): JSX.Element {
     MAX_PRICE: findMaximalPrice(usedCameras)
   };
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [selectedCategory, setSelectedCategory] = useState<CameraCategory | null>(categoryFilter);
   const [selectedTypes, setSelectedTypes] = useState<CameraType[]>([]);
   const [selectedLevels, setSelectedLevels] = useState<CameraLevel[]>([]);
   const [priceFrom, setPriceFrom] = useState<number>(minPrice);
@@ -44,6 +48,40 @@ export default function CatalogFilter(): JSX.Element {
 
   const price: number | string = priceFrom !== PRICE_FROM ? priceFrom : '';
   const priceUp: number | string = priceTo !== PRICE_TO ? priceTo : '';
+
+  useEffect(() => {
+    const priceFromParam = Number(searchParams.get(URLParam.PriceFrom));
+    const priceToParam = Number(searchParams.get(URLParam.PriceTo));
+
+    const isValidPriceFrom = !isNaN(priceFromParam) && priceFromParam >= PRICE_FROM;
+    const isValidPriceTo = !isNaN(priceToParam) && priceToParam <= PRICE_TO && priceToParam >= priceFromParam;
+
+    const categoryParam = searchParams.get(URLParam.FilterOfCategory);
+    const isValidCategory = categoryParam && Object.values(CameraCategory).includes(categoryParam as CameraCategory);
+
+    const typesParam = (searchParams.get(URLParam.FilterOfTypes)?.split(' ') || []) as CameraType[];
+    const validTypes = typesParam.filter((type) => Object.values(CameraType).includes(type));
+
+    const levelsParam = (searchParams.get(URLParam.FilterOfLevels)?.split(' ') || []) as CameraLevel[];
+    const validLevels = levelsParam.filter((level) => Object.values(CameraLevel).includes(level));
+
+    setPriceFrom(isValidPriceFrom ? priceFromParam : PRICE_FROM);
+    setPriceTo(isValidPriceTo ? priceToParam : PRICE_TO);
+    setSelectedCategory(isValidCategory ? (categoryParam as CameraCategory) : null);
+    setSelectedTypes(validTypes);
+    setSelectedLevels(validLevels);
+
+    dispatch(filterCamerasPrice({ priceFrom: isValidPriceFrom ? priceFromParam : PRICE_FROM, priceTo: isValidPriceTo ? priceToParam : PRICE_TO }));
+    if (isValidCategory) {
+      dispatch(filterCamerasCategory(categoryParam as CameraCategory));
+    }
+    if (validTypes.length) {
+      dispatch(filterCamerasType(validTypes));
+    }
+    if (validLevels.length) {
+      dispatch(filterCamerasLevel(validLevels));
+    }
+  }, [dispatch, searchParams]);
 
   useEffect(() => {
     setPriceFrom(minPrice);
@@ -72,6 +110,13 @@ export default function CatalogFilter(): JSX.Element {
           priceTo
         })
       );
+
+      setSearchParams((prevParams) => {
+        const params = new URLSearchParams(prevParams);
+        params.set(URLParam.PriceFrom, priceFrom.toString());
+        params.set(URLParam.PriceTo, priceTo.toString());
+        return params;
+      });
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -101,7 +146,13 @@ export default function CatalogFilter(): JSX.Element {
       dispatch(filterCamerasType(updatedTypes));
     }
 
+    setSelectedCategory(category);
     dispatch(filterCamerasCategory(category));
+    setSearchParams((prevParams) => {
+      const params = new URLSearchParams(prevParams);
+      params.set(URLParam.FilterOfCategory, category);
+      return params;
+    });
   };
 
   const handleFilterTypeInputChange = (type: CameraType) => {
@@ -112,6 +163,12 @@ export default function CatalogFilter(): JSX.Element {
 
     setSelectedTypes(updatedTypes);
     dispatch(filterCamerasType(updatedTypes));
+
+    setSearchParams((prevParams) => {
+      const params = new URLSearchParams(prevParams);
+      params.set(URLParam.FilterOfTypes, updatedTypes.join(' '));
+      return params;
+    });
   };
 
   const handleFilterLevelInputChange = (level: CameraLevel) => {
@@ -122,6 +179,12 @@ export default function CatalogFilter(): JSX.Element {
 
     setSelectedLevels(updatedLevels);
     dispatch(filterCamerasLevel(updatedLevels));
+
+    setSearchParams((prevParams) => {
+      const params = new URLSearchParams(prevParams);
+      params.set(URLParam.FilterOfLevels, updatedLevels.join(' '));
+      return params;
+    });
   };
 
   const handleResetFiltersButtonClick = () => {
@@ -174,7 +237,7 @@ export default function CatalogFilter(): JSX.Element {
                     type="radio"
                     name="category"
                     value={key}
-                    checked={value === categoryFilter}
+                    checked={value === selectedCategory}
                     onChange={() => handleFilterCategoryInputChange(value)}
                     data-testid="category-radio-button"
                   />
@@ -194,7 +257,7 @@ export default function CatalogFilter(): JSX.Element {
                   <input
                     type="checkbox"
                     name={key}
-                    disabled={categoryFilter === CameraCategory.videocamera && (value === CameraType.film || value === CameraType.snapshot)}
+                    disabled={selectedCategory === CameraCategory.videocamera && (value === CameraType.film || value === CameraType.snapshot)}
                     checked={selectedTypes.includes(value)}
                     onChange={() => handleFilterTypeInputChange(value)}
                   />

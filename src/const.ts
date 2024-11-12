@@ -68,8 +68,8 @@ export enum URLParam {
   PriceFrom = 'priceFrom',
   PriceTo = 'priceTo',
   FilterOfCategory = 'filterOfCategory',
-  FilterOfType = 'filterOfType',
-  FilterOfLevel = 'filterOfLevel'
+  FilterOfTypes = 'filterOfTypes',
+  FilterOfLevels = 'filterOfLevels'
 }
 
 export enum APIRoute {
