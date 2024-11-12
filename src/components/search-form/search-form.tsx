@@ -61,7 +61,10 @@ export default function SearchForm(): JSX.Element {
 
   return (
     <React.Fragment>
-      <div className={`form-search ${foundCameras.length > 0 ? 'list-opened' : ''}`}>
+      <div
+        data-testid="search-from"
+        className={`form-search ${foundCameras.length > 0 ? 'list-opened' : ''}`}
+      >
         <form onSubmit={(evt) => evt.preventDefault()}>
           <label>
             <svg className="form-search__icon" width="16" height="16" aria-hidden="true">
@@ -76,7 +79,11 @@ export default function SearchForm(): JSX.Element {
               onKeyDown={handleInputKeyDown}
             />
           </label>
-          <ul className="form-search__select-list">
+          <ul
+            className="form-search__select-list"
+            data-testid="search-results"
+            data-opened={foundCameras.length > 0}
+          >
             {
               foundCameras.map((camera, index) =>
                 (

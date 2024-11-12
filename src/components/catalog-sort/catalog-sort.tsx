@@ -28,13 +28,14 @@ export default function CatalogSort(): JSX.Element {
   };
 
   return (
-    <div className="catalog-sort">
+    <div className="catalog-sort" data-testid="catalog-sort">
       <form action="#">
         <div className="catalog-sort__inner">
           <p className="title title&#45;&#45;h5">Сортировать:</p>
           <div className="catalog-sort__type">
             <div className="catalog-sort__btn-text">
               <input
+                data-testid="by-price"
                 type="radio"
                 id="sortPrice"
                 name="sort"
@@ -45,6 +46,7 @@ export default function CatalogSort(): JSX.Element {
             </div>
             <div className="catalog-sort__btn-text">
               <input
+                data-testid="by-popular"
                 type="radio"
                 id="sortPopular"
                 name="sort"
@@ -57,6 +59,7 @@ export default function CatalogSort(): JSX.Element {
           <div className="catalog-sort__order">
             <div className="catalog-sort__btn catalog-sort__btn&#45;&#45;up">
               <input
+                data-testid="up"
                 type="radio"
                 id="up"
                 name="sort-icon"
@@ -72,6 +75,7 @@ export default function CatalogSort(): JSX.Element {
             </div>
             <div className="catalog-sort__btn catalog-sort__btn&#45;&#45;down">
               <input
+                data-testid="down"
                 type="radio"
                 id="down"
                 name="sort-icon"

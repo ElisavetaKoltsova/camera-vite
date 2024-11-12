@@ -1,5 +1,6 @@
-import { CameraCategory, CameraFilterPrice, CameraLevel, CameraType } from '../const';
+import { CameraCategory, CameraLevel, CameraType } from '../const';
 import { Camera } from '../types/camera';
+import { findMaximalPrice, findMinimalPrice } from './list';
 
 const Level = {
   ZERO: 'Нулевой',
@@ -9,11 +10,8 @@ const Level = {
 
 const PHOTOCAMERA_CATEGORY = 'Фотоаппарат';
 
-export const filterPrice = {
-  [CameraFilterPrice.From]:
-    (cameras: Camera[], priceFrom: number) =>
-      cameras.filter((camera) => camera.price >= priceFrom)
-};
+export const filterPrice = (cameras: Camera[], priceFrom: number, priceTo: number) =>
+  cameras.filter((camera) => camera.price >= priceFrom && camera.price <= priceTo);
 
 export const filterCategory = {
   [CameraCategory.photocamera]: (cameras: Camera[]) =>
@@ -44,12 +42,9 @@ export const filterLevel = {
 
 export const applyFilters = (
   cameras: Camera[],
-  filterOfPrice: CameraFilterPrice | null,
   filterOfCategory: CameraCategory | null,
   filterOfTypes: CameraType[],
-  filterOfLevels: CameraLevel[],
-  priceFrom: number | null,
-  priceTo: number | null
+  filterOfLevels: CameraLevel[]
 ) => {
   let filteredCameras: Camera[] = cameras;
 
@@ -79,14 +74,22 @@ export const applyFilters = (
     }, [] as Camera[]);
   }
 
-  if (filterOfPrice) {
-    if (priceFrom && priceTo) {
-      filteredCameras = [...filteredCameras].filter((camera) => camera.price >= priceFrom && camera.price <= priceTo);
-    }
-    if(priceFrom && !priceTo) {
-      filteredCameras = filterPrice[CameraFilterPrice.From]([...filteredCameras], priceFrom);
-    }
-  }
+  const priceFrom = findMinimalPrice(filteredCameras);
+  const priceTo = findMaximalPrice(filteredCameras);
+
+  filteredCameras = filterPrice(filteredCameras, priceFrom, priceTo);
 
   return filteredCameras;
+};
+
+export const changeFiltersByPrice = (filteredCameras: Camera[], priceFrom: number, priceTo: number) => {
+  const filteredPriceFrom = findMinimalPrice(filteredCameras);
+  const filteredPriceTo = findMaximalPrice(filteredCameras);
+
+  priceFrom = priceFrom > filteredPriceFrom ? priceFrom : filteredPriceFrom;
+  priceTo = priceTo < filteredPriceTo ? priceTo : filteredPriceTo;
+
+  filteredCameras = filterPrice(filteredCameras, priceFrom, priceTo);
+
+  return {filteredCameras, priceFrom: findMinimalPrice(filteredCameras), priceTo: findMaximalPrice(filteredCameras)};
 };

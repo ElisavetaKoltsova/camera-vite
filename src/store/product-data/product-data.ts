@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ProductData } from '../../types/state';
-import { CameraCategory, CameraFilterPrice, CameraLevel, CameraType, NameSpace, Sorts } from '../../const';
+import { CameraCategory, CameraLevel, CameraType, NameSpace, PRICE_FROM, PRICE_TO, Sorts } from '../../const';
 import { fetchCamerasAction, fetchCurrentCameraAction, fetchSimilarCamerasAction } from '../api-action';
 import { Camera } from '../../types/camera';
 import { sort } from '../../utils/sort';
-import { applyFilters } from '../../utils/filter';
+import { applyFilters, changeFiltersByPrice, filterPrice } from '../../utils/filter';
 import { findMaximalPrice, findMinimalPrice } from '../../utils/list';
 
 const initialState: ProductData = {
@@ -15,9 +15,8 @@ const initialState: ProductData = {
   camerasInBasket: [],
   isCamerasDataLoading: false,
   sort: Sorts.PRICE_LOW_TO_HIGH,
-  priceFrom: null,
-  priceTo: null,
-  filterOfPrice: null,
+  priceFrom: PRICE_FROM,
+  priceTo: PRICE_TO,
   filterOfCategory: null,
   filterOfTypes: [],
   filterOfLevels: []
@@ -36,75 +35,69 @@ export const productData = createSlice({
         state.sort = action.payload;
       }
     },
-    filterCamerasPrice(state, action: PayloadAction<{priceFrom: number | null; priceTo: number | null; type: CameraFilterPrice | null}>) {
-      state.filterOfPrice = action.payload.type;
+    filterCamerasPrice(state, action: PayloadAction<{priceFrom: number; priceTo: number}>) {
       state.priceFrom = action.payload.priceFrom;
       state.priceTo = action.payload.priceTo;
 
       state.filteredCameras = applyFilters(
         state.cameras,
-        state.filterOfPrice,
         state.filterOfCategory,
         state.filterOfTypes,
         state.filterOfLevels,
-        state.priceFrom,
-        state.priceTo
       );
+
+      state.filteredCameras = filterPrice(state.filteredCameras, state.priceFrom, state.priceTo);
     },
     filterCamerasCategory(state, action: PayloadAction<CameraCategory>) {
       state.filterOfCategory = action.payload;
 
       state.filteredCameras = applyFilters(
         state.cameras,
-        state.filterOfPrice,
         state.filterOfCategory,
         state.filterOfTypes,
         state.filterOfLevels,
-        state.priceFrom,
-        state.priceTo
       );
 
-      state.priceFrom = findMinimalPrice(state.filteredCameras);
-      state.priceTo = findMaximalPrice(state.filteredCameras);
+      const {filteredCameras, priceFrom, priceTo} = changeFiltersByPrice(state.filteredCameras, state.priceFrom, state.priceTo);
+      state.filteredCameras = filteredCameras;
+      state.priceFrom = priceFrom;
+      state.priceTo = priceTo;
     },
     filterCamerasType(state, action: PayloadAction<CameraType[]>) {
       state.filterOfTypes = action.payload;
 
       state.filteredCameras = applyFilters(
         state.cameras,
-        state.filterOfPrice,
         state.filterOfCategory,
         state.filterOfTypes,
         state.filterOfLevels,
-        state.priceFrom,
-        state.priceTo
       );
 
-      state.priceFrom = findMinimalPrice(state.filteredCameras);
-      state.priceTo = findMaximalPrice(state.filteredCameras);
+      const {filteredCameras, priceFrom, priceTo} = changeFiltersByPrice(state.filteredCameras, state.priceFrom, state.priceTo);
+      state.filteredCameras = filteredCameras;
+      state.priceFrom = priceFrom;
+      state.priceTo = priceTo;
     },
     filterCamerasLevel(state, action: PayloadAction<CameraLevel[]>) {
       state.filterOfLevels = action.payload;
 
       state.filteredCameras = applyFilters(
         state.cameras,
-        state.filterOfPrice,
         state.filterOfCategory,
         state.filterOfTypes,
         state.filterOfLevels,
-        state.priceFrom,
-        state.priceTo
       );
 
-      state.priceFrom = findMinimalPrice(state.filteredCameras);
-      state.priceTo = findMaximalPrice(state.filteredCameras);
+      const {filteredCameras, priceFrom, priceTo} = changeFiltersByPrice(state.filteredCameras, state.priceFrom, state.priceTo);
+      state.filteredCameras = filteredCameras;
+      state.priceFrom = priceFrom;
+      state.priceTo = priceTo;
     },
     resetFilters(state) {
-      state.filteredCameras = state.cameras;
+      state.filteredCameras = [];
 
       state.filterOfCategory = null;
       state.filterOfLevels = [];
-      state.filterOfPrice = null;
       state.filterOfTypes = [];
 
       state.priceFrom = findMinimalPrice(state.cameras);

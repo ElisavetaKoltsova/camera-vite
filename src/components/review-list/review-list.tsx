@@ -33,7 +33,7 @@ export default function ReviewList({reviews}: ReviewListProps): JSX.Element {
   const countReviews = visibleReviews <= reviews.length ? visibleReviews : reviews.length;
 
   return (
-    <section className="review-block" onScroll={handleScroll}>
+    <section className="review-block" onScroll={handleScroll} data-testid="review-list">
       <div className="container">
         <div className="page-content__headed">
           <h2 className="title title--h3">Отзывы</h2>

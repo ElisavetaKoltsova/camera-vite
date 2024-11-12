@@ -1,13 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import Header from './header';
-import { withHistory } from '../../utils/mock-components';
+import { withHistory, withStore } from '../../utils/mock-components';
+import { makeFakeStore } from '../../utils/mock';
 
 describe('Component: Header', () => {
   it('should render correctly', () => {
     const expectedTestId = 'header';
-    const preparedComponent = withHistory(<Header />);
+    const { withStoreComponent } = withStore(withHistory(<Header />), makeFakeStore());
 
-    render(preparedComponent);
+    render(withStoreComponent);
 
     expect(screen.getByTestId(expectedTestId)).toBeInTheDocument();
   });

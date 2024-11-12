@@ -21,7 +21,7 @@ export default function ReviewItem({review}: ReviewItemProps): JSX.Element {
   const formattedDate = formatDateToDayMonth(createAt);
 
   return (
-    <li className="review-card">
+    <li className="review-card" data-testid="review-item">
       <div className="review-card__head">
         <p className="title title--h4">{userName}</p>
         <time className="review-card__data" dateTime={formattedDateTime}>{formattedDate}</time>

@@ -2,10 +2,11 @@ import { FormEvent, useEffect, useState } from 'react';
 import { CameraCategory, CameraFilterPrice, CameraLevel, CameraType, PRICE_FROM, PRICE_TO } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { filterCamerasCategory, filterCamerasLevel, filterCamerasPrice, filterCamerasType, resetFilters } from '../../store/product-data/product-data';
-import { getCameras, getCategoryFilter, getFilteredCameras, getLevelFilter, getPriceFilter, getPriceFrom, getPriceTo, getTypeFilter } from '../../store/product-data/selectors';
+import { getCameras, getCategoryFilter, getFilteredCameras, getLevelFilter, getPriceFrom, getPriceTo, getTypeFilter } from '../../store/product-data/selectors';
 import { findMinimalPrice, findMaximalPrice } from '../../utils/list';
 import { useDebounce } from 'use-debounce';
 import { Camera } from '../../types/camera';
+import { filterPrice } from '../../utils/filter';
 
 const DEBOUNCE_TIMEOUT = 1000;
 
@@ -15,14 +16,16 @@ export default function CatalogFilter(): JSX.Element {
   const cameras = useAppSelector(getCameras);
   const filteredCameras = useAppSelector(getFilteredCameras);
 
-  const priceFilter = useAppSelector(getPriceFilter);
   const categoryFilter = useAppSelector(getCategoryFilter);
   const typeFilter = useAppSelector(getTypeFilter);
   const levelFilter = useAppSelector(getLevelFilter);
 
-  let usedCameras: Camera[] = [...cameras];
+  const minPrice = useAppSelector(getPriceFrom);
+  const maxPrice = useAppSelector(getPriceTo);
 
-  if (categoryFilter || priceFilter || typeFilter.length > 0 || levelFilter.length > 0) {
+  let usedCameras: Camera[] = filterPrice(cameras, minPrice, maxPrice);
+
+  if (categoryFilter || typeFilter.length > 0 || levelFilter.length > 0) {
     usedCameras = [...filteredCameras];
   }
 
@@ -31,28 +34,16 @@ export default function CatalogFilter(): JSX.Element {
     MAX_PRICE: findMaximalPrice(usedCameras)
   };
 
-  const minPrice = useAppSelector(getPriceFrom);
-  const maxPrice = useAppSelector(getPriceTo);
-
   const [selectedTypes, setSelectedTypes] = useState<CameraType[]>([]);
   const [selectedLevels, setSelectedLevels] = useState<CameraLevel[]>([]);
-  const [selectedPriceTypeFilter, setSelectedPriceTypeFilter] = useState<CameraFilterPrice | null>(null);
-  const [priceFrom, setPriceFrom] = useState<number | null>(minPrice);
-  const [priceTo, setPriceTo] = useState<number | null>(maxPrice);
+  const [priceFrom, setPriceFrom] = useState<number>(minPrice);
+  const [priceTo, setPriceTo] = useState<number>(maxPrice);
 
-  const [debouncedPriceFrom] = useDebounce(minPrice, DEBOUNCE_TIMEOUT);
+  const [debouncedPriceFrom] = useDebounce(priceFrom, DEBOUNCE_TIMEOUT);
   const [debouncedPriceTo] = useDebounce(priceTo, DEBOUNCE_TIMEOUT);
 
-  let price: number | string = priceFrom ?? '';
-  let priceUp: number | string = priceTo ?? '';
-
-  if (priceFrom === PRICE_FROM) {
-    price = '';
-  }
-
-  if (priceTo === PRICE_TO) {
-    priceUp = '';
-  }
+  const price: number | string = priceFrom !== PRICE_FROM ? priceFrom : '';
+  const priceUp: number | string = priceTo !== PRICE_TO ? priceTo : '';
 
   useEffect(() => {
     setPriceFrom(minPrice);
@@ -64,33 +55,32 @@ export default function CatalogFilter(): JSX.Element {
   }, [dispatch]);
 
   useEffect(() => {
-    if (debouncedPriceFrom !== null && debouncedPriceFrom < Price.MIN_PRICE) {
+    if (debouncedPriceFrom < Price.MIN_PRICE) {
       setPriceFrom(Price.MIN_PRICE);
     }
-    if (debouncedPriceFrom !== null && debouncedPriceTo !== null && debouncedPriceFrom >= debouncedPriceTo) {
+    if (debouncedPriceFrom > debouncedPriceTo) {
       setPriceTo(debouncedPriceFrom);
     }
-    if (debouncedPriceTo !== null && debouncedPriceTo > Price.MAX_PRICE) {
+    if (debouncedPriceTo > Price.MAX_PRICE) {
       setPriceTo(Price.MAX_PRICE);
     }
 
-    dispatch(
-      filterCamerasPrice({
-        priceFrom,
-        priceTo,
-        type: selectedPriceTypeFilter
-      })
-    );
+    if (priceFrom !== PRICE_FROM && priceTo !== PRICE_TO) {
+      dispatch(
+        filterCamerasPrice({
+          priceFrom,
+          priceTo
+        })
+      );
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedPriceFrom, debouncedPriceTo, dispatch, priceFrom, priceTo, selectedPriceTypeFilter]);
+  }, [debouncedPriceFrom, debouncedPriceTo, dispatch, priceFrom, priceTo]);
 
   const handleFilterPriceInputInput = (evt: FormEvent<HTMLInputElement>) => {
-
     const type = evt.currentTarget.name as CameraFilterPrice;
     const value = Number(evt.currentTarget.value);
 
-    setSelectedPriceTypeFilter(type);
 
     if (type === CameraFilterPrice.From) {
       setPriceFrom(value);
@@ -102,7 +92,10 @@ export default function CatalogFilter(): JSX.Element {
 
   const handleFilterCategoryInputChange = (category: CameraCategory) => {
     if (category === CameraCategory.videocamera) {
-      const updatedTypes: CameraType[] = selectedTypes.filter((type) => type !== CameraType.film && type !== CameraType.snapshot);
+      const updatedTypes: CameraType[] =
+        selectedTypes.filter((type) =>
+          type !== CameraType.film && type !== CameraType.snapshot
+        );
 
       setSelectedTypes(updatedTypes);
       dispatch(filterCamerasType(updatedTypes));
@@ -141,7 +134,7 @@ export default function CatalogFilter(): JSX.Element {
   };
 
   return (
-    <div className="catalog-filter">
+    <div className="catalog-filter" data-testid="catalog-filter">
       <form action="#">
         <h2 className="visually-hidden">Фильтр</h2>
         <fieldset className="catalog-filter__block">
@@ -183,6 +176,7 @@ export default function CatalogFilter(): JSX.Element {
                     value={key}
                     checked={value === categoryFilter}
                     onChange={() => handleFilterCategoryInputChange(value)}
+                    data-testid="category-radio-button"
                   />
                   <span className="custom-radio__icon" ></span>
                   <span className="custom-radio__label">{value}</span>

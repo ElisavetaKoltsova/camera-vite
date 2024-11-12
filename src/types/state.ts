@@ -1,4 +1,4 @@
-import { CameraCategory, CameraFilterPrice, CameraLevel, CameraType } from '../const';
+import { CameraCategory, CameraLevel, CameraType } from '../const';
 import { store } from '../store';
 import { Camera } from './camera';
 import { Promo } from './promo';
@@ -12,9 +12,8 @@ export type ProductData = {
   camerasInBasket: Camera[];
   isCamerasDataLoading: boolean;
   sort: string;
-  priceFrom: number | null;
-  priceTo: number | null;
-  filterOfPrice: CameraFilterPrice | null;
+  priceFrom: number;
+  priceTo: number;
   filterOfCategory: CameraCategory | null;
   filterOfTypes: CameraType[];
   filterOfLevels: CameraLevel[];

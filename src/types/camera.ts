@@ -7,7 +7,7 @@ export type Camera = {
   type: CameraType;
   category: CameraCategory | 'Фотоаппарат';
   description: string;
-  level: CameraLevel;
+  level: CameraLevel | 'Нулевой' | 'Любительский' | 'Профессиональный';
   price: number;
   rating: number;
   reviewCount: number;

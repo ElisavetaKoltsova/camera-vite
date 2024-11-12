@@ -46,7 +46,7 @@ export const findMinimalPrice = (cameras: Camera[]) => {
   let minimalPrice = PRICE_TO;
 
   if (cameras.length === 0) {
-    minimalPrice = 0;
+    minimalPrice = PRICE_FROM;
     return minimalPrice;
   }
 
