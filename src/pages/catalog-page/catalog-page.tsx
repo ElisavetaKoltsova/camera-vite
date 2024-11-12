@@ -1,7 +1,7 @@
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import Banner from '../../components/banner/banner';
 import Header from '../../components/header/header';
-import { AppRoute, COUNT_OF_CAMERAS_ON_PAGE } from '../../const';
+import { AppRoute, COUNT_OF_CAMERAS_ON_PAGE, URLParam } from '../../const';
 import CatalogCardList from '../../components/catalog-card-list/catalog-card-list';
 import Footer from '../../components/footer/footer';
 import { getCameras, getCamerasDataLoadingStatus, getCategoryFilter, getFilteredCameras, getLevelFilter, getPriceFrom, getPriceTo, getSort, getTypeFilter } from '../../store/product-data/selectors';
@@ -23,7 +23,7 @@ import Pagination from '../../components/pagination/pagination';
 export default function CatalogPage(): JSX.Element {
   const { pathname } = useLocation();
   const dispatch = useAppDispatch();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const cameras = useAppSelector(getCameras);
   const filteredCameras = useAppSelector(getFilteredCameras);
@@ -56,6 +56,14 @@ export default function CatalogPage(): JSX.Element {
   const camerasCountFrom = (currentPage - 1) * COUNT_OF_CAMERAS_ON_PAGE;
   const camerasCountTo = currentPage * COUNT_OF_CAMERAS_ON_PAGE > usedCameras.length ? usedCameras.length : currentPage * COUNT_OF_CAMERAS_ON_PAGE;
   const visibleCameras = usedCameras.slice(camerasCountFrom, camerasCountTo);
+
+  useEffect(() => {
+    setSearchParams((prevParams) => {
+      const params = new URLSearchParams(prevParams);
+      params.set(URLParam.Page, currentPage.toString());
+      return params;
+    });
+  }, [currentPage, setSearchParams]);
 
   useEffect(() => {
     navigateToUpOfPage();

@@ -60,7 +60,16 @@ export enum AppRoute {
   Product = '/cameras',
   ProductId = ':id',
   Basket = '/basket',
-  Page = '?page='
+}
+
+export enum URLParam {
+  Page = 'page',
+  Sort = 'sort',
+  PriceFrom = 'priceFrom',
+  PriceTo = 'priceTo',
+  FilterOfCategory = 'filterOfCategory',
+  FilterOfType = 'filterOfType',
+  FilterOfLevel = 'filterOfLevel'
 }
 
 export enum APIRoute {

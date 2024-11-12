@@ -1,12 +1,16 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { getSort } from '../../store/product-data/selectors';
-import { SortOrder, SortType } from '../../const';
+import { SortOrder, Sorts, SortType, URLParam } from '../../const';
 import { sortCameras } from '../../store/product-data/product-data';
+import { useSearchParams } from 'react-router-dom';
 
 export default function CatalogSort(): JSX.Element {
   const dispatch = useAppDispatch();
   const currentSort = useAppSelector(getSort);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlSort = searchParams.get(URLParam.Sort) || Sorts.PRICE_LOW_TO_HIGH;
 
   const [sortType, setSortType] = useState(currentSort.split(' ')[0]);
   const [sortOrder, setSortOrder] = useState(currentSort.split(' ')[1]);
@@ -15,15 +19,40 @@ export default function CatalogSort(): JSX.Element {
     dispatch(sortCameras(`${sortType} ${sortOrder}`));
   }, [dispatch, sortType, sortOrder]);
 
+  useEffect(() => {
+    const [urlSortType, urlSortOrder] = urlSort.split(' ');
+
+    if (urlSortType !== sortType || urlSortOrder !== sortOrder) {
+      setSortType(urlSortType);
+      setSortOrder(urlSortOrder);
+    }
+  }, [urlSort, sortType, sortOrder]);
+
   const handleSortInputChange = (evt: FormEvent<HTMLInputElement>) => {
     const checkedSort = evt.currentTarget.id;
 
     if (checkedSort === SortType.PRICE || checkedSort === SortType.POPULAR) {
+      const dispatchedSort = `${checkedSort} ${sortOrder}`;
+
       setSortType(checkedSort);
-      dispatch(sortCameras(`${checkedSort} ${sortOrder}`));
+      dispatch(sortCameras(dispatchedSort));
+
+      setSearchParams((prevParams) => {
+        const params = new URLSearchParams(prevParams);
+        params.set(URLParam.Sort, dispatchedSort);
+        return params;
+      });
     } else if (checkedSort === SortOrder.UP || checkedSort === SortOrder.DOWN) {
+      const dispatchedSort = `${sortType} ${checkedSort}`;
+
       setSortOrder(checkedSort);
-      dispatch(sortCameras(`${sortType} ${checkedSort}`));
+      dispatch(sortCameras(dispatchedSort));
+
+      setSearchParams((prevParams) => {
+        const params = new URLSearchParams(prevParams);
+        params.set(URLParam.Sort, dispatchedSort);
+        return params;
+      });
     }
   };
 
