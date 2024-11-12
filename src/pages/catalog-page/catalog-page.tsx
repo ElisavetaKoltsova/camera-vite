@@ -44,7 +44,7 @@ export default function CatalogPage(): JSX.Element {
 
   let usedCameras: Camera[] = filterPrice(cameras, priceFrom, priceTo);
 
-  if (categoryFilter || typeFilter.length > 0 || levelFilter.length > 0) {
+  if (categoryFilter || typeFilter.length || levelFilter.length) {
     usedCameras = [...filteredCameras];
   }
 
@@ -56,6 +56,16 @@ export default function CatalogPage(): JSX.Element {
   const camerasCountFrom = (currentPage - 1) * COUNT_OF_CAMERAS_ON_PAGE;
   const camerasCountTo = currentPage * COUNT_OF_CAMERAS_ON_PAGE > usedCameras.length ? usedCameras.length : currentPage * COUNT_OF_CAMERAS_ON_PAGE;
   const visibleCameras = usedCameras.slice(camerasCountFrom, camerasCountTo);
+
+  useEffect(() => {
+    if (currentPage > countOfPage) {
+      setSearchParams((prevParams) => {
+        const params = new URLSearchParams(prevParams);
+        params.set(URLParam.Page, '1');
+        return params;
+      });
+    }
+  }, [currentPage, countOfPage, setSearchParams, usedCameras]);
 
   useEffect(() => {
     setSearchParams((prevParams) => {
@@ -122,7 +132,11 @@ export default function CatalogPage(): JSX.Element {
                       ? <Loader />
                       : <CatalogCardList cameras={visibleCameras} onClick={handlePopupButtonOpenClick} />
                   }
-                  <Pagination currentPage={currentPage} countOfPage={countOfPage} />
+                  {
+                    usedCameras.length < COUNT_OF_CAMERAS_ON_PAGE
+                      ? ''
+                      : <Pagination currentPage={currentPage} countOfPage={countOfPage} />
+                  }
                 </div>
               </div>
             </div>

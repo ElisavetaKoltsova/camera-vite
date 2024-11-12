@@ -63,7 +63,7 @@ export default function SearchForm(): JSX.Element {
     <React.Fragment>
       <div
         data-testid="search-from"
-        className={`form-search ${foundCameras.length > 0 ? 'list-opened' : ''}`}
+        className={`form-search ${foundCameras.length ? 'list-opened' : ''}`}
       >
         <form onSubmit={(evt) => evt.preventDefault()}>
           <label>
@@ -82,7 +82,7 @@ export default function SearchForm(): JSX.Element {
           <ul
             className="form-search__select-list"
             data-testid="search-results"
-            data-opened={foundCameras.length > 0}
+            data-opened={foundCameras.length}
           >
             {
               foundCameras.map((camera, index) =>
@@ -105,7 +105,7 @@ export default function SearchForm(): JSX.Element {
           className="form-search__reset"
           type="button"
           onClick={handleResetSearchButtonClick}
-          style={{ display: searchQuery.length > 0 ? 'flex' : 'none' }}
+          style={{ display: searchQuery.length ? 'flex' : 'none' }}
         >
           <svg width="10" height="10" aria-hidden="true">
             <use xlinkHref="#icon-close"></use>

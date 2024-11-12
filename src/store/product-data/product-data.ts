@@ -27,7 +27,7 @@ export const productData = createSlice({
   initialState,
   reducers: {
     sortCameras(state, action: PayloadAction<string>) {
-      if (state.filteredCameras.length > 0) {
+      if (state.filteredCameras.length) {
         state.filteredCameras = sort[action.payload]([...state.filteredCameras]);
         state.sort = action.payload;
       } else {

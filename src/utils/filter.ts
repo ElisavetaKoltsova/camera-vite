@@ -52,7 +52,7 @@ export const applyFilters = (
     filteredCameras = filterCategory[filterOfCategory]([...filteredCameras]);
   }
 
-  if (filterOfTypes.length > 0) {
+  if (filterOfTypes.length) {
     filteredCameras = filterOfTypes.reduce((filtered, type) => {
       const typeFiltered = filterType[type](filteredCameras);
       return filtered.concat(
@@ -63,7 +63,7 @@ export const applyFilters = (
     }, [] as Camera[]);
   }
 
-  if (filterOfLevels.length > 0) {
+  if (filterOfLevels.length) {
     filteredCameras = filterOfLevels.reduce((filtered, level) => {
       const levelFiltered = filterLevel[level](filteredCameras);
       return filtered.concat(

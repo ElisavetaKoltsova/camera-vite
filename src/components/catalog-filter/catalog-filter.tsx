@@ -26,7 +26,7 @@ export default function CatalogFilter(): JSX.Element {
 
   let usedCameras: Camera[] = filterPrice(cameras, minPrice, maxPrice);
 
-  if (categoryFilter || typeFilter.length > 0 || levelFilter.length > 0) {
+  if (categoryFilter || typeFilter || levelFilter) {
     usedCameras = [...filteredCameras];
   }
 
@@ -60,10 +60,22 @@ export default function CatalogFilter(): JSX.Element {
     const isValidCategory = categoryParam && Object.values(CameraCategory).includes(categoryParam as CameraCategory);
 
     const typesParam = (searchParams.get(URLParam.FilterOfTypes)?.split(' ') || []) as CameraType[];
-    const validTypes = typesParam.filter((type) => Object.values(CameraType).includes(type));
+    let validTypes = typesParam.filter((type) => Object.values(CameraType).includes(type));
 
     const levelsParam = (searchParams.get(URLParam.FilterOfLevels)?.split(' ') || []) as CameraLevel[];
     const validLevels = levelsParam.filter((level) => Object.values(CameraLevel).includes(level));
+
+    if (categoryParam === CameraCategory.videocamera) {
+      validTypes = validTypes.filter(
+        (type) => type !== CameraType.film && type !== CameraType.snapshot
+      );
+
+      setSearchParams((prevParams) => {
+        const params = new URLSearchParams(prevParams);
+        params.set(URLParam.FilterOfTypes, validTypes.join(' '));
+        return params;
+      });
+    }
 
     setPriceFrom(isValidPriceFrom ? priceFromParam : PRICE_FROM);
     setPriceTo(isValidPriceTo ? priceToParam : PRICE_TO);
@@ -81,7 +93,7 @@ export default function CatalogFilter(): JSX.Element {
     if (validLevels.length) {
       dispatch(filterCamerasLevel(validLevels));
     }
-  }, [dispatch, searchParams]);
+  }, [dispatch, searchParams, setSearchParams]);
 
   useEffect(() => {
     setPriceFrom(minPrice);
@@ -193,6 +205,16 @@ export default function CatalogFilter(): JSX.Element {
     setPriceFrom(minPrice);
     setPriceTo(maxPrice);
 
+    setSearchParams((prevParams) => {
+      const params = new URLSearchParams(prevParams);
+      params.delete(URLParam.FilterOfCategory);
+      params.delete(URLParam.FilterOfTypes);
+      params.delete(URLParam.FilterOfLevels);
+      params.set(URLParam.PriceFrom, PRICE_FROM.toString());
+      params.set(URLParam.PriceTo, PRICE_TO.toString());
+      return params;
+    });
+
     dispatch(resetFilters());
   };
 
@@ -277,6 +299,7 @@ export default function CatalogFilter(): JSX.Element {
                   <input
                     type="checkbox"
                     name={value}
+                    checked={selectedLevels.includes(value)}
                     onChange={() => handleFilterLevelInputChange(value)}
                   />
                   <span className="custom-checkbox__icon"></span>
