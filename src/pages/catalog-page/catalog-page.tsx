@@ -1,7 +1,7 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import Banner from '../../components/banner/banner';
 import Header from '../../components/header/header';
-import { AppRoute } from '../../const';
+import { AppRoute, COUNT_OF_CAMERAS_ON_PAGE } from '../../const';
 import CatalogCardList from '../../components/catalog-card-list/catalog-card-list';
 import Footer from '../../components/footer/footer';
 import { getCameras, getCamerasDataLoadingStatus, getCategoryFilter, getFilteredCameras, getLevelFilter, getPriceFrom, getPriceTo, getSort, getTypeFilter } from '../../store/product-data/selectors';
@@ -18,10 +18,12 @@ import CatalogSort from '../../components/catalog-sort/catalog-sort';
 import { resetFilters } from '../../store/product-data/product-data';
 import { sort } from '../../utils/sort';
 import { filterPrice } from '../../utils/filter';
+import Pagination from '../../components/pagination/pagination';
 
 export default function CatalogPage(): JSX.Element {
   const { pathname } = useLocation();
   const dispatch = useAppDispatch();
+  const [searchParams] = useSearchParams();
 
   const cameras = useAppSelector(getCameras);
   const filteredCameras = useAppSelector(getFilteredCameras);
@@ -47,6 +49,13 @@ export default function CatalogPage(): JSX.Element {
   }
 
   usedCameras = sort[currentSort]([...usedCameras]);
+
+  const currentPage = Number(searchParams.get('page')) || 1;
+  const countOfPage: number = Math.ceil(usedCameras.length / COUNT_OF_CAMERAS_ON_PAGE);
+
+  const camerasCountFrom = (currentPage - 1) * COUNT_OF_CAMERAS_ON_PAGE;
+  const camerasCountTo = currentPage * COUNT_OF_CAMERAS_ON_PAGE > usedCameras.length ? usedCameras.length : currentPage * COUNT_OF_CAMERAS_ON_PAGE;
+  const visibleCameras = usedCameras.slice(camerasCountFrom, camerasCountTo);
 
   useEffect(() => {
     navigateToUpOfPage();
@@ -103,9 +112,9 @@ export default function CatalogPage(): JSX.Element {
                   {
                     isCamerasDataLoading
                       ? <Loader />
-                      : <CatalogCardList cameras={usedCameras} onClick={handlePopupButtonOpenClick} />
+                      : <CatalogCardList cameras={visibleCameras} onClick={handlePopupButtonOpenClick} />
                   }
-                  {/* <Pagination /> */}
+                  <Pagination currentPage={currentPage} countOfPage={countOfPage} />
                 </div>
               </div>
             </div>

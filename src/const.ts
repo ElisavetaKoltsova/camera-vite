@@ -2,6 +2,8 @@
 export const PRICE_FROM = 0;
 export const PRICE_TO = 1000000;
 
+export const COUNT_OF_CAMERAS_ON_PAGE = 9;
+
 export const months = [
   'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
   'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
@@ -57,7 +59,8 @@ export enum AppRoute {
   Catalog = '/',
   Product = '/cameras',
   ProductId = ':id',
-  Basket = '/basket'
+  Basket = '/basket',
+  Page = '?page='
 }
 
 export enum APIRoute {
