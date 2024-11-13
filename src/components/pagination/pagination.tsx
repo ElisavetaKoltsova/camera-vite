@@ -30,7 +30,7 @@ export default function Pagination({currentPage, countOfPage}: PaginationProps):
   };
 
   return (
-    <div className="pagination">
+    <div className="pagination" data-testid="pagination">
       <ul className="pagination__list">
         {
           startOfPagination < BASE_COUNT_OF_PAGE
@@ -41,6 +41,7 @@ export default function Pagination({currentPage, countOfPage}: PaginationProps):
                 className="pagination__link pagination__link--text"
                 to='#'
                 onClick={(evt) => handlePaginationClick(currentPage - 1, evt)}
+                data-testid="back"
               >
                 Назад
               </Link>
@@ -68,6 +69,7 @@ export default function Pagination({currentPage, countOfPage}: PaginationProps):
                 className="pagination__link pagination__link--text"
                 to='#'
                 onClick={(evt) => handlePaginationClick(currentPage + 1, evt)}
+                data-testid="next"
               >
                 Далее
               </Link>

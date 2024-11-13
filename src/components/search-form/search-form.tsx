@@ -82,7 +82,7 @@ export default function SearchForm(): JSX.Element {
           <ul
             className="form-search__select-list"
             data-testid="search-results"
-            data-opened={foundCameras.length}
+            data-opened={foundCameras.length > 0}
           >
             {
               foundCameras.map((camera, index) =>
