@@ -1,8 +1,8 @@
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import Header from '../../components/header/header';
 import NotFoundPage from '../not-found-page/not-found-page';
 import Footer from '../../components/footer/footer';
-import { AppRoute } from '../../const';
+import { AppRoute, Tab, URLParam } from '../../const';
 import ProductRating from '../../components/product-rating/product-rating';
 import { convertNumberIntoMoneyFormat, navigateToUpOfPage } from '../../utils/list';
 import ReviewList from '../../components/review-list/review-list';
@@ -25,8 +25,12 @@ export default function ProductPage(): JSX.Element {
   const dispatch = useAppDispatch();
   const { pathname } = useLocation();
 
-  const [characteristicsStatus, setCharacteristicsStatus] = useState<boolean>(false);
-  const [descriptionStatus, setDescriptionStatus] = useState<boolean>(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const urlTabParam = searchParams.get(URLParam.TabControl) || Tab.Description;
+  const isCorrectUrl = Object.values(Tab).includes(urlTabParam as Tab);
+
+  const [currentTab, setCurrentTab] = useState<Tab>(Tab.Description);
 
   const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
 
@@ -42,6 +46,14 @@ export default function ProductPage(): JSX.Element {
     navigateToUpOfPage();
   }, [pathname]);
 
+  useEffect(() => {
+    if (isCorrectUrl) {
+      if (urlTabParam !== currentTab) {
+        setCurrentTab(urlTabParam as Tab);
+      }
+    }
+  }, [isCorrectUrl, urlTabParam, currentTab]);
+
   const currentProduct = useAppSelector(getCurrentCamera);
   const reviews = useAppSelector(getReviews);
   const similarCameras = useAppSelector(getSimilarCameras);
@@ -55,9 +67,14 @@ export default function ProductPage(): JSX.Element {
 
   const callItemPopupOpenStatus = useAppSelector(getCallItemPopupOpenStatus);
 
-  const handleTabButtonClick = () => {
-    setCharacteristicsStatus(!characteristicsStatus);
-    setDescriptionStatus(!descriptionStatus);
+  const handleTabButtonClick = (tab: Tab) => {
+    setCurrentTab(tab);
+
+    setSearchParams((prevParams) => {
+      const params = new URLSearchParams(prevParams);
+      params.set(URLParam.TabControl, tab);
+      return params;
+    });
   };
 
   const handleReviewPopupButtonOpenToggleClick = () => {
@@ -153,11 +170,20 @@ export default function ProductPage(): JSX.Element {
                     </button>
                     <div className="tabs product__tabs">
                       <div className="tabs__controls product__tabs-controls">
-                        <button className={`tabs__control ${characteristicsStatus ? 'is-active' : ''}`} type="button" onClick={handleTabButtonClick}>Характеристики</button>
-                        <button className={`tabs__control ${descriptionStatus ? 'is-active' : ''}`} type="button" onClick={handleTabButtonClick}>Описание</button>
+                        {
+                          Object.values(Tab).map((value) => (
+                            <button
+                              className={`tabs__control ${currentTab === value ? 'is-active' : ''}`}
+                              type="button" onClick={() => handleTabButtonClick(value)}
+                              key={value}
+                            >
+                              {value}
+                            </button>
+                          ))
+                        }
                       </div>
                       <div className="tabs__content">
-                        <div className={`tabs__element ${characteristicsStatus ? 'is-active' : ''}`}>
+                        <div className={`tabs__element ${currentTab === Tab.Characteristics ? 'is-active' : ''}`}>
                           <ul className="product__tabs-list">
                             <li className="item-list"><span className="item-list__title">Артикул:</span>
                               <p className="item-list__text">{vendorCode}</p>
@@ -173,7 +199,7 @@ export default function ProductPage(): JSX.Element {
                             </li>
                           </ul>
                         </div>
-                        <div className={`tabs__element ${descriptionStatus ? 'is-active' : ''}`}>
+                        <div className={`tabs__element ${currentTab === Tab.Description ? 'is-active' : ''}`}>
                           <div className="product__tabs-text">
                             {description}
                           </div>

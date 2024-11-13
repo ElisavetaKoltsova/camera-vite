@@ -26,6 +26,11 @@ export const SortOrder = {
   DOWN: 'down'
 };
 
+export enum Tab {
+  Characteristics ='Характеристики',
+  Description = 'Описание'
+}
+
 export enum CameraFilterPrice {
   From = 'price',
   To = 'priceUp'
@@ -69,7 +74,8 @@ export enum URLParam {
   PriceTo = 'priceTo',
   FilterOfCategory = 'filterOfCategory',
   FilterOfTypes = 'filterOfTypes',
-  FilterOfLevels = 'filterOfLevels'
+  FilterOfLevels = 'filterOfLevels',
+  TabControl = 'tabControl'
 }
 
 export enum APIRoute {
