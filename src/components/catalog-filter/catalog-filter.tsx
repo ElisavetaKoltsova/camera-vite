@@ -50,11 +50,11 @@ export default function CatalogFilter(): JSX.Element {
   const priceUp: number | string = priceTo !== PRICE_TO ? priceTo : '';
 
   useEffect(() => {
-    const priceFromParam = Number(searchParams.get(URLParam.PriceFrom));
-    const priceToParam = Number(searchParams.get(URLParam.PriceTo));
+    // const priceFromParam = Number(searchParams.get(URLParam.PriceFrom));
+    // const priceToParam = Number(searchParams.get(URLParam.PriceTo));
 
-    const isValidPriceFrom = !isNaN(priceFromParam) && priceFromParam >= PRICE_FROM;
-    const isValidPriceTo = !isNaN(priceToParam) && priceToParam <= PRICE_TO && priceToParam >= priceFromParam;
+    // const isValidPriceFrom = !isNaN(priceFromParam) && priceFromParam >= PRICE_FROM;
+    // const isValidPriceTo = !isNaN(priceToParam) && priceToParam <= PRICE_TO && priceToParam >= priceFromParam;
 
     const categoryParam = searchParams.get(URLParam.FilterOfCategory);
     const isValidCategory = categoryParam && Object.values(CameraCategory).includes(categoryParam as CameraCategory);
@@ -77,13 +77,13 @@ export default function CatalogFilter(): JSX.Element {
       });
     }
 
-    setPriceFrom(isValidPriceFrom ? priceFromParam : PRICE_FROM);
-    setPriceTo(isValidPriceTo ? priceToParam : PRICE_TO);
+    // setPriceFrom(isValidPriceFrom ? priceFromParam : PRICE_FROM);
+    // setPriceTo(isValidPriceTo ? priceToParam : PRICE_TO);
     setSelectedCategory(isValidCategory ? (categoryParam as CameraCategory) : null);
     setSelectedTypes(validTypes);
     setSelectedLevels(validLevels);
 
-    dispatch(filterCamerasPrice({ priceFrom: isValidPriceFrom ? priceFromParam : PRICE_FROM, priceTo: isValidPriceTo ? priceToParam : PRICE_TO }));
+    //dispatch(filterCamerasPrice({ priceFrom: isValidPriceFrom ? priceFromParam : PRICE_FROM, priceTo: isValidPriceTo ? priceToParam : PRICE_TO }));
     if (isValidCategory) {
       dispatch(filterCamerasCategory(categoryParam as CameraCategory));
     }
@@ -123,12 +123,12 @@ export default function CatalogFilter(): JSX.Element {
         })
       );
 
-      setSearchParams((prevParams) => {
-        const params = new URLSearchParams(prevParams);
-        params.set(URLParam.PriceFrom, priceFrom.toString());
-        params.set(URLParam.PriceTo, priceTo.toString());
-        return params;
-      });
+      // setSearchParams((prevParams) => {
+      //   const params = new URLSearchParams(prevParams);
+      //   params.set(URLParam.PriceFrom, priceFrom.toString());
+      //   params.set(URLParam.PriceTo, priceTo.toString());
+      //   return params;
+      // });
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

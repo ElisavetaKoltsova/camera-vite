@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../hooks';
 import { getCameras } from '../../store/product-data/selectors';
 import { Camera } from '../../types/camera';
@@ -17,6 +17,8 @@ export default function SearchForm(): JSX.Element {
   const [foundCameras, setFoundCameras] = useState<Camera[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
+  const searchListRefs = useRef<(HTMLLIElement | null)[]>([]);
+
   useEffect(() => {
     if (searchQuery.length >= START_LENGTH_OF_SEARCH_QUERY) {
       setFoundCameras(cameras.filter((camera) =>
@@ -27,6 +29,16 @@ export default function SearchForm(): JSX.Element {
       setFoundCameras([]);
     }
   }, [searchQuery, cameras]);
+
+  useEffect(() => {
+    if (selectedIndex !== null) {
+      const activeElement = searchListRefs.current[selectedIndex];
+      activeElement?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
+    }
+  }, [selectedIndex]);
 
   const handleSearchInputInput = (evt: FormEvent<HTMLInputElement>) => {
     const query = evt.currentTarget.value;
@@ -91,6 +103,7 @@ export default function SearchForm(): JSX.Element {
                     className={`form-search__select-item ${selectedIndex === index ? 'hover' : ''}`}
                     tabIndex={index}
                     key={camera.id}
+                    ref={(element) => (searchListRefs.current[index] = element)}
                   >
                     <Link to={`${AppRoute.Product}/${camera.id}`}>
                       {camera.name}
