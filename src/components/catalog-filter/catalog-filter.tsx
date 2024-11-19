@@ -2,10 +2,9 @@ import { FormEvent, useEffect, useState } from 'react';
 import { CameraCategory, CameraFilterPrice, CameraLevel, CameraType, PRICE_FROM, PRICE_TO, URLParam } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { filterCamerasCategory, filterCamerasLevel, filterCamerasPrice, filterCamerasType, resetFilters } from '../../store/product-data/product-data';
-import { getCameras, getFilteredCameras, getPriceFrom, getPriceTo } from '../../store/product-data/selectors';
+import { getCameras, getFilteredCameras } from '../../store/product-data/selectors';
 import { findMinimalPrice, findMaximalPrice } from '../../utils/list';
 import { useDebounce } from 'use-debounce';
-import { Camera } from '../../types/camera';
 import { filterPrice } from '../../utils/filter';
 import { useSearchParams } from 'react-router-dom';
 
@@ -26,93 +25,57 @@ export default function CatalogFilter({priceFromParam, priceToParam, categoryFil
   const cameras = useAppSelector(getCameras);
   const filteredCameras = useAppSelector(getFilteredCameras);
 
-  const minPrice = useAppSelector(getPriceFrom);
-  const maxPrice = useAppSelector(getPriceTo);
-
-  let usedCameras: Camera[] = cameras;
-
-  if (categoryFilter || typeFilters.length || levelFilters.length) {
-    usedCameras = [...filteredCameras];
-  }
-
-  usedCameras = filterPrice(usedCameras, priceFromParam, priceToParam);
-
-  const Price = {
-    MIN_PRICE: findMinimalPrice(usedCameras),
-    MAX_PRICE: findMaximalPrice(usedCameras)
-  };
-
-  //const {MIN_PRICE: priceFrom, MAX_PRICE: priceTo} = Price;
-
-  const [priceFrom, setPriceFrom] = useState<number>(minPrice);
-  const [priceTo, setPriceTo] = useState<number>(maxPrice);
+  const [priceFrom, setPriceFrom] = useState<number>(priceFromParam);
+  const [priceTo, setPriceTo] = useState<number>(priceToParam);
 
   const [debouncedPriceFrom] = useDebounce(priceFrom, DEBOUNCE_TIMEOUT);
   const [debouncedPriceTo] = useDebounce(priceTo, DEBOUNCE_TIMEOUT);
 
+  const minPrice = findMinimalPrice(cameras);
+  const maxPrice = findMaximalPrice(cameras);
+
   const price: number | string = priceFrom !== PRICE_FROM ? priceFrom : '';
   const priceUp: number | string = priceTo !== PRICE_TO ? priceTo : '';
 
-  useEffect(() => {
-    setSearchParams((prevParams) => {
-      const params = new URLSearchParams(prevParams);
-      params.set(URLParam.PriceFrom, priceFromParam.toString());
-      params.set(URLParam.PriceTo, priceToParam.toString());
-      return params;
-    });
-
-    //dispatch(filterCamerasPrice({priceFrom: priceFromParam, priceTo: priceToParam}));
-  }, [dispatch, priceFromParam, priceToParam, setSearchParams]);
+  // why category saved
+  console.log(categoryFilter, typeFilters, levelFilters)
 
   useEffect(() => {
-    setPriceFrom(Price.MIN_PRICE);
-    setPriceTo(Price.MAX_PRICE);
-  }, [Price.MAX_PRICE, Price.MIN_PRICE]);
+    setPriceFrom(priceFromParam);
+    setPriceTo(priceToParam);
+  }, [priceFromParam, priceToParam]);
 
   useEffect(() => {
-    dispatch(resetFilters());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (debouncedPriceFrom < Price.MIN_PRICE) {
-      setPriceFrom(Price.MIN_PRICE);
+    if (categoryFilter || typeFilters.length || levelFilters.length) {
+      setPriceFrom(findMinimalPrice(filterPrice(filteredCameras, priceFrom, priceTo)));
+      setPriceTo(findMaximalPrice(filterPrice(filteredCameras, priceFrom, priceTo)));
+    } else {
+      setPriceFrom(minPrice);
+      setPriceTo(maxPrice);
     }
-    if (debouncedPriceFrom > debouncedPriceTo) {
-      setPriceTo(debouncedPriceFrom);
-    }
-    if (debouncedPriceTo > Price.MAX_PRICE) {
-      setPriceTo(Price.MAX_PRICE);
-    }
+  }, [categoryFilter, typeFilters, levelFilters, filteredCameras, priceFrom, priceTo, minPrice, maxPrice]);
 
-    if (priceFrom !== PRICE_FROM && priceTo !== PRICE_TO) {
-      dispatch(
-        filterCamerasPrice({
-          priceFrom,
-          priceTo
-        })
-      );
-
+  useEffect(() => {
+    if (debouncedPriceFrom <= debouncedPriceTo) {
+      dispatch(filterCamerasPrice({ priceFrom: debouncedPriceFrom, priceTo: debouncedPriceTo }));
       setSearchParams((prevParams) => {
         const params = new URLSearchParams(prevParams);
-        params.set(URLParam.PriceFrom, priceFrom.toString());
-        params.set(URLParam.PriceTo, priceTo.toString());
+        params.set(URLParam.PriceFrom, debouncedPriceFrom.toString());
+        params.set(URLParam.PriceTo, debouncedPriceTo.toString());
         return params;
       });
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedPriceFrom, debouncedPriceTo, dispatch, priceFrom, priceTo]);
+  }, [debouncedPriceFrom, debouncedPriceTo, dispatch, setSearchParams]);
 
   const handleFilterPriceInputInput = (evt: FormEvent<HTMLInputElement>) => {
-    const type = evt.currentTarget.name as CameraFilterPrice;
-    const value = Number(evt.currentTarget.value);
+    const { name, value } = evt.currentTarget;
+    const numericValue = Number(value) || 0;
 
-
-    if (type === CameraFilterPrice.From) {
-      setPriceFrom(value);
+    if (name === CameraFilterPrice.From) {
+      setPriceFrom(Math.max(minPrice, Math.min(numericValue, priceTo)));
     }
-    if (type === CameraFilterPrice.To) {
-      setPriceTo(value);
+    if (name === CameraFilterPrice.To) {
+      setPriceTo(Math.max(priceFrom, Math.min(numericValue, maxPrice)));
     }
   };
 
@@ -166,20 +129,19 @@ export default function CatalogFilter({priceFromParam, priceToParam, categoryFil
   };
 
   const handleResetFiltersButtonClick = () => {
-    setPriceFrom(findMinimalPrice(cameras));
-    setPriceTo(findMaximalPrice(cameras));
+    setPriceFrom(minPrice);
+    setPriceTo(maxPrice);
+    dispatch(resetFilters());
 
     setSearchParams((prevParams) => {
       const params = new URLSearchParams(prevParams);
       params.delete(URLParam.FilterOfCategory);
       params.delete(URLParam.FilterOfTypes);
       params.delete(URLParam.FilterOfLevels);
-      params.set(URLParam.PriceFrom, priceFrom.toString());
-      params.set(URLParam.PriceTo, priceTo.toString());
+      params.set(URLParam.PriceFrom, minPrice.toString());
+      params.set(URLParam.PriceTo, maxPrice.toString());
       return params;
     });
-
-    dispatch(resetFilters());
   };
 
   return (
