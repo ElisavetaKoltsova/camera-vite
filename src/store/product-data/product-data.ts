@@ -22,6 +22,23 @@ const initialState: ProductData = {
   filterOfLevels: []
 };
 
+const changeAndApplyFilters = (state: ProductData) => {
+  state.filteredCameras = applyFilters(
+    state.cameras,
+    state.filterOfCategory,
+    state.filterOfTypes,
+    state.filterOfLevels,
+  );
+
+  state.priceFrom = findMinimalPrice(state.cameras);
+  state.priceTo = findMaximalPrice(state.cameras);
+
+  const { filteredCameras, priceFrom, priceTo } = changeFiltersByPrice(state.filteredCameras, state.priceFrom, state.priceTo);
+  state.filteredCameras = filteredCameras;
+  state.priceFrom = priceFrom;
+  state.priceTo = priceTo;
+};
+
 export const productData = createSlice({
   name: NameSpace.Product,
   initialState,
@@ -50,57 +67,15 @@ export const productData = createSlice({
     },
     filterCamerasCategory(state, action: PayloadAction<CameraCategory>) {
       state.filterOfCategory = action.payload;
-
-      state.filteredCameras = applyFilters(
-        state.cameras,
-        state.filterOfCategory,
-        state.filterOfTypes,
-        state.filterOfLevels,
-      );
-
-      state.priceFrom = findMinimalPrice(state.cameras);
-      state.priceTo = findMaximalPrice(state.cameras);
-
-      const {filteredCameras, priceFrom, priceTo} = changeFiltersByPrice(state.filteredCameras, state.priceFrom, state.priceTo);
-      state.filteredCameras = filteredCameras;
-      state.priceFrom = priceFrom;
-      state.priceTo = priceTo;
+      changeAndApplyFilters(state);
     },
     filterCamerasType(state, action: PayloadAction<CameraType[]>) {
       state.filterOfTypes = action.payload;
-
-      state.filteredCameras = applyFilters(
-        state.cameras,
-        state.filterOfCategory,
-        state.filterOfTypes,
-        state.filterOfLevels,
-      );
-
-      state.priceFrom = findMinimalPrice(state.cameras);
-      state.priceTo = findMaximalPrice(state.cameras);
-
-      const {filteredCameras, priceFrom, priceTo} = changeFiltersByPrice(state.filteredCameras, state.priceFrom, state.priceTo);
-      state.filteredCameras = filteredCameras;
-      state.priceFrom = priceFrom;
-      state.priceTo = priceTo;
+      changeAndApplyFilters(state);
     },
     filterCamerasLevel(state, action: PayloadAction<CameraLevel[]>) {
       state.filterOfLevels = action.payload;
-
-      state.filteredCameras = applyFilters(
-        state.cameras,
-        state.filterOfCategory,
-        state.filterOfTypes,
-        state.filterOfLevels,
-      );
-
-      state.priceFrom = findMinimalPrice(state.cameras);
-      state.priceTo = findMaximalPrice(state.cameras);
-
-      const {filteredCameras, priceFrom, priceTo} = changeFiltersByPrice(state.filteredCameras, state.priceFrom, state.priceTo);
-      state.filteredCameras = filteredCameras;
-      state.priceFrom = priceFrom;
-      state.priceTo = priceTo;
+      changeAndApplyFilters(state);
     },
     resetFilters(state) {
       state.filteredCameras = [];
@@ -170,6 +145,10 @@ export const productData = createSlice({
         state.cameras.forEach((camera) => {
           camera.countInBasket = 0;
         });
+
+        if (state.filterOfCategory || state.filterOfTypes.length || state.filterOfLevels.length) {
+          changeAndApplyFilters(state);
+        }
 
         state.isCamerasDataLoading = false;
       })

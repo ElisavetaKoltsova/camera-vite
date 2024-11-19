@@ -2,44 +2,48 @@ import { FormEvent, useEffect, useState } from 'react';
 import { CameraCategory, CameraFilterPrice, CameraLevel, CameraType, PRICE_FROM, PRICE_TO, URLParam } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { filterCamerasCategory, filterCamerasLevel, filterCamerasPrice, filterCamerasType, resetFilters } from '../../store/product-data/product-data';
-import { getCameras, getCategoryFilter, getFilteredCameras, getLevelFilter, getPriceFrom, getPriceTo, getTypeFilter } from '../../store/product-data/selectors';
+import { getCameras, getFilteredCameras, getPriceFrom, getPriceTo } from '../../store/product-data/selectors';
 import { findMinimalPrice, findMaximalPrice } from '../../utils/list';
 import { useDebounce } from 'use-debounce';
 import { Camera } from '../../types/camera';
 import { filterPrice } from '../../utils/filter';
 import { useSearchParams } from 'react-router-dom';
 
+type CatalogFilterProps = {
+  priceFromParam: number;
+  priceToParam: number;
+  categoryFilter: CameraCategory | null;
+  typeFilters: CameraType[];
+  levelFilters: CameraLevel[];
+}
+
 const DEBOUNCE_TIMEOUT = 1000;
 
-export default function CatalogFilter(): JSX.Element {
+export default function CatalogFilter({priceFromParam, priceToParam, categoryFilter, typeFilters, levelFilters}: CatalogFilterProps): JSX.Element {
   const dispatch = useAppDispatch();
+  const [, setSearchParams] = useSearchParams();
 
   const cameras = useAppSelector(getCameras);
   const filteredCameras = useAppSelector(getFilteredCameras);
 
-  const categoryFilter = useAppSelector(getCategoryFilter);
-  const typeFilter = useAppSelector(getTypeFilter);
-  const levelFilter = useAppSelector(getLevelFilter);
-
   const minPrice = useAppSelector(getPriceFrom);
   const maxPrice = useAppSelector(getPriceTo);
 
-  let usedCameras: Camera[] = filterPrice(cameras, minPrice, maxPrice);
+  let usedCameras: Camera[] = cameras;
 
-  if (categoryFilter || typeFilter || levelFilter) {
+  if (categoryFilter || typeFilters.length || levelFilters.length) {
     usedCameras = [...filteredCameras];
   }
+
+  usedCameras = filterPrice(usedCameras, priceFromParam, priceToParam);
 
   const Price = {
     MIN_PRICE: findMinimalPrice(usedCameras),
     MAX_PRICE: findMaximalPrice(usedCameras)
   };
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  //const {MIN_PRICE: priceFrom, MAX_PRICE: priceTo} = Price;
 
-  const [selectedCategory, setSelectedCategory] = useState<CameraCategory | null>(categoryFilter);
-  const [selectedTypes, setSelectedTypes] = useState<CameraType[]>([]);
-  const [selectedLevels, setSelectedLevels] = useState<CameraLevel[]>([]);
   const [priceFrom, setPriceFrom] = useState<number>(minPrice);
   const [priceTo, setPriceTo] = useState<number>(maxPrice);
 
@@ -50,55 +54,20 @@ export default function CatalogFilter(): JSX.Element {
   const priceUp: number | string = priceTo !== PRICE_TO ? priceTo : '';
 
   useEffect(() => {
-    // const priceFromParam = Number(searchParams.get(URLParam.PriceFrom));
-    // const priceToParam = Number(searchParams.get(URLParam.PriceTo));
+    setSearchParams((prevParams) => {
+      const params = new URLSearchParams(prevParams);
+      params.set(URLParam.PriceFrom, priceFromParam.toString());
+      params.set(URLParam.PriceTo, priceToParam.toString());
+      return params;
+    });
 
-    // const isValidPriceFrom = !isNaN(priceFromParam) && priceFromParam >= PRICE_FROM;
-    // const isValidPriceTo = !isNaN(priceToParam) && priceToParam <= PRICE_TO && priceToParam >= priceFromParam;
-
-    const categoryParam = searchParams.get(URLParam.FilterOfCategory);
-    const isValidCategory = categoryParam && Object.values(CameraCategory).includes(categoryParam as CameraCategory);
-
-    const typesParam = (searchParams.get(URLParam.FilterOfTypes)?.split(' ') || []) as CameraType[];
-    let validTypes = typesParam.filter((type) => Object.values(CameraType).includes(type));
-
-    const levelsParam = (searchParams.get(URLParam.FilterOfLevels)?.split(' ') || []) as CameraLevel[];
-    const validLevels = levelsParam.filter((level) => Object.values(CameraLevel).includes(level));
-
-    if (categoryParam === CameraCategory.videocamera) {
-      validTypes = validTypes.filter(
-        (type) => type !== CameraType.film && type !== CameraType.snapshot
-      );
-
-      setSearchParams((prevParams) => {
-        const params = new URLSearchParams(prevParams);
-        params.set(URLParam.FilterOfTypes, validTypes.join(' '));
-        return params;
-      });
-    }
-
-    // setPriceFrom(isValidPriceFrom ? priceFromParam : PRICE_FROM);
-    // setPriceTo(isValidPriceTo ? priceToParam : PRICE_TO);
-    setSelectedCategory(isValidCategory ? (categoryParam as CameraCategory) : null);
-    setSelectedTypes(validTypes);
-    setSelectedLevels(validLevels);
-
-    //dispatch(filterCamerasPrice({ priceFrom: isValidPriceFrom ? priceFromParam : PRICE_FROM, priceTo: isValidPriceTo ? priceToParam : PRICE_TO }));
-    if (isValidCategory) {
-      dispatch(filterCamerasCategory(categoryParam as CameraCategory));
-    }
-    if (validTypes.length) {
-      dispatch(filterCamerasType(validTypes));
-    }
-    if (validLevels.length) {
-      dispatch(filterCamerasLevel(validLevels));
-    }
-  }, [dispatch, searchParams, setSearchParams]);
+    //dispatch(filterCamerasPrice({priceFrom: priceFromParam, priceTo: priceToParam}));
+  }, [dispatch, priceFromParam, priceToParam, setSearchParams]);
 
   useEffect(() => {
-    setPriceFrom(minPrice);
-    setPriceTo(maxPrice);
-  }, [minPrice, maxPrice]);
+    setPriceFrom(Price.MIN_PRICE);
+    setPriceTo(Price.MAX_PRICE);
+  }, [Price.MAX_PRICE, Price.MIN_PRICE]);
 
   useEffect(() => {
     dispatch(resetFilters());
@@ -123,12 +92,12 @@ export default function CatalogFilter(): JSX.Element {
         })
       );
 
-      // setSearchParams((prevParams) => {
-      //   const params = new URLSearchParams(prevParams);
-      //   params.set(URLParam.PriceFrom, priceFrom.toString());
-      //   params.set(URLParam.PriceTo, priceTo.toString());
-      //   return params;
-      // });
+      setSearchParams((prevParams) => {
+        const params = new URLSearchParams(prevParams);
+        params.set(URLParam.PriceFrom, priceFrom.toString());
+        params.set(URLParam.PriceTo, priceTo.toString());
+        return params;
+      });
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -150,15 +119,13 @@ export default function CatalogFilter(): JSX.Element {
   const handleFilterCategoryInputChange = (category: CameraCategory) => {
     if (category === CameraCategory.videocamera) {
       const updatedTypes: CameraType[] =
-        selectedTypes.filter((type) =>
+        typeFilters.filter((type) =>
           type !== CameraType.film && type !== CameraType.snapshot
         );
 
-      setSelectedTypes(updatedTypes);
       dispatch(filterCamerasType(updatedTypes));
     }
 
-    setSelectedCategory(category);
     dispatch(filterCamerasCategory(category));
     setSearchParams((prevParams) => {
       const params = new URLSearchParams(prevParams);
@@ -169,11 +136,10 @@ export default function CatalogFilter(): JSX.Element {
 
   const handleFilterTypeInputChange = (type: CameraType) => {
     const updatedTypes =
-      selectedTypes.includes(type)
-        ? selectedTypes.filter((t) => t !== type)
-        : [...selectedTypes, type];
+      typeFilters.includes(type)
+        ? typeFilters.filter((t) => t !== type)
+        : [...typeFilters, type];
 
-    setSelectedTypes(updatedTypes);
     dispatch(filterCamerasType(updatedTypes));
 
     setSearchParams((prevParams) => {
@@ -184,12 +150,12 @@ export default function CatalogFilter(): JSX.Element {
   };
 
   const handleFilterLevelInputChange = (level: CameraLevel) => {
-    const updatedLevels =
-      selectedLevels.includes(level)
-        ? selectedLevels.filter((l) => l !== level)
-        : [...selectedLevels, level];
 
-    setSelectedLevels(updatedLevels);
+    const updatedLevels =
+      levelFilters.includes(level)
+        ? levelFilters.filter((l) => l !== level)
+        : [...levelFilters, level];
+
     dispatch(filterCamerasLevel(updatedLevels));
 
     setSearchParams((prevParams) => {
@@ -200,18 +166,16 @@ export default function CatalogFilter(): JSX.Element {
   };
 
   const handleResetFiltersButtonClick = () => {
-    setSelectedTypes([]);
-    setSelectedLevels([]);
-    setPriceFrom(minPrice);
-    setPriceTo(maxPrice);
+    setPriceFrom(findMinimalPrice(cameras));
+    setPriceTo(findMaximalPrice(cameras));
 
     setSearchParams((prevParams) => {
       const params = new URLSearchParams(prevParams);
       params.delete(URLParam.FilterOfCategory);
       params.delete(URLParam.FilterOfTypes);
       params.delete(URLParam.FilterOfLevels);
-      params.set(URLParam.PriceFrom, PRICE_FROM.toString());
-      params.set(URLParam.PriceTo, PRICE_TO.toString());
+      params.set(URLParam.PriceFrom, priceFrom.toString());
+      params.set(URLParam.PriceTo, priceTo.toString());
       return params;
     });
 
@@ -259,7 +223,7 @@ export default function CatalogFilter(): JSX.Element {
                     type="radio"
                     name="category"
                     value={key}
-                    checked={value === selectedCategory}
+                    checked={value === categoryFilter}
                     onChange={() => handleFilterCategoryInputChange(value)}
                     data-testid="category-radio-button"
                   />
@@ -279,8 +243,8 @@ export default function CatalogFilter(): JSX.Element {
                   <input
                     type="checkbox"
                     name={key}
-                    disabled={selectedCategory === CameraCategory.videocamera && (value === CameraType.film || value === CameraType.snapshot)}
-                    checked={selectedTypes.includes(value)}
+                    disabled={categoryFilter === CameraCategory.videocamera && (value === CameraType.film || value === CameraType.snapshot)}
+                    checked={typeFilters.includes(value)}
                     onChange={() => handleFilterTypeInputChange(value)}
                   />
                   <span className="custom-checkbox__icon"></span>
@@ -299,7 +263,7 @@ export default function CatalogFilter(): JSX.Element {
                   <input
                     type="checkbox"
                     name={value}
-                    checked={selectedLevels.includes(value)}
+                    checked={levelFilters.includes(value)}
                     onChange={() => handleFilterLevelInputChange(value)}
                   />
                   <span className="custom-checkbox__icon"></span>

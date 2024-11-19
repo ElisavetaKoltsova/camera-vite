@@ -1,7 +1,7 @@
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import Banner from '../../components/banner/banner';
 import Header from '../../components/header/header';
-import { AppRoute, COUNT_OF_CAMERAS_ON_PAGE, URLParam } from '../../const';
+import { AppRoute, CameraCategory, CameraLevel, CameraType, COUNT_OF_CAMERAS_ON_PAGE, PRICE_FROM, PRICE_TO, URLParam } from '../../const';
 import CatalogCardList from '../../components/catalog-card-list/catalog-card-list';
 import Footer from '../../components/footer/footer';
 import { getCameras, getCamerasDataLoadingStatus, getCategoryFilter, getFilteredCameras, getLevelFilter, getPriceFrom, getPriceTo, getSort, getTypeFilter } from '../../store/product-data/selectors';
@@ -15,10 +15,10 @@ import { getCallItemPopupOpenStatus } from '../../store/popup-process/selectors'
 import { navigateToUpOfPage } from '../../utils/list';
 import CatalogFilter from '../../components/catalog-filter/catalog-filter';
 import CatalogSort from '../../components/catalog-sort/catalog-sort';
-import { resetFilters } from '../../store/product-data/product-data';
+import { filterCamerasCategory, filterCamerasLevel, filterCamerasPrice, filterCamerasType, resetFilters } from '../../store/product-data/product-data';
 import { sort } from '../../utils/sort';
-import { filterPrice } from '../../utils/filter';
 import Pagination from '../../components/pagination/pagination';
+import { filterPrice } from '../../utils/filter';
 
 export default function CatalogPage(): JSX.Element {
   const { pathname } = useLocation();
@@ -29,11 +29,15 @@ export default function CatalogPage(): JSX.Element {
   const filteredCameras = useAppSelector(getFilteredCameras);
   const isCamerasDataLoading = useAppSelector(getCamerasDataLoadingStatus);
 
-  const categoryFilter = useAppSelector(getCategoryFilter);
-  const typeFilter = useAppSelector(getTypeFilter);
-  const levelFilter = useAppSelector(getLevelFilter);
-
   const currentSort = useAppSelector(getSort);
+
+  const categoryFilter = useAppSelector(getCategoryFilter);
+  const typeFilters = useAppSelector(getTypeFilter);
+  const levelFilters = useAppSelector(getLevelFilter);
+
+  const [selectedCategory, setSelectedCategory] = useState<CameraCategory | null>(categoryFilter);
+  const [selectedTypes, setSelectedTypes] = useState<CameraType[]>([]);
+  const [selectedLevels, setSelectedLevels] = useState<CameraLevel[]>([]);
 
   const callItemPopupOpenStatus = useAppSelector(getCallItemPopupOpenStatus);
 
@@ -42,13 +46,23 @@ export default function CatalogPage(): JSX.Element {
   const priceFrom = useAppSelector(getPriceFrom);
   const priceTo = useAppSelector(getPriceTo);
 
-  let usedCameras: Camera[] = filterPrice(cameras, priceFrom, priceTo);
+  const priceFromParam = Number(searchParams.get(URLParam.PriceFrom));
+  const priceToParam = Number(searchParams.get(URLParam.PriceTo));
 
-  if (categoryFilter || typeFilter.length || levelFilter.length) {
+  const isValidPriceFrom = !isNaN(priceFromParam) && priceFromParam > PRICE_FROM;
+  const isValidPriceTo = !isNaN(priceToParam) && priceToParam < PRICE_TO && priceToParam >= priceFromParam && priceFromParam > PRICE_FROM;
+
+  const validPriceFrom = isValidPriceFrom ? priceFromParam : priceFrom;
+  const validPriceTo = isValidPriceTo ? priceToParam : priceTo;
+
+  let usedCameras: Camera[] = cameras;
+
+  if (categoryFilter || typeFilters.length || levelFilters.length) {
     usedCameras = [...filteredCameras];
   }
 
   usedCameras = sort[currentSort]([...usedCameras]);
+  usedCameras = filterPrice(usedCameras, validPriceFrom, validPriceTo);
 
   const currentPage = Number(searchParams.get('page')) || 1;
   const countOfPage: number = Math.ceil(usedCameras.length / COUNT_OF_CAMERAS_ON_PAGE);
@@ -82,6 +96,47 @@ export default function CatalogPage(): JSX.Element {
   useEffect(() => {
     dispatch(resetFilters());
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(filterCamerasPrice({priceFrom: validPriceFrom, priceTo: validPriceTo}));
+  }, [dispatch, validPriceFrom, validPriceTo]);
+
+  useEffect(() => {
+    const categoryParam = searchParams.get(URLParam.FilterOfCategory);
+    const isValidCategory = categoryParam && Object.values(CameraCategory).includes(categoryParam as CameraCategory);
+
+    const typesParam = (searchParams.get(URLParam.FilterOfTypes)?.split(' ') || []) as CameraType[];
+    let validTypes = typesParam.filter((type) => Object.values(CameraType).includes(type));
+
+    const levelsParam = (searchParams.get(URLParam.FilterOfLevels)?.split(' ') || []) as CameraLevel[];
+    const validLevels = levelsParam.filter((level) => Object.values(CameraLevel).includes(level));
+
+    if (categoryParam === CameraCategory.videocamera) {
+      validTypes = validTypes.filter(
+        (type) => type !== CameraType.film && type !== CameraType.snapshot
+      );
+
+      setSearchParams((prevParams) => {
+        const params = new URLSearchParams(prevParams);
+        params.set(URLParam.FilterOfTypes, validTypes.join(' '));
+        return params;
+      });
+    }
+
+    setSelectedCategory(isValidCategory ? (categoryParam as CameraCategory) : null);
+    setSelectedTypes(validTypes);
+    setSelectedLevels(validLevels);
+
+    if (isValidCategory) {
+      dispatch(filterCamerasCategory(categoryParam as CameraCategory));
+    }
+    if (validTypes.length) {
+      dispatch(filterCamerasType(validTypes));
+    }
+    if (validLevels.length) {
+      dispatch(filterCamerasLevel(validLevels));
+    }
+  }, [dispatch, searchParams, setSearchParams]);
 
   const handlePopupButtonOpenClick = (id: number) => {
     const currentCamera = cameras.find((camera) => camera.id === id);
@@ -123,7 +178,13 @@ export default function CatalogPage(): JSX.Element {
               <div className="page-content__columns">
                 <div className="catalog__aside">
                   {/* <img src="img/banner.png" /> */}
-                  <CatalogFilter />
+                  <CatalogFilter
+                    priceFromParam={validPriceFrom}
+                    priceToParam={validPriceTo}
+                    categoryFilter={selectedCategory}
+                    typeFilters={selectedTypes}
+                    levelFilters={selectedLevels}
+                  />
                 </div>
                 <div className="catalog__content">
                   <CatalogSort />
