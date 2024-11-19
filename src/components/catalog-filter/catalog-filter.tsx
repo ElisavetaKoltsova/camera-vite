@@ -25,20 +25,20 @@ export default function CatalogFilter({priceFromParam, priceToParam, categoryFil
   const cameras = useAppSelector(getCameras);
   const filteredCameras = useAppSelector(getFilteredCameras);
 
+  const minPrice = findMinimalPrice(cameras);
+  const maxPrice = findMaximalPrice(cameras);
+
   const [priceFrom, setPriceFrom] = useState<number>(priceFromParam);
   const [priceTo, setPriceTo] = useState<number>(priceToParam);
 
   const [debouncedPriceFrom] = useDebounce(priceFrom, DEBOUNCE_TIMEOUT);
   const [debouncedPriceTo] = useDebounce(priceTo, DEBOUNCE_TIMEOUT);
 
-  const minPrice = findMinimalPrice(cameras);
-  const maxPrice = findMaximalPrice(cameras);
-
   const price: number | string = priceFrom !== PRICE_FROM ? priceFrom : '';
   const priceUp: number | string = priceTo !== PRICE_TO ? priceTo : '';
 
   // why category saved
-  console.log(categoryFilter, typeFilters, levelFilters)
+  // console.log(categoryFilter, typeFilters, levelFilters)
 
   useEffect(() => {
     setPriceFrom(priceFromParam);
@@ -46,22 +46,32 @@ export default function CatalogFilter({priceFromParam, priceToParam, categoryFil
   }, [priceFromParam, priceToParam]);
 
   useEffect(() => {
-    if (categoryFilter || typeFilters.length || levelFilters.length) {
-      setPriceFrom(findMinimalPrice(filterPrice(filteredCameras, priceFrom, priceTo)));
-      setPriceTo(findMaximalPrice(filterPrice(filteredCameras, priceFrom, priceTo)));
-    } else {
-      setPriceFrom(minPrice);
-      setPriceTo(maxPrice);
-    }
-  }, [categoryFilter, typeFilters, levelFilters, filteredCameras, priceFrom, priceTo, minPrice, maxPrice]);
+    // if (categoryFilter || typeFilters.length || levelFilters.length) {
+    //   setPriceFrom(findMinimalPrice(filterPrice(filteredCameras, priceFrom, priceTo)));
+    //   setPriceTo(findMaximalPrice(filterPrice(filteredCameras, priceFrom, priceTo)));
+    // } else {
+    //   setPriceFrom(findMinimalPrice(filterPrice(cameras, priceFrom, priceTo)));
+    //   setPriceTo(findMaximalPrice(filterPrice(cameras, priceFrom, priceTo)));
+    // }
+    setPriceFrom(findMinimalPrice(filterPrice(cameras, priceFrom, priceTo)));
+    setPriceTo(findMaximalPrice(filterPrice(cameras, priceFrom, priceTo)));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoryFilter, typeFilters, levelFilters, filteredCameras]);
 
   useEffect(() => {
+    const validPriceFrom = Math.max(minPrice, Math.min(debouncedPriceFrom || PRICE_FROM, debouncedPriceTo || maxPrice));
+    const validPriceTo = Math.max(debouncedPriceFrom || minPrice, Math.min(debouncedPriceTo || maxPrice));
+
     if (debouncedPriceFrom <= debouncedPriceTo) {
-      dispatch(filterCamerasPrice({ priceFrom: debouncedPriceFrom, priceTo: debouncedPriceTo }));
+      setPriceFrom(validPriceFrom);
+      setPriceTo(validPriceTo);
+
+      dispatch(filterCamerasPrice({ priceFrom: validPriceFrom, priceTo: validPriceTo }));
+
       setSearchParams((prevParams) => {
         const params = new URLSearchParams(prevParams);
-        params.set(URLParam.PriceFrom, debouncedPriceFrom.toString());
-        params.set(URLParam.PriceTo, debouncedPriceTo.toString());
+        params.set(URLParam.PriceFrom, validPriceFrom.toString());
+        params.set(URLParam.PriceTo, validPriceTo.toString());
         return params;
       });
     }
@@ -72,10 +82,10 @@ export default function CatalogFilter({priceFromParam, priceToParam, categoryFil
     const numericValue = Number(value) || 0;
 
     if (name === CameraFilterPrice.From) {
-      setPriceFrom(Math.max(minPrice, Math.min(numericValue, priceTo)));
+      setPriceFrom(numericValue);
     }
     if (name === CameraFilterPrice.To) {
-      setPriceTo(Math.max(priceFrom, Math.min(numericValue, maxPrice)));
+      setPriceTo(numericValue);
     }
   };
 

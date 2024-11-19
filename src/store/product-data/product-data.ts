@@ -65,7 +65,7 @@ export const productData = createSlice({
 
       state.filteredCameras = filterPrice(state.filteredCameras, state.priceFrom, state.priceTo);
     },
-    filterCamerasCategory(state, action: PayloadAction<CameraCategory>) {
+    filterCamerasCategory(state, action: PayloadAction<CameraCategory | null>) {
       state.filterOfCategory = action.payload;
       changeAndApplyFilters(state);
     },
