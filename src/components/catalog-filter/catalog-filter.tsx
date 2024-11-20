@@ -2,11 +2,12 @@ import { FormEvent, useEffect, useState } from 'react';
 import { CameraCategory, CameraFilterPrice, CameraLevel, CameraType, PRICE_FROM, PRICE_TO, URLParam } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { filterCamerasCategory, filterCamerasLevel, filterCamerasPrice, filterCamerasType, resetFilters } from '../../store/product-data/product-data';
-import { getCameras, getFilteredCameras } from '../../store/product-data/selectors';
+import { getFilteredCameras } from '../../store/product-data/selectors';
 import { findMinimalPrice, findMaximalPrice } from '../../utils/list';
 import { useDebounce } from 'use-debounce';
 import { filterPrice } from '../../utils/filter';
 import { useSearchParams } from 'react-router-dom';
+import { Camera } from '../../types/camera';
 
 type CatalogFilterProps = {
   priceFromParam: number;
@@ -14,19 +15,20 @@ type CatalogFilterProps = {
   categoryFilter: CameraCategory | null;
   typeFilters: CameraType[];
   levelFilters: CameraLevel[];
+  usedCameras: Camera[];
 }
 
 const DEBOUNCE_TIMEOUT = 1000;
 
-export default function CatalogFilter({priceFromParam, priceToParam, categoryFilter, typeFilters, levelFilters}: CatalogFilterProps): JSX.Element {
+export default function CatalogFilter({usedCameras, priceFromParam, priceToParam, categoryFilter, typeFilters, levelFilters}: CatalogFilterProps): JSX.Element {
   const dispatch = useAppDispatch();
   const [, setSearchParams] = useSearchParams();
 
-  const cameras = useAppSelector(getCameras);
+  // const cameras = useAppSelector(getCameras);
   const filteredCameras = useAppSelector(getFilteredCameras);
 
-  const minPrice = findMinimalPrice(cameras);
-  const maxPrice = findMaximalPrice(cameras);
+  const minPrice = findMinimalPrice(usedCameras);
+  const maxPrice = findMaximalPrice(usedCameras);
 
   const [priceFrom, setPriceFrom] = useState<number>(priceFromParam);
   const [priceTo, setPriceTo] = useState<number>(priceToParam);
@@ -41,22 +43,22 @@ export default function CatalogFilter({priceFromParam, priceToParam, categoryFil
   // console.log(categoryFilter, typeFilters, levelFilters)
 
   useEffect(() => {
+    if (categoryFilter || typeFilters.length || levelFilters.length) {
+      setPriceFrom(findMinimalPrice(filterPrice(filteredCameras, priceFrom, priceTo)));
+      setPriceTo(findMaximalPrice(filterPrice(filteredCameras, priceFrom, priceTo)));
+    }
+
+    if (priceToParam >= priceFrom) {
+      setPriceFrom(findMinimalPrice(filterPrice(usedCameras, priceFromParam, priceToParam)));
+      setPriceTo(findMaximalPrice(filterPrice(usedCameras, priceFromParam, priceToParam)));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoryFilter, typeFilters, levelFilters]);
+
+  useEffect(() => {
     setPriceFrom(priceFromParam);
     setPriceTo(priceToParam);
   }, [priceFromParam, priceToParam]);
-
-  useEffect(() => {
-    // if (categoryFilter || typeFilters.length || levelFilters.length) {
-    //   setPriceFrom(findMinimalPrice(filterPrice(filteredCameras, priceFrom, priceTo)));
-    //   setPriceTo(findMaximalPrice(filterPrice(filteredCameras, priceFrom, priceTo)));
-    // } else {
-    //   setPriceFrom(findMinimalPrice(filterPrice(cameras, priceFrom, priceTo)));
-    //   setPriceTo(findMaximalPrice(filterPrice(cameras, priceFrom, priceTo)));
-    // }
-    setPriceFrom(findMinimalPrice(filterPrice(cameras, priceFrom, priceTo)));
-    setPriceTo(findMaximalPrice(filterPrice(cameras, priceFrom, priceTo)));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryFilter, typeFilters, levelFilters, filteredCameras]);
 
   useEffect(() => {
     const validPriceFrom = Math.max(minPrice, Math.min(debouncedPriceFrom || PRICE_FROM, debouncedPriceTo || maxPrice));
@@ -139,8 +141,8 @@ export default function CatalogFilter({priceFromParam, priceToParam, categoryFil
   };
 
   const handleResetFiltersButtonClick = () => {
-    setPriceFrom(minPrice);
-    setPriceTo(maxPrice);
+    setPriceFrom(PRICE_FROM);
+    setPriceTo(PRICE_TO);
     dispatch(resetFilters());
 
     setSearchParams((prevParams) => {
@@ -148,8 +150,8 @@ export default function CatalogFilter({priceFromParam, priceToParam, categoryFil
       params.delete(URLParam.FilterOfCategory);
       params.delete(URLParam.FilterOfTypes);
       params.delete(URLParam.FilterOfLevels);
-      params.set(URLParam.PriceFrom, minPrice.toString());
-      params.set(URLParam.PriceTo, maxPrice.toString());
+      params.set(URLParam.PriceFrom, PRICE_FROM.toString());
+      params.set(URLParam.PriceTo, PRICE_TO.toString());
       return params;
     });
   };

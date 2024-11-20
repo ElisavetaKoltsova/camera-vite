@@ -12,7 +12,7 @@ import CallItemPopup from '../../components/popups/call-item-popup/call-item-pop
 import { Camera } from '../../types/camera';
 import { toggleCallItemPopupOpenStatus } from '../../store/popup-process/popup-process';
 import { getCallItemPopupOpenStatus } from '../../store/popup-process/selectors';
-import { navigateToUpOfPage } from '../../utils/list';
+import { findMaximalPrice, findMinimalPrice, navigateToUpOfPage } from '../../utils/list';
 import CatalogFilter from '../../components/catalog-filter/catalog-filter';
 import CatalogSort from '../../components/catalog-sort/catalog-sort';
 import { filterCamerasCategory, filterCamerasLevel, filterCamerasPrice, filterCamerasType, resetFilters } from '../../store/product-data/product-data';
@@ -46,14 +46,17 @@ export default function CatalogPage(): JSX.Element {
   const priceFrom = useAppSelector(getPriceFrom);
   const priceTo = useAppSelector(getPriceTo);
 
+  const minPrice = findMinimalPrice(cameras);
+  const maxPrice = findMaximalPrice(cameras);
+
   const priceFromParam = Number(searchParams.get(URLParam.PriceFrom));
   const priceToParam = Number(searchParams.get(URLParam.PriceTo));
 
   const isValidPriceFrom = !isNaN(priceFromParam) && priceFromParam > PRICE_FROM;
   const isValidPriceTo = !isNaN(priceToParam) && priceToParam < PRICE_TO && priceToParam >= priceFromParam && priceFromParam > PRICE_FROM;
 
-  const validPriceFrom = isValidPriceFrom ? priceFromParam : priceFrom;
-  const validPriceTo = isValidPriceTo ? priceToParam : priceTo;
+  const validPriceFrom = isValidPriceFrom ? priceFromParam : Math.max(priceFrom, minPrice);
+  const validPriceTo = isValidPriceTo ? priceToParam : Math.min(priceTo, maxPrice);
 
   let usedCameras: Camera[] = cameras;
 
@@ -185,6 +188,7 @@ export default function CatalogPage(): JSX.Element {
                 <div className="catalog__aside">
                   {/* <img src="img/banner.png" /> */}
                   <CatalogFilter
+                    usedCameras={usedCameras}
                     priceFromParam={validPriceFrom}
                     priceToParam={validPriceTo}
                     categoryFilter={selectedCategory}
