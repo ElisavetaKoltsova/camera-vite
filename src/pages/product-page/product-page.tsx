@@ -19,6 +19,7 @@ import ReviewSuccessPopup from '../../components/popups/review-success/review-su
 import ProductSimilarList from '../../components/product-similar-list/product-similar-list';
 import CallItemPopup from '../../components/popups/call-item-popup/call-item-popup';
 import { Camera } from '../../types/camera';
+import { resetFilters } from '../../store/product-data/product-data';
 
 export default function ProductPage(): JSX.Element {
   const { id: currentId } = useParams();
@@ -35,6 +36,8 @@ export default function ProductPage(): JSX.Element {
   const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
 
   useEffect(() => {
+    dispatch(resetFilters());
+
     if (currentId) {
       dispatch(fetchCurrentCameraAction(currentId));
       dispatch(fetchReviewsAction(currentId));

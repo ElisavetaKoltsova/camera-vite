@@ -77,6 +77,7 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
         return params;
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedPriceFrom, debouncedPriceTo, dispatch, setSearchParams]);
 
   const handleFilterPriceInputInput = (evt: FormEvent<HTMLInputElement>) => {

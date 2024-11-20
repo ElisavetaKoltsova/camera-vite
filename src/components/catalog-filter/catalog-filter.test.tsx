@@ -5,10 +5,13 @@ import CatalogFilter from './catalog-filter';
 import { CameraCategory, CameraType } from '../../const';
 
 describe('Component: CatalogFilter', () => {
+  const mockPriceFrom = 1990;
+  const mockPriceTo = 56900;
+
   it('should render correctly', () => {
     const expectedTestId = 'catalog-filter';
     const { withStoreComponent } = withStore(
-      withHistory(<CatalogFilter />),
+      withHistory(<CatalogFilter priceFromParam={0} priceToParam={0} categoryFilter={null} typeFilters={[]} levelFilters={[]} usedCameras={[]} />),
       makeFakeStore()
     );
 
@@ -22,7 +25,7 @@ describe('Component: CatalogFilter', () => {
     const testSecondValue = 'videocamera';
 
     const { withStoreComponent } = withStore(
-      withHistory(<CatalogFilter />),
+      withHistory(<CatalogFilter priceFromParam={0} priceToParam={0} categoryFilter={null} typeFilters={[]} levelFilters={[]} usedCameras={[]} />),
       makeFakeStore()
     );
 
@@ -48,7 +51,15 @@ describe('Component: CatalogFilter', () => {
     const testFirstValue = CameraType.collection;
 
     const { withStoreComponent } = withStore(
-      withHistory(<CatalogFilter />),
+      withHistory(
+        <CatalogFilter
+          priceFromParam={mockPriceFrom}
+          priceToParam={mockPriceTo}
+          categoryFilter={null}
+          typeFilters={[]}
+          levelFilters={[]}
+          usedCameras={[]}
+        />),
       makeFakeStore()
     );
 
@@ -68,7 +79,15 @@ describe('Component: CatalogFilter', () => {
     const testThirdCheckBoxValue = 'snapshot';
 
     const { withStoreComponent } = withStore(
-      withHistory(<CatalogFilter />),
+      withHistory(
+        <CatalogFilter
+          priceFromParam={mockPriceFrom}
+          priceToParam={mockPriceTo}
+          categoryFilter={null}
+          typeFilters={[]}
+          levelFilters={[]}
+          usedCameras={[]}
+        />),
       makeFakeStore()
     );
 
@@ -102,7 +121,15 @@ describe('Component: CatalogFilter', () => {
     const testFirstValue = 'Любительский';
 
     const { withStoreComponent } = withStore(
-      withHistory(<CatalogFilter />),
+      withHistory(
+        <CatalogFilter
+          priceFromParam={mockPriceFrom}
+          priceToParam={mockPriceTo}
+          categoryFilter={null}
+          typeFilters={[]}
+          levelFilters={[]}
+          usedCameras={[]}
+        />),
       makeFakeStore()
     );
 
@@ -116,7 +143,15 @@ describe('Component: CatalogFilter', () => {
 
   it ('should change price on input on something in price section', () => {
     const { withStoreComponent } = withStore(
-      withHistory(<CatalogFilter />),
+      withHistory(
+        <CatalogFilter
+          priceFromParam={mockPriceFrom}
+          priceToParam={mockPriceTo}
+          categoryFilter={null}
+          typeFilters={[]}
+          levelFilters={[]}
+          usedCameras={[]}
+        />),
       makeFakeStore()
     );
 
