@@ -74,11 +74,6 @@ export const applyFilters = (
     }, [] as Camera[]);
   }
 
-  const priceFrom = findMinimalPrice(filteredCameras);
-  const priceTo = findMaximalPrice(filteredCameras);
-
-  filteredCameras = filterPrice(filteredCameras, priceFrom, priceTo);
-
   return filteredCameras;
 };
 

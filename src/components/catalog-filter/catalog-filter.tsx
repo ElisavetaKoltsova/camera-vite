@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import { CameraCategory, CameraFilterPrice, CameraLevel, CameraType, PRICE_FROM, PRICE_TO, URLParam } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { filterCamerasCategory, filterCamerasLevel, filterCamerasPrice, filterCamerasType, resetFilters } from '../../store/product-data/product-data';
-import { getFilteredCameras } from '../../store/product-data/selectors';
+import { getCameras, getFilteredCameras } from '../../store/product-data/selectors';
 import { findMinimalPrice, findMaximalPrice } from '../../utils/list';
 import { useDebounce } from 'use-debounce';
 import { filterPrice } from '../../utils/filter';
@@ -24,6 +24,7 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
   const dispatch = useAppDispatch();
   const [, setSearchParams] = useSearchParams();
 
+  const cameras = useAppSelector(getCameras);
   const filteredCameras = useAppSelector(getFilteredCameras);
 
   const minPrice = findMinimalPrice(usedCameras);
@@ -40,8 +41,9 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
 
   useEffect(() => {
     if (categoryFilter || typeFilters.length || levelFilters.length) {
-      setPriceFrom(findMinimalPrice(filterPrice(filteredCameras, priceFrom, priceTo)));
-      setPriceTo(findMaximalPrice(filterPrice(filteredCameras, priceFrom, priceTo)));
+      const filtered = filterPrice(filteredCameras, priceFrom, priceTo);
+      setPriceFrom(findMinimalPrice(filtered));
+      setPriceTo(findMaximalPrice(filtered));
     }
 
     if (priceToParam >= priceFrom) {
@@ -57,8 +59,14 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
   }, [priceFromParam, priceToParam]);
 
   useEffect(() => {
-    const validPriceFrom = Math.max(minPrice, Math.min(debouncedPriceFrom || PRICE_FROM, debouncedPriceTo || maxPrice));
-    const validPriceTo = Math.max(debouncedPriceFrom || minPrice, Math.min(debouncedPriceTo || maxPrice));
+    const validPriceFrom = Math.max(
+      debouncedPriceFrom || minPrice,
+      Math.min(debouncedPriceFrom || PRICE_FROM, debouncedPriceTo || maxPrice)
+    );
+    const validPriceTo = Math.max(
+      debouncedPriceFrom || minPrice,
+      Math.min(debouncedPriceTo || maxPrice)
+    );
 
     if (debouncedPriceFrom <= debouncedPriceTo) {
       setPriceFrom(validPriceFrom);
