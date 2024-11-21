@@ -24,7 +24,6 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
   const dispatch = useAppDispatch();
   const [, setSearchParams] = useSearchParams();
 
-  // const cameras = useAppSelector(getCameras);
   const filteredCameras = useAppSelector(getFilteredCameras);
 
   const minPrice = findMinimalPrice(usedCameras);
@@ -37,10 +36,7 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
   const [debouncedPriceTo] = useDebounce(priceTo, DEBOUNCE_TIMEOUT);
 
   const price: number | string = priceFrom !== PRICE_FROM ? priceFrom : '';
-  const priceUp: number | string = priceTo !== PRICE_TO ? priceTo : '';
-
-  // why category saved
-  // console.log(categoryFilter, typeFilters, levelFilters)
+  const priceUp: number | string = priceTo !== PRICE_FROM ? priceTo : '';
 
   useEffect(() => {
     if (categoryFilter || typeFilters.length || levelFilters.length) {
@@ -151,8 +147,8 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
       params.delete(URLParam.FilterOfCategory);
       params.delete(URLParam.FilterOfTypes);
       params.delete(URLParam.FilterOfLevels);
-      params.set(URLParam.PriceFrom, PRICE_FROM.toString());
-      params.set(URLParam.PriceTo, PRICE_TO.toString());
+      params.delete(URLParam.PriceFrom);
+      params.delete(URLParam.PriceTo);
       return params;
     });
   };

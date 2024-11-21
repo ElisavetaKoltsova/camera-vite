@@ -60,12 +60,14 @@ export default function CatalogPage(): JSX.Element {
 
   let usedCameras: Camera[] = cameras;
 
-  if (categoryFilter || typeFilters.length || levelFilters.length) {
+  if (categoryFilter || typeFilters.length || levelFilters.length || (filteredCameras.length < cameras.length && filteredCameras.length)) {
     usedCameras = [...filteredCameras];
   }
 
   usedCameras = sort[currentSort]([...usedCameras]);
   usedCameras = filterPrice(usedCameras, validPriceFrom, validPriceTo);
+
+  console.log(usedCameras)
 
   const currentPage = Number(searchParams.get('page')) || 1;
   const countOfPage: number = Math.ceil(usedCameras.length / COUNT_OF_CAMERAS_ON_PAGE);

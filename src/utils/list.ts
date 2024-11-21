@@ -63,7 +63,7 @@ export const findMaximalPrice = (cameras: Camera[]) => {
   let maximalPrice = PRICE_FROM;
 
   if (cameras.length === 0) {
-    maximalPrice = PRICE_TO;
+    maximalPrice = PRICE_FROM;
     return maximalPrice;
   }
 
