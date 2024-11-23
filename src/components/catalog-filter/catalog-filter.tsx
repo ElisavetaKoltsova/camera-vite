@@ -59,16 +59,22 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
   }, [priceFromParam, priceToParam]);
 
   useEffect(() => {
-    const validPriceFrom = Math.max(
+    const defaultMaxPrice = findMaximalPrice(cameras);
+
+    const valuePriceFrom = Math.max(
       debouncedPriceFrom || minPrice,
       Math.min(debouncedPriceFrom || PRICE_FROM, debouncedPriceTo || maxPrice)
     );
-    const validPriceTo = Math.max(
+    const valuePriceTo = Math.max(
       debouncedPriceFrom || minPrice,
       Math.min(debouncedPriceTo || maxPrice)
     );
 
-    if (debouncedPriceFrom <= debouncedPriceTo) {
+    // не работает когда я хочу выбрать в от значение больше чем в до (оно просто сбрасывается обратно)
+    const validPriceFrom = valuePriceFrom <= defaultMaxPrice ? valuePriceFrom : defaultMaxPrice;
+    const validPriceTo = valuePriceTo < validPriceFrom ? validPriceFrom : valuePriceTo;
+
+    if (debouncedPriceFrom <= debouncedPriceTo || validPriceFrom <= validPriceTo) {
       setPriceFrom(validPriceFrom);
       setPriceTo(validPriceTo);
 

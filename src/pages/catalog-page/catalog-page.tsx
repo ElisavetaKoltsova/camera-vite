@@ -142,10 +142,10 @@ export default function CatalogPage(): JSX.Element {
   }, [dispatch, searchParams, setSearchParams]);
 
   useEffect(() => {
-    dispatch(filterCamerasCategory(categoryFilter));
-    dispatch(filterCamerasType(typeFilters));
-    dispatch(filterCamerasLevel(levelFilters));
-  }, [categoryFilter, typeFilters, levelFilters, dispatch]);
+    dispatch(filterCamerasCategory(selectedCategory));
+    dispatch(filterCamerasType(selectedTypes));
+    dispatch(filterCamerasLevel(selectedLevels));
+  }, [dispatch, selectedCategory, selectedTypes, selectedLevels]);
 
   const handlePopupButtonOpenClick = (id: number) => {
     const currentCamera = cameras.find((camera) => camera.id === id);
