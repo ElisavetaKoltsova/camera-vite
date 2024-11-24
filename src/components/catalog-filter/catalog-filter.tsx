@@ -38,11 +38,12 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
   const [debouncedPriceFrom] = useDebounce(priceFrom, DEBOUNCE_TIMEOUT);
   const [debouncedPriceTo] = useDebounce(priceTo, DEBOUNCE_TIMEOUT);
 
+  //console.log(priceFrom, priceTo)
   const price: number | string = priceFrom === PRICE_FROM || priceFrom === minPrice ? '' : priceFrom;
   const priceUp: number | string = priceTo === PRICE_FROM || priceTo === maxPrice ? '' : priceTo;
 
   useEffect(() => {
-    if (categoryFilter || typeFilters.length || levelFilters.length) {
+    if ((categoryFilter || typeFilters.length || levelFilters.length)) {
       const filtered = filterPrice(filteredCameras, priceFrom, priceTo);
       setPriceFrom(findMinimalPrice(filtered));
       setPriceTo(findMaximalPrice(filtered));

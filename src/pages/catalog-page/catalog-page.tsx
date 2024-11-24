@@ -58,6 +58,9 @@ export default function CatalogPage(): JSX.Element {
   const validPriceFrom = isValidPriceFrom ? priceFromParam : Math.max(priceFrom, minPrice);
   const validPriceTo = isValidPriceTo ? priceToParam : Math.min(priceTo, maxPrice);
 
+  const pageOne = 1;
+  const pageZero = 0;
+
   let usedCameras: Camera[] = cameras;
 
   if (categoryFilter || typeFilters.length || levelFilters.length || (filteredCameras.length < cameras.length && filteredCameras.length)) {
@@ -67,15 +70,15 @@ export default function CatalogPage(): JSX.Element {
   usedCameras = sort[currentSort]([...usedCameras]);
   usedCameras = filterPrice(usedCameras, validPriceFrom, validPriceTo);
 
-  const currentPage = Number(searchParams.get('page')) || 1;
+  const currentPage = Number(searchParams.get('page')) || pageOne;
   const countOfPage: number = Math.ceil(usedCameras.length / COUNT_OF_CAMERAS_ON_PAGE);
 
-  const camerasCountFrom = (currentPage - 1) * COUNT_OF_CAMERAS_ON_PAGE;
+  const camerasCountFrom = (currentPage - pageOne) * COUNT_OF_CAMERAS_ON_PAGE;
   const camerasCountTo = currentPage * COUNT_OF_CAMERAS_ON_PAGE > usedCameras.length ? usedCameras.length : currentPage * COUNT_OF_CAMERAS_ON_PAGE;
   const visibleCameras = usedCameras.slice(camerasCountFrom, camerasCountTo);
 
   useEffect(() => {
-    if (currentPage > countOfPage) {
+    if (currentPage > countOfPage && countOfPage !== pageZero) {
       setSearchParams((prevParams) => {
         const params = new URLSearchParams(prevParams);
         params.set(URLParam.Page, '1');
