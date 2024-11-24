@@ -10,12 +10,13 @@ type PaginationProps = {
 export default function Pagination({currentPage, countOfPage}: PaginationProps): JSX.Element {
   const [, setSearchParams] = useSearchParams();
   const BASE_COUNT_OF_PAGE = 3;
+  const basePage = 1;
 
-  const startOfPagination = Math.floor((currentPage - 1) / BASE_COUNT_OF_PAGE) * BASE_COUNT_OF_PAGE + 1;
-  const endOfPagination = Math.min(startOfPagination + BASE_COUNT_OF_PAGE - 1, countOfPage);
+  const startOfPagination = Math.floor((currentPage - basePage) / BASE_COUNT_OF_PAGE) * BASE_COUNT_OF_PAGE + basePage;
+  const endOfPagination = Math.min(startOfPagination + BASE_COUNT_OF_PAGE - basePage, countOfPage);
 
   const currentPages = Array.from(
-    { length: endOfPagination - startOfPagination + 1 },
+    { length: endOfPagination - startOfPagination + basePage },
     (_, index) => startOfPagination + index
   );
 
@@ -40,7 +41,7 @@ export default function Pagination({currentPage, countOfPage}: PaginationProps):
               <Link
                 className="pagination__link pagination__link--text"
                 to='#'
-                onClick={(evt) => handlePaginationClick(currentPage - 1, evt)}
+                onClick={(evt) => handlePaginationClick(currentPage - basePage, evt)}
                 data-testid="back"
               >
                 Назад
@@ -48,17 +49,20 @@ export default function Pagination({currentPage, countOfPage}: PaginationProps):
             </li>
         }
         {
-          currentPages.map((page) => (
-            <li className="pagination__item" key={page}>
-              <Link
-                className={`pagination__link ${currentPage === page ? 'pagination__link--active' : ''}`}
-                to='#'
-                onClick={(evt) => handlePaginationClick(page, evt)}
-              >
-                {page}
-              </Link>
-            </li>
-          ))
+          currentPages.length === basePage && currentPages[0] === basePage
+            ? ''
+            :
+            currentPages.map((page) => (
+              <li className="pagination__item" key={page}>
+                <Link
+                  className={`pagination__link ${currentPage === page ? 'pagination__link--active' : ''}`}
+                  to='#'
+                  onClick={(evt) => handlePaginationClick(page, evt)}
+                >
+                  {page}
+                </Link>
+              </li>
+            ))
         }
         {
           countOfPage <= endOfPagination
@@ -68,7 +72,7 @@ export default function Pagination({currentPage, countOfPage}: PaginationProps):
               <Link
                 className="pagination__link pagination__link--text"
                 to='#'
-                onClick={(evt) => handlePaginationClick(currentPage + 1, evt)}
+                onClick={(evt) => handlePaginationClick(currentPage + basePage, evt)}
                 data-testid="next"
               >
                 Далее
