@@ -157,11 +157,11 @@ describe('Component: CatalogFilter', () => {
 
     render(withStoreComponent);
 
-    const firstInput = screen.getByPlaceholderText('от');
-    const inputFirstValue = '4990';
+    const firstInput = screen.getByTestId('price');
+    const inputFirstValue = '1990';
 
-    const secondInput = screen.getByPlaceholderText('до');
-    const inputSecondValue = '10990';
+    const secondInput = screen.getByTestId('priceUp');
+    const inputSecondValue = '56900';
 
     fireEvent.input(firstInput, { target: { value: inputFirstValue } });
     expect((firstInput as HTMLInputElement).value).toBe(inputFirstValue);

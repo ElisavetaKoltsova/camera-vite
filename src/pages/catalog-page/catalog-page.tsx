@@ -74,15 +74,15 @@ export default function CatalogPage(): JSX.Element {
   const camerasCountTo = currentPage * COUNT_OF_CAMERAS_ON_PAGE > usedCameras.length ? usedCameras.length : currentPage * COUNT_OF_CAMERAS_ON_PAGE;
   const visibleCameras = usedCameras.slice(camerasCountFrom, camerasCountTo);
 
-  // useEffect(() => {
-  //   if (currentPage > countOfPage) {
-  //     setSearchParams((prevParams) => {
-  //       const params = new URLSearchParams(prevParams);
-  //       params.set(URLParam.Page, '1');
-  //       return params;
-  //     });
-  //   }
-  // }, [currentPage, countOfPage, setSearchParams, usedCameras]);
+  useEffect(() => {
+    if (currentPage > countOfPage) {
+      setSearchParams((prevParams) => {
+        const params = new URLSearchParams(prevParams);
+        params.set(URLParam.Page, '1');
+        return params;
+      });
+    }
+  }, [currentPage, countOfPage, setSearchParams, usedCameras]);
 
   useEffect(() => {
     setSearchParams((prevParams) => {

@@ -1,4 +1,4 @@
-import { CameraCategory, CameraLevel, CameraType, PRICE_FROM, PRICE_TO } from '../const';
+import { CameraCategory, CameraLevel, CameraType, PRICE_FROM } from '../const';
 import { Camera } from '../types/camera';
 import { checkSearchQueryInCameras, convertNumberIntoMoneyFormat, findMaximalPrice, findMinimalPrice, formatDateToDayMonth, formatDateToYearMonthDay, sortByAscendingPrice, sortByAscendingRating, sortByDescendingPrice, sortByDescendingRating, sortReviewsByDate } from './list';
 import { makeFakeCameras, makeFakeReviews, makeFakeStore } from './mock';
@@ -167,7 +167,7 @@ describe('Function: findMaximalPrice', () => {
     const mockCameras: Camera[] = [];
     const maxPrice = findMaximalPrice(mockCameras);
 
-    expect(maxPrice).toEqual(PRICE_TO);
+    expect(maxPrice).toEqual(PRICE_FROM);
   });
 });
 

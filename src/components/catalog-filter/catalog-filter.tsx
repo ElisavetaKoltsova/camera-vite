@@ -27,6 +27,8 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
   const cameras = useAppSelector(getCameras);
   const filteredCameras = useAppSelector(getFilteredCameras);
 
+  const defaultMaxPrice = findMaximalPrice(cameras);
+
   const minPrice = findMinimalPrice(usedCameras);
   const maxPrice = findMaximalPrice(usedCameras);
 
@@ -36,8 +38,8 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
   const [debouncedPriceFrom] = useDebounce(priceFrom, DEBOUNCE_TIMEOUT);
   const [debouncedPriceTo] = useDebounce(priceTo, DEBOUNCE_TIMEOUT);
 
-  const price: number | string = priceFrom !== PRICE_FROM ? priceFrom : '';
-  const priceUp: number | string = priceTo !== PRICE_FROM ? priceTo : '';
+  const price: number | string = priceFrom === PRICE_FROM || priceFrom === minPrice ? '' : priceFrom;
+  const priceUp: number | string = priceTo === PRICE_FROM || priceTo === maxPrice ? '' : priceTo;
 
   useEffect(() => {
     if (categoryFilter || typeFilters.length || levelFilters.length) {
@@ -59,8 +61,6 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
   }, [priceFromParam, priceToParam]);
 
   useEffect(() => {
-    const defaultMaxPrice = findMaximalPrice(cameras);
-
     const valuePriceFrom = Math.max(
       debouncedPriceFrom || minPrice,
       Math.min(debouncedPriceFrom || PRICE_FROM, debouncedPriceTo || maxPrice)
@@ -70,7 +70,6 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
       Math.min(debouncedPriceTo || maxPrice)
     );
 
-    // не работает когда я хочу выбрать в от значение больше чем в до (оно просто сбрасывается обратно)
     const validPriceFrom = valuePriceFrom <= defaultMaxPrice ? valuePriceFrom : defaultMaxPrice;
     const validPriceTo = valuePriceTo < validPriceFrom ? validPriceFrom : valuePriceTo;
 
@@ -154,6 +153,7 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
   const handleResetFiltersButtonClick = () => {
     setPriceFrom(PRICE_FROM);
     setPriceTo(PRICE_TO);
+
     dispatch(resetFilters());
 
     setSearchParams((prevParams) => {
@@ -177,9 +177,10 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
             <div className="custom-input">
               <label>
                 <input
+                  data-testid="price"
                   type="number"
                   name="price"
-                  placeholder="от"
+                  placeholder={minPrice.toString()}
                   value={price}
                   onInput={handleFilterPriceInputInput}
                 />
@@ -188,9 +189,10 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
             <div className="custom-input">
               <label>
                 <input
+                  data-testid="priceUp"
                   type="number"
                   name="priceUp"
-                  placeholder="до"
+                  placeholder={maxPrice.toString()}
                   value={priceUp}
                   onInput={handleFilterPriceInputInput}
                 />
