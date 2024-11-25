@@ -10,13 +10,13 @@ type PaginationProps = {
 export default function Pagination({currentPage, countOfPage}: PaginationProps): JSX.Element {
   const [, setSearchParams] = useSearchParams();
   const BASE_COUNT_OF_PAGE = 3;
-  const basePage = 1;
+  const BASE_PAGE = 1;
 
-  const startOfPagination = Math.floor((currentPage - basePage) / BASE_COUNT_OF_PAGE) * BASE_COUNT_OF_PAGE + basePage;
-  const endOfPagination = Math.min(startOfPagination + BASE_COUNT_OF_PAGE - basePage, countOfPage);
+  const startOfPagination = Math.floor((currentPage - BASE_PAGE) / BASE_COUNT_OF_PAGE) * BASE_COUNT_OF_PAGE + BASE_PAGE;
+  const endOfPagination = Math.min(startOfPagination + BASE_COUNT_OF_PAGE - BASE_PAGE, countOfPage);
 
   const currentPages = Array.from(
-    { length: endOfPagination - startOfPagination + basePage },
+    { length: endOfPagination - startOfPagination + BASE_PAGE },
     (_, index) => startOfPagination + index
   );
 
@@ -41,7 +41,7 @@ export default function Pagination({currentPage, countOfPage}: PaginationProps):
               <Link
                 className="pagination__link pagination__link--text"
                 to='#'
-                onClick={(evt) => handlePaginationClick(currentPage - basePage, evt)}
+                onClick={(evt) => handlePaginationClick(currentPage - BASE_PAGE, evt)}
                 data-testid="back"
               >
                 Назад
@@ -49,7 +49,7 @@ export default function Pagination({currentPage, countOfPage}: PaginationProps):
             </li>
         }
         {
-          currentPages.length === basePage && currentPages[0] === basePage
+          currentPages.length === BASE_PAGE && currentPages[0] === BASE_PAGE
             ? ''
             :
             currentPages.map((page) => (
@@ -72,7 +72,7 @@ export default function Pagination({currentPage, countOfPage}: PaginationProps):
               <Link
                 className="pagination__link pagination__link--text"
                 to='#'
-                onClick={(evt) => handlePaginationClick(currentPage + basePage, evt)}
+                onClick={(evt) => handlePaginationClick(currentPage + BASE_PAGE, evt)}
                 data-testid="next"
               >
                 Далее

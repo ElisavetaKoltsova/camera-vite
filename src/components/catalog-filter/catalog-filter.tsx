@@ -42,7 +42,7 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
   const priceUp: number | string = priceTo === PRICE_FROM || priceTo === maxPrice ? '' : priceTo;
 
   useEffect(() => {
-    if ((categoryFilter || typeFilters.length || levelFilters.length)) {
+    if (categoryFilter || typeFilters.length || levelFilters.length) {
       const filtered = filterPrice(filteredCameras, priceFrom, priceTo);
       setPriceFrom(findMinimalPrice(filtered));
       setPriceTo(findMaximalPrice(filtered));
@@ -52,8 +52,9 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
       setPriceFrom(findMinimalPrice(filterPrice(usedCameras, priceFromParam, priceToParam)));
       setPriceTo(findMaximalPrice(filterPrice(usedCameras, priceFromParam, priceToParam)));
     }
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryFilter, typeFilters, levelFilters]);
+  }, [categoryFilter, typeFilters, levelFilters, priceFromParam, priceToParam]);
 
   useEffect(() => {
     setPriceFrom(priceFromParam);
@@ -91,7 +92,8 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
 
   const handleFilterPriceInputInput = (evt: FormEvent<HTMLInputElement>) => {
     const { name, value } = evt.currentTarget;
-    const numericValue = Number(value) || 0;
+    const ZERO_VALUE = 0;
+    const numericValue = Number(value) || ZERO_VALUE;
 
     if (name === CameraFilterPrice.From) {
       setPriceFrom(numericValue);
