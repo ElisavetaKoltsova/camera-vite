@@ -26,6 +26,10 @@ export const SortOrder = {
   DOWN: 'down'
 };
 
+export enum LocalStorageNames {
+  CamerasInBasket = 'CamerasInBasket'
+}
+
 export enum Tab {
   Characteristics ='Характеристики',
   Description = 'Описание'
@@ -64,7 +68,7 @@ export enum AppRoute {
   Catalog = '/',
   Product = '/cameras',
   ProductId = ':id',
-  Basket = '/basket',
+  Basket = '/card',
 }
 
 export enum URLParam {

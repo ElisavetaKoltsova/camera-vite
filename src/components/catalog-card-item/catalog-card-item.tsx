@@ -3,6 +3,8 @@ import { Camera } from '../../types/camera';
 import { convertNumberIntoMoneyFormat } from '../../utils/list';
 import { AppRoute } from '../../const';
 import ProductRating from '../product-rating/product-rating';
+import { useAppSelector } from '../../hooks';
+import { getCamerasInBasket } from '../../store/product-data/selectors';
 
 type CatalogCardItemProps = {
   camera: Camera;
@@ -25,6 +27,9 @@ export default function CatalogCardItem({camera, onClick, isActiveClass = ''}: C
 
   const convertedPrice = convertNumberIntoMoneyFormat(price);
 
+  const camerasInBasket = useAppSelector(getCamerasInBasket);
+  const isCurrentCameraInBasket = camerasInBasket.find((currentCamera) => currentCamera.id === camera.id) !== undefined;
+
   return (
     <div className={`product-card ${isActiveClass}`} data-testid="catalog-card-item">
       <div className="product-card__img">
@@ -42,9 +47,20 @@ export default function CatalogCardItem({camera, onClick, isActiveClass = ''}: C
         </p>
       </div>
       <div className="product-card__buttons">
-        <button className="btn btn--purple product-card__btn" type="button" onClick={() => onClick(id)}>
-          Купить
-        </button>
+        {
+          isCurrentCameraInBasket
+            ?
+            <Link className="btn btn--purple-border product-card__btn product-card__btn--in-cart" to={AppRoute.Basket}>
+              <svg width="16" height="16" aria-hidden="true">
+                <use xlinkHref="#icon-basket"></use>
+              </svg>
+              В корзине
+            </Link>
+            :
+            <button className="btn btn--purple product-card__btn" type="button" onClick={() => onClick(id)}>
+              Купить
+            </button>
+        }
         <Link className="btn btn--transparent" to={`${AppRoute.Product}/${id}`}>
           Подробнее
         </Link>

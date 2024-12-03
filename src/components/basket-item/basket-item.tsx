@@ -1,5 +1,6 @@
-import { useAppDispatch } from '../../hooks';
-import { decreaseCountOfCamerasInBasket, increaseCountOfCamerasInBasket } from '../../store/product-data/product-data';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { addCameraToBasket, removeCameraInBasket } from '../../store/product-data/product-data';
+import { getCamerasInBasket } from '../../store/product-data/selectors';
 import { Camera } from '../../types/camera';
 import { convertNumberIntoMoneyFormat } from '../../utils/list';
 
@@ -8,8 +9,13 @@ type BasketItemProps = {
   onDeleteClick: (id: number) => void;
 }
 
+const MIN_COUNT_OF_CAMERAS = 1;
+const MAX_COUNT_OF_CAMERAS = 9;
+
 export default function BasketItem({camera, onDeleteClick}: BasketItemProps): JSX.Element {
   const dispatch = useAppDispatch();
+
+  const camerasInBasket = useAppSelector(getCamerasInBasket);
 
   const {
     id,
@@ -22,20 +28,19 @@ export default function BasketItem({camera, onDeleteClick}: BasketItemProps): JS
     price,
     type,
     category,
-    level,
-    countInBasket
+    level
   } = camera;
 
-  const countOfProduct = countInBasket ? countInBasket : 1;
+  const countOfProduct = camerasInBasket.filter((cameraInBasket) => cameraInBasket.id === id).length;
   const totalPrice = convertNumberIntoMoneyFormat(price * countOfProduct);
   const convertedPrice = convertNumberIntoMoneyFormat(price);
 
   const handleIncreaseCountOfProductButtonClick = () => {
-    dispatch(increaseCountOfCamerasInBasket(id));
+    dispatch(addCameraToBasket(camera));
   };
 
   const handleDecreaseCountOfProductButtonClick = () => {
-    dispatch(decreaseCountOfCamerasInBasket(id));
+    dispatch(removeCameraInBasket({id, parameter: 'parameter'}));
   };
 
   return (
@@ -60,7 +65,7 @@ export default function BasketItem({camera, onDeleteClick}: BasketItemProps): JS
         <button
           className="btn-icon btn-icon--prev"
           aria-label="уменьшить количество товара"
-          disabled={countOfProduct === 1}
+          disabled={countOfProduct === MIN_COUNT_OF_CAMERAS}
           onClick={handleDecreaseCountOfProductButtonClick}
         >
           <svg width="7" height="12" aria-hidden="true">
@@ -72,6 +77,7 @@ export default function BasketItem({camera, onDeleteClick}: BasketItemProps): JS
         <button
           className="btn-icon btn-icon--next"
           aria-label="увеличить количество товара"
+          disabled={countOfProduct === MAX_COUNT_OF_CAMERAS}
           onClick={handleIncreaseCountOfProductButtonClick}
         >
           <svg width="7" height="12" aria-hidden="true">

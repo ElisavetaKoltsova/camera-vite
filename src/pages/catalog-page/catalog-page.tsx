@@ -8,10 +8,9 @@ import { getCameras, getCamerasDataLoadingStatus, getCategoryFilter, getFiltered
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import Loader from '../../components/loader/loader';
 import { useEffect, useState } from 'react';
-import CallItemPopup from '../../components/popups/call-item-popup/call-item-popup';
 import { Camera } from '../../types/camera';
-import { toggleCallItemPopupOpenStatus } from '../../store/popup-process/popup-process';
-import { getCallItemPopupOpenStatus } from '../../store/popup-process/selectors';
+import { toggleAddItemPopupOpenStatus, toggleAddItemSuccessPopupOpenStatus } from '../../store/popup-process/popup-process';
+import { getAddItemPopupOpenStatus, getAddItemSuccessPopupOpenStatus } from '../../store/popup-process/selectors';
 import { findMaximalPrice, findMinimalPrice, navigateToUpOfPage } from '../../utils/list';
 import CatalogFilter from '../../components/catalog-filter/catalog-filter';
 import CatalogSort from '../../components/catalog-sort/catalog-sort';
@@ -19,6 +18,8 @@ import { filterCamerasCategory, filterCamerasLevel, filterCamerasPrice, filterCa
 import { sort } from '../../utils/sort';
 import Pagination from '../../components/pagination/pagination';
 import { filterPrice } from '../../utils/filter';
+import AddItemPopup from '../../components/popups/add-item-popup/add-item-popup';
+import AddItemSuccessPopup from '../../components/popups/add-item-success-popup/add-item-success-popup';
 
 export default function CatalogPage(): JSX.Element {
   const { pathname } = useLocation();
@@ -39,7 +40,8 @@ export default function CatalogPage(): JSX.Element {
   const [selectedTypes, setSelectedTypes] = useState<CameraType[]>([]);
   const [selectedLevels, setSelectedLevels] = useState<CameraLevel[]>([]);
 
-  const callItemPopupOpenStatus = useAppSelector(getCallItemPopupOpenStatus);
+  const addItemPopupOpenStatus = useAppSelector(getAddItemPopupOpenStatus);
+  const addItemSuccessPopupOpenStatus = useAppSelector(getAddItemSuccessPopupOpenStatus);
 
   const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
 
@@ -150,17 +152,21 @@ export default function CatalogPage(): JSX.Element {
     dispatch(filterCamerasLevel(selectedLevels));
   }, [dispatch, selectedCategory, selectedTypes, selectedLevels]);
 
-  const handlePopupButtonOpenClick = (id: number) => {
+  const handleAddItemPopupButtonOpenClick = (id: number) => {
     const currentCamera = cameras.find((camera) => camera.id === id);
 
     if (currentCamera) {
       setSelectedCamera(currentCamera);
-      dispatch(toggleCallItemPopupOpenStatus());
+      dispatch(toggleAddItemPopupOpenStatus());
     }
   };
 
-  const handlePopupButtonCloseClick = () => {
-    dispatch(toggleCallItemPopupOpenStatus());
+  const handleAddItemPopupButtonCloseClick = () => {
+    dispatch(toggleAddItemPopupOpenStatus());
+  };
+
+  const handleAddItemSuccessPopupButtonCloseClick = () => {
+    dispatch(toggleAddItemSuccessPopupOpenStatus());
   };
 
   return (
@@ -204,7 +210,11 @@ export default function CatalogPage(): JSX.Element {
                   {
                     isCamerasDataLoading
                       ? <Loader />
-                      : <CatalogCardList cameras={visibleCameras} onClick={handlePopupButtonOpenClick} />
+                      :
+                      <CatalogCardList
+                        cameras={visibleCameras}
+                        onClick={handleAddItemPopupButtonOpenClick}
+                      />
                   }
                   {
                     usedCameras.length < COUNT_OF_CAMERAS_ON_PAGE
@@ -216,15 +226,25 @@ export default function CatalogPage(): JSX.Element {
             </div>
           </section>
         </div>
+
         {
-          callItemPopupOpenStatus
+          addItemPopupOpenStatus
             ?
-            <CallItemPopup
+            <AddItemPopup
               selectedCamera={selectedCamera}
-              onCloseClick={handlePopupButtonCloseClick}
+              onCloseClick={handleAddItemPopupButtonCloseClick}
+              onAddToBasketClick={handleAddItemSuccessPopupButtonCloseClick}
             />
-            :
-            ''
+            : ''
+        }
+
+        {
+          addItemSuccessPopupOpenStatus
+            ?
+            <AddItemSuccessPopup
+              onCloseClick={handleAddItemSuccessPopupButtonCloseClick}
+            />
+            : ''
         }
       </main>
       <Footer />

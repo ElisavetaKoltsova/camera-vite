@@ -126,11 +126,11 @@ export default function SearchForm(): JSX.Element {
           <span className="visually-hidden">Сбросить поиск</span>
         </button>
       </div>
-      {/* <Link className="header__basket-link" to={AppRoute.Basket}>
+      <Link className="header__basket-link" to={AppRoute.Basket}>
         <svg width="16" height="16" aria-hidden="true">
           <use xlinkHref="#icon-basket"></use>
         </svg>
-      </Link> */}
+      </Link>
     </React.Fragment>
   );
 }

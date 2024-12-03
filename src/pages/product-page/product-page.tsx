@@ -12,14 +12,15 @@ import { fetchCurrentCameraAction, fetchReviewsAction, fetchSimilarCamerasAction
 import { getCameras, getCamerasDataLoadingStatus, getCurrentCamera, getSimilarCameras } from '../../store/product-data/selectors';
 import Loader from '../../components/loader/loader';
 import { getReviews, getReviewsDataLoadingStatus } from '../../store/review-data/selectors';
-import { toggleCallItemPopupOpenStatus, toggleReviewPopupOpen, toggleReviewSuccessPopupOpen } from '../../store/popup-process/popup-process';
+import { toggleAddItemPopupOpenStatus, toggleAddItemSuccessPopupOpenStatus, toggleReviewPopupOpen, toggleReviewSuccessPopupOpen } from '../../store/popup-process/popup-process';
 import ReviewPopup from '../../components/popups/review-popup/review-popup';
-import { getCallItemPopupOpenStatus, getReviewPopupOpenStatus, getReviewSuccessPopupOpenStatus } from '../../store/popup-process/selectors';
+import { getAddItemPopupOpenStatus, getAddItemSuccessPopupOpenStatus, getReviewPopupOpenStatus, getReviewSuccessPopupOpenStatus } from '../../store/popup-process/selectors';
 import ReviewSuccessPopup from '../../components/popups/review-success/review-success-popup';
 import ProductSimilarList from '../../components/product-similar-list/product-similar-list';
-import CallItemPopup from '../../components/popups/call-item-popup/call-item-popup';
 import { Camera } from '../../types/camera';
 import { resetFilters } from '../../store/product-data/product-data';
+import AddItemPopup from '../../components/popups/add-item-popup/add-item-popup';
+import AddItemSuccessPopup from '../../components/popups/add-item-success-popup/add-item-success-popup';
 
 export default function ProductPage(): JSX.Element {
   const { id: currentId } = useParams();
@@ -68,7 +69,8 @@ export default function ProductPage(): JSX.Element {
   const reviewPopupOpenStatus = useAppSelector(getReviewPopupOpenStatus);
   const reviewSuccessPopupOpenStatus = useAppSelector(getReviewSuccessPopupOpenStatus);
 
-  const callItemPopupOpenStatus = useAppSelector(getCallItemPopupOpenStatus);
+  const addItemPopupOpenStatus = useAppSelector(getAddItemPopupOpenStatus);
+  const addItemSuccessPopupOpenStatus = useAppSelector(getAddItemSuccessPopupOpenStatus);
 
   const handleTabButtonClick = (tab: Tab) => {
     setCurrentTab(tab);
@@ -88,17 +90,24 @@ export default function ProductPage(): JSX.Element {
     dispatch(toggleReviewSuccessPopupOpen());
   };
 
-  const handleBuyPopupButtonOpenClick = (id: number) => {
+  const handleAddItemPopupButtonOpenClick = (id?: number) => {
     const currentCamera = cameras.find((camera) => camera.id === id);
 
     if (currentCamera) {
       setSelectedCamera(currentCamera);
-      dispatch(toggleCallItemPopupOpenStatus());
+      dispatch(toggleAddItemPopupOpenStatus());
+    } else if (currentProduct) {
+      setSelectedCamera(currentProduct);
+      dispatch(toggleAddItemPopupOpenStatus());
     }
   };
 
-  const handleBuyPopupButtonCloseClick = () => {
-    dispatch(toggleCallItemPopupOpenStatus());
+  const handleAddItemPopupButtonCloseClick = () => {
+    dispatch(toggleAddItemPopupOpenStatus());
+  };
+
+  const handleAddItemSuccessPopupButtonCloseClick = () => {
+    dispatch(toggleAddItemSuccessPopupOpenStatus());
   };
 
   if (isCameraDataLoading) {
@@ -166,7 +175,7 @@ export default function ProductPage(): JSX.Element {
                       <ProductRating rating={rating} reviewCount={reviewCount} />
                     </div>
                     <p className="product__price"><span className="visually-hidden">Цена:</span>{convertedPrice} ₽</p>
-                    <button className="btn btn--purple" type="button">
+                    <button className="btn btn--purple" type="button" onClick={() => handleAddItemPopupButtonOpenClick()}>
                       <svg width="24" height="16" aria-hidden="true">
                         <use xlinkHref="#icon-add-basket"></use>
                       </svg>Добавить в корзину
@@ -214,7 +223,7 @@ export default function ProductPage(): JSX.Element {
               </section>
             </div>
             <div className="page-content__section">
-              <ProductSimilarList onClick={handleBuyPopupButtonOpenClick} similarCameras={similarCameras} />
+              <ProductSimilarList onClick={handleAddItemPopupButtonOpenClick} similarCameras={similarCameras} />
             </div>
             <div className="page-content__section">
               {
@@ -239,9 +248,23 @@ export default function ProductPage(): JSX.Element {
           }
 
           {
-            callItemPopupOpenStatus
+            addItemPopupOpenStatus
               ?
-              <CallItemPopup onCloseClick={handleBuyPopupButtonCloseClick} selectedCamera={selectedCamera} />
+              <AddItemPopup
+                selectedCamera={selectedCamera}
+                onCloseClick={handleAddItemPopupButtonCloseClick}
+                onAddToBasketClick={handleAddItemSuccessPopupButtonCloseClick}
+              />
+              :
+              ''
+          }
+
+          {
+            addItemSuccessPopupOpenStatus
+              ?
+              <AddItemSuccessPopup
+                onCloseClick={handleAddItemSuccessPopupButtonCloseClick}
+              />
               :
               ''
           }

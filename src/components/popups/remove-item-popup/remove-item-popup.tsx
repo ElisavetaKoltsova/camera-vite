@@ -33,7 +33,7 @@ export default function RemoveItemPopup({selectedCamera, onCloseClick}: RemoveIt
   }, [disableScroll, enableScroll, onCloseClick]);
 
   const handleDeleteButtonClick = (id: number) => {
-    dispatch(removeCameraInBasket(id));
+    dispatch(removeCameraInBasket({id}));
     onCloseClick();
   };
 

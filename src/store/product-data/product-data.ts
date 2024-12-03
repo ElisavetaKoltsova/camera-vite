@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ProductData } from '../../types/state';
-import { CameraCategory, CameraLevel, CameraType, NameSpace, PRICE_FROM, PRICE_TO, Sorts } from '../../const';
+import { CameraCategory, CameraLevel, CameraType, LocalStorageNames, NameSpace, PRICE_FROM, PRICE_TO, Sorts } from '../../const';
 import { fetchCamerasAction, fetchCurrentCameraAction, fetchSimilarCamerasAction } from '../api-action';
 import { Camera } from '../../types/camera';
 import { sort } from '../../utils/sort';
@@ -87,48 +87,31 @@ export const productData = createSlice({
       state.priceFrom = findMinimalPrice(state.cameras);
       state.priceTo = findMaximalPrice(state.cameras);
     },
+    setCamerasInBasket(state, action: PayloadAction<Camera[]>) {
+      state.camerasInBasket = action.payload;
+    },
     addCameraToBasket(state, action: PayloadAction<Camera>) {
-      if (state.camerasInBasket.some((camera) => camera.id === action.payload.id)) {
-        const seekedCamera = state.camerasInBasket.find((camera) => camera.id === action.payload.id);
-
-        if (seekedCamera) {
-          const indexOfCamera = state.camerasInBasket.indexOf(seekedCamera);
-
-          if (state.camerasInBasket[indexOfCamera].countInBasket) {
-            ++state.camerasInBasket[indexOfCamera].countInBasket;
+      state.camerasInBasket.push(action.payload);
+      localStorage.setItem(LocalStorageNames.CamerasInBasket, JSON.stringify(state.camerasInBasket));
+    },
+    removeCameraInBasket(state, action: PayloadAction<{id: number; parameter?: string}>) {
+      const { id, parameter } = action.payload;
+      if (parameter) {
+        const cameraForDelete = state.camerasInBasket.find((camera) => camera.id === id);
+        if (cameraForDelete) {
+          const indexOfCamera = state.camerasInBasket.indexOf(cameraForDelete);
+          if (indexOfCamera >= 0) {
+            state.camerasInBasket.splice(indexOfCamera, 1);
           }
         }
       } else {
-        state.camerasInBasket.push(action.payload);
+        state.camerasInBasket = state.camerasInBasket.filter((camera) => camera.id !== id);
       }
-    },
-    removeCameraInBasket(state, action: PayloadAction<number>) {
-      state.camerasInBasket = state.camerasInBasket.filter((camera) => camera.id !== action.payload);
+      localStorage.setItem(LocalStorageNames.CamerasInBasket, JSON.stringify(state.camerasInBasket));
     },
     clearBasket(state) {
       state.camerasInBasket = [];
-    },
-    increaseCountOfCamerasInBasket(state, action: PayloadAction<number>) {
-      const seekedCamera = state.camerasInBasket.find((camera) => camera.id === action.payload);
-
-      if (seekedCamera) {
-        const indexOfCamera = state.camerasInBasket.indexOf(seekedCamera);
-
-        if (state.camerasInBasket[indexOfCamera].countInBasket) {
-          ++state.camerasInBasket[indexOfCamera].countInBasket;
-        }
-      }
-    },
-    decreaseCountOfCamerasInBasket(state, action: PayloadAction<number>) {
-      const seekedCamera = state.camerasInBasket.find((camera) => camera.id === action.payload);
-
-      if (seekedCamera) {
-        const indexOfCamera = state.camerasInBasket.indexOf(seekedCamera);
-
-        if (state.camerasInBasket[indexOfCamera].countInBasket) {
-          --state.camerasInBasket[indexOfCamera].countInBasket;
-        }
-      }
+      localStorage.setItem(LocalStorageNames.CamerasInBasket, JSON.stringify(state.camerasInBasket));
     }
   },
   extraReducers(builder) {
@@ -170,11 +153,10 @@ export const productData = createSlice({
 });
 
 export const {
+  setCamerasInBasket,
   addCameraToBasket,
   removeCameraInBasket,
   clearBasket,
-  increaseCountOfCamerasInBasket,
-  decreaseCountOfCamerasInBasket,
   sortCameras,
   filterCamerasCategory,
   filterCamerasLevel,

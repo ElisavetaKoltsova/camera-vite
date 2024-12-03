@@ -12,7 +12,8 @@ import RemoveItemPopup from '../../components/popups/remove-item-popup/remove-it
 import OrderSuccessPopup from '../../components/popups/order-success-popup/order-success-popup';
 import SummaryOrder from '../../components/summary-order/summary-order';
 import { navigateToUpOfPage } from '../../utils/list';
-import { AppRoute } from '../../const';
+import { AppRoute, Sorts } from '../../const';
+import { sort } from '../../utils/sort';
 
 export default function BasketPage(): JSX.Element {
   const { pathname } = useLocation();
@@ -25,12 +26,14 @@ export default function BasketPage(): JSX.Element {
   }, [pathname]);
 
   const camerasInBasket = useAppSelector(getCamerasInBasket);
+  const cameraInBasketToShow = sort[Sorts.PRICE_LOW_TO_HIGH]([...new Set(camerasInBasket)]);
+  console.log(cameraInBasketToShow)
 
   const removeItemPopupOpenStatus = useAppSelector(getRemoveItemPopupOpenStatus);
   const orderSuccessPopupOpenStatus = useAppSelector(getOrderSuccessPopupOpenStatus);
 
   const handleRemoveItemPopupOpenClick = (id: number) => {
-    const currentCamera = camerasInBasket.find((camera) => camera.id === id);
+    const currentCamera = cameraInBasketToShow.find((camera) => camera.id === id);
 
     if (currentCamera) {
       setSelectedCamera(currentCamera);
@@ -77,14 +80,14 @@ export default function BasketPage(): JSX.Element {
             <div className="container">
               <h1 className="title title--h2">Корзина</h1>
               {
-                camerasInBasket.length !== 0
+                cameraInBasketToShow.length
                   ?
-                  <BasketList cameras={camerasInBasket} onDeleteClick={handleRemoveItemPopupOpenClick} />
+                  <BasketList cameras={cameraInBasketToShow} onDeleteClick={handleRemoveItemPopupOpenClick} />
                   : <h2>Ваша карзина пуста</h2>
               }
 
               {
-                camerasInBasket.length !== 0
+                cameraInBasketToShow.length
                   ?
                   <SummaryOrder camerasInBasket={camerasInBasket} onOrderSuccessClick={handleOrderSuccessPopupClick} />
                   : ''
