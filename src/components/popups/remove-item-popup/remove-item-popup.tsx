@@ -3,9 +3,10 @@ import { useScroll } from '../../../hooks/use-scroll';
 import { Camera } from '../../../types/camera';
 import BasketShortItem from '../../basket-short-item/basket-short-item';
 import { removeCameraInBasket } from '../../../store/product-data/product-data';
-import { useAppDispatch } from '../../../hooks';
-import { Link } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../../hooks';
+import { Link, useNavigate } from 'react-router-dom';
 import { AppRoute } from '../../../const';
+import { getCamerasInBasket } from '../../../store/product-data/selectors';
 
 type RemoveItemPopupProps = {
   selectedCamera: Camera | null;
@@ -15,6 +16,9 @@ type RemoveItemPopupProps = {
 export default function RemoveItemPopup({selectedCamera, onCloseClick}: RemoveItemPopupProps): JSX.Element {
   const { disableScroll, enableScroll } = useScroll();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const camerasInBasket = useAppSelector(getCamerasInBasket);
 
   useEffect(() => {
     const handleEscKeyDown = (event: KeyboardEvent) => {
@@ -32,9 +36,18 @@ export default function RemoveItemPopup({selectedCamera, onCloseClick}: RemoveIt
     };
   }, [disableScroll, enableScroll, onCloseClick]);
 
+  useEffect(() => {
+    if (camerasInBasket.length) {
+      onCloseClick();
+    } else {
+      navigate(AppRoute.Catalog);
+      onCloseClick();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [camerasInBasket]);
+
   const handleDeleteButtonClick = (id: number) => {
     dispatch(removeCameraInBasket({id}));
-    onCloseClick();
   };
 
   if (selectedCamera) {
