@@ -1,6 +1,6 @@
 import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../hooks';
-import { getCameras } from '../../store/product-data/selectors';
+import { getCameras, getCamerasInBasket } from '../../store/product-data/selectors';
 import { Camera } from '../../types/camera';
 import { Link, useNavigate } from 'react-router-dom';
 import { AppRoute } from '../../const';
@@ -18,6 +18,8 @@ export default function SearchForm(): JSX.Element {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const searchListRefs = useRef<(HTMLLIElement | null)[]>([]);
+
+  const camerasInBasket = useAppSelector(getCamerasInBasket);
 
   useEffect(() => {
     if (searchQuery.length >= START_LENGTH_OF_SEARCH_QUERY) {
@@ -130,6 +132,11 @@ export default function SearchForm(): JSX.Element {
         <svg width="16" height="16" aria-hidden="true">
           <use xlinkHref="#icon-basket"></use>
         </svg>
+        {
+          camerasInBasket.length
+            ? <span className="header__basket-count">{camerasInBasket.length}</span>
+            : ''
+        }
       </Link>
     </React.Fragment>
   );
