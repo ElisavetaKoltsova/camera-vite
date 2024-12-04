@@ -227,7 +227,7 @@ export default function ProductPage(): JSX.Element {
             </div>
             <div className="page-content__section">
               {
-                isReviewsDataLoading ? <Loader /> : <ReviewList reviews={reviews} />
+                isReviewsDataLoading ? <Loader /> : <ReviewList reviews={reviews} onLeaveReviewClick={handleReviewPopupButtonOpenToggleClick} />
               }
             </div>
           </div>
