@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ProductData } from '../../types/state';
-import { CameraCategory, CameraLevel, CameraType, LocalStorageNames, NameSpace, PRICE_FROM, PRICE_TO, Sorts } from '../../const';
+import { CameraCategory, CameraLevel, CameraType, LocalStorageName, NameSpace, PRICE_FROM, PRICE_TO, Sorts } from '../../const';
 import { fetchCamerasAction, fetchCurrentCameraAction, fetchSimilarCamerasAction } from '../api-action';
 import { Camera } from '../../types/camera';
 import { sort } from '../../utils/sort';
@@ -92,7 +92,7 @@ export const productData = createSlice({
     },
     addCameraToBasket(state, action: PayloadAction<Camera>) {
       state.camerasInBasket.push(action.payload);
-      localStorage.setItem(LocalStorageNames.CamerasInBasket, JSON.stringify(state.camerasInBasket));
+      localStorage.setItem(LocalStorageName.CamerasInBasket, JSON.stringify(state.camerasInBasket));
     },
     removeCameraInBasket(state, action: PayloadAction<{id: number; parameter?: string}>) {
       const { id, parameter } = action.payload;
@@ -107,11 +107,11 @@ export const productData = createSlice({
       } else {
         state.camerasInBasket = state.camerasInBasket.filter((camera) => camera.id !== id);
       }
-      localStorage.setItem(LocalStorageNames.CamerasInBasket, JSON.stringify(state.camerasInBasket));
+      localStorage.setItem(LocalStorageName.CamerasInBasket, JSON.stringify(state.camerasInBasket));
     },
     clearBasket(state) {
       state.camerasInBasket = [];
-      localStorage.setItem(LocalStorageNames.CamerasInBasket, JSON.stringify(state.camerasInBasket));
+      localStorage.setItem(LocalStorageName.CamerasInBasket, JSON.stringify(state.camerasInBasket));
     }
   },
   extraReducers(builder) {

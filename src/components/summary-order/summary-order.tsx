@@ -4,17 +4,18 @@ import { postCouponAction } from '../../store/api-action';
 import { getCouponDiscount, getCouponDiscountDataLoadingStatus } from '../../store/promo-data/selectors';
 import { Camera } from '../../types/camera';
 import { Coupon } from '../../types/promo';
-import { convertNumberIntoMoneyFormat } from '../../utils/list';
+import { calculateDiscount, convertNumberIntoMoneyFormat } from '../../utils/list';
 import Loader from '../loader/loader';
 import { CouponName } from '../../const';
 import { useState } from 'react';
+import { getOrderDataLoadingStatus } from '../../store/order-data/selectors';
 
 type SummaryOrderProps = {
   camerasInBasket: Camera[];
-  onOrderSuccessClick: () => void;
+  onOrderSuccessClick: (camerasToOrder: Camera[]) => void;
 }
 
-const SUCCESS_COUPON_MESSAGE_TIMEOUT = 5000;
+const SUCCESS_COUPON_MESSAGE_TIMEOUT = 2000;
 
 export default function SummaryOrder({camerasInBasket, onOrderSuccessClick}: SummaryOrderProps): JSX.Element {
   const dispatch = useAppDispatch();
@@ -23,16 +24,16 @@ export default function SummaryOrder({camerasInBasket, onOrderSuccessClick}: Sum
 
   const couponDiscount = useAppSelector(getCouponDiscount);
   const isCouponDiscountDataLoading = useAppSelector(getCouponDiscountDataLoadingStatus);
+  const isOrderDataLoading = useAppSelector(getOrderDataLoadingStatus);
 
   let summaryPrice = 0;
 
   camerasInBasket.forEach((camera) => {
-    const countOfCameras = camera.countInBasket ? camera.countInBasket : 1;
-    summaryPrice += (countOfCameras * camera.price);
+    summaryPrice += camera.price;
   });
 
   const convertedPrice = convertNumberIntoMoneyFormat(summaryPrice);
-  const priceWithDiscount = summaryPrice * (100 - couponDiscount) / 100;
+  const priceWithDiscount = calculateDiscount(camerasInBasket, summaryPrice, couponDiscount);
   const convertedPriceWithDiscount = convertNumberIntoMoneyFormat(priceWithDiscount);
   const discount = convertNumberIntoMoneyFormat(summaryPrice - priceWithDiscount);
 
@@ -79,15 +80,28 @@ export default function SummaryOrder({camerasInBasket, onOrderSuccessClick}: Sum
         </div>
       </div>
       {
-        isCouponDiscountDataLoading
+        isCouponDiscountDataLoading || isOrderDataLoading
           ?
           <Loader />
           :
           <div className="basket__summary-order">
             <p className="basket__summary-item"><span className="basket__summary-text">Всего:</span><span className="basket__summary-value">{convertedPrice} ₽</span></p>
-            <p className="basket__summary-item"><span className="basket__summary-text">Скидка:</span><span className="basket__summary-value basket__summary-value--bonus">{discount} ₽</span></p>
+            <p className="basket__summary-item">
+              <span className="basket__summary-text">
+                Скидка:
+              </span>
+              <span className={`basket__summary-value ${summaryPrice - priceWithDiscount > 0 ? 'basket__summary-value--bonus' : ''}`}>
+                {discount} ₽
+              </span>
+            </p>
             <p className="basket__summary-item"><span className="basket__summary-text basket__summary-text--total">К оплате:</span><span className="basket__summary-value basket__summary-value--total">{convertedPriceWithDiscount} ₽</span></p>
-            <button className="btn btn--purple" type="submit" onClick={onOrderSuccessClick}>Оформить заказ
+            <button
+              className="btn btn--purple"
+              type="submit"
+              onClick={() => onOrderSuccessClick(camerasInBasket)}
+              disabled={!camerasInBasket.length}
+            >
+              Оформить заказ
             </button>
           </div>
       }

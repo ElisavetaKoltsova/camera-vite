@@ -26,7 +26,18 @@ export const SortOrder = {
   DOWN: 'down'
 };
 
-export enum LocalStorageNames {
+export const Discount = {
+  TWO_PRODUCT: { productCount: 2, discount: 3 },
+  THREE_FIVE_PRODUCT: { productCount: 5, discount: 5 },
+  SIX_TEN_PRODUCT: { productCount: 10, discount: 10 },
+  MORE_THEN_TEN_PRODUCT: { discount: 15 },
+  UP_TO_TEN_THOUSAND: { totalPrice: 10000, discount: 0 },
+  TEN_TO_TWO_THOUSAND: { totalPrice: 20000, discount: 1 },
+  TWO_TO_THREE_THOUSAND: { totalPrice: 30000, discount: 2 },
+  MORE_THAN_THREE_THOUSAND: { discount: 3 }
+};
+
+export enum LocalStorageName {
   CamerasInBasket = 'CamerasInBasket'
 }
 
@@ -96,5 +107,6 @@ export enum NameSpace {
   Review = 'REVIEW',
   Popup = 'POPUP',
   Promo = 'PROMO',
-  Error = 'ERROR'
+  Error = 'ERROR',
+  Order = 'ORDER'
 }

@@ -14,6 +14,9 @@ import SummaryOrder from '../../components/summary-order/summary-order';
 import { navigateToUpOfPage } from '../../utils/list';
 import { AppRoute, Sorts } from '../../const';
 import { sort } from '../../utils/sort';
+import { postOrderAction } from '../../store/api-action';
+import { Order } from '../../types/order';
+import { getOrderDataLoadingStatus } from '../../store/order-data/selectors';
 
 export default function BasketPage(): JSX.Element {
   const { pathname } = useLocation();
@@ -26,14 +29,25 @@ export default function BasketPage(): JSX.Element {
   }, [pathname]);
 
   const camerasInBasket = useAppSelector(getCamerasInBasket);
-  const cameraInBasketToShow = sort[Sorts.PRICE_LOW_TO_HIGH]([...new Set(camerasInBasket)]);
-  console.log(cameraInBasketToShow)
+
+  const seenIds = new Set<number>();
+  const uniqueCameras = camerasInBasket.filter((camera) => {
+    if (seenIds.has(camera.id)) {
+      return false;
+    }
+    seenIds.add(camera.id);
+    return true;
+  });
+
+  const camerasInBasketToShow = sort[Sorts.PRICE_LOW_TO_HIGH]([...uniqueCameras]);
 
   const removeItemPopupOpenStatus = useAppSelector(getRemoveItemPopupOpenStatus);
   const orderSuccessPopupOpenStatus = useAppSelector(getOrderSuccessPopupOpenStatus);
 
+  const isOrderDataLoading = useAppSelector(getOrderDataLoadingStatus);
+
   const handleRemoveItemPopupOpenClick = (id: number) => {
-    const currentCamera = cameraInBasketToShow.find((camera) => camera.id === id);
+    const currentCamera = camerasInBasketToShow.find((camera) => camera.id === id);
 
     if (currentCamera) {
       setSelectedCamera(currentCamera);
@@ -45,8 +59,18 @@ export default function BasketPage(): JSX.Element {
     dispatch(toggleRemoveItemPopupOpenStatus());
   };
 
-  const handleOrderSuccessPopupClick = () => {
-    dispatch(toggleOrderSuccessPopupOpen());
+  const handleOrderSuccessPopupClick = (camerasToOrder?: Camera[]) => {
+    if (camerasToOrder) {
+      const orderCamerasId = camerasToOrder.map((cameraToOrder) => cameraToOrder.id);
+      const order: Order = {
+        camerasIds: orderCamerasId,
+        coupon: null
+      };
+      dispatch(postOrderAction(order));
+    }
+    if (!isOrderDataLoading) {
+      dispatch(toggleOrderSuccessPopupOpen());
+    }
   };
 
   return (
@@ -80,18 +104,13 @@ export default function BasketPage(): JSX.Element {
             <div className="container">
               <h1 className="title title--h2">Корзина</h1>
               {
-                cameraInBasketToShow.length
+                camerasInBasketToShow.length
                   ?
-                  <BasketList cameras={cameraInBasketToShow} onDeleteClick={handleRemoveItemPopupOpenClick} />
+                  <BasketList cameras={camerasInBasketToShow} onDeleteClick={handleRemoveItemPopupOpenClick} />
                   : <h2>Ваша карзина пуста</h2>
               }
 
-              {
-                cameraInBasketToShow.length
-                  ?
-                  <SummaryOrder camerasInBasket={camerasInBasket} onOrderSuccessClick={handleOrderSuccessPopupClick} />
-                  : ''
-              }
+              <SummaryOrder camerasInBasket={camerasInBasket} onOrderSuccessClick={handleOrderSuccessPopupClick} />
             </div>
           </section>
         </div>

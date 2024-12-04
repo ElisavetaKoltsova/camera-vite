@@ -65,7 +65,7 @@ export default function BasketItem({camera, onDeleteClick}: BasketItemProps): JS
         <button
           className="btn-icon btn-icon--prev"
           aria-label="уменьшить количество товара"
-          disabled={countOfProduct === MIN_COUNT_OF_CAMERAS}
+          disabled={countOfProduct <= MIN_COUNT_OF_CAMERAS}
           onClick={handleDecreaseCountOfProductButtonClick}
         >
           <svg width="7" height="12" aria-hidden="true">
@@ -77,7 +77,7 @@ export default function BasketItem({camera, onDeleteClick}: BasketItemProps): JS
         <button
           className="btn-icon btn-icon--next"
           aria-label="увеличить количество товара"
-          disabled={countOfProduct === MAX_COUNT_OF_CAMERAS}
+          disabled={countOfProduct >= MAX_COUNT_OF_CAMERAS}
           onClick={handleIncreaseCountOfProductButtonClick}
         >
           <svg width="7" height="12" aria-hidden="true">
