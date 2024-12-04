@@ -8,7 +8,6 @@ import { calculateDiscount, convertNumberIntoMoneyFormat } from '../../utils/lis
 import Loader from '../loader/loader';
 import { CouponName } from '../../const';
 import { useState } from 'react';
-import { getOrderDataLoadingStatus } from '../../store/order-data/selectors';
 
 type SummaryOrderProps = {
   camerasInBasket: Camera[];
@@ -24,7 +23,6 @@ export default function SummaryOrder({camerasInBasket, onOrderSuccessClick}: Sum
 
   const couponDiscount = useAppSelector(getCouponDiscount);
   const isCouponDiscountDataLoading = useAppSelector(getCouponDiscountDataLoadingStatus);
-  const isOrderDataLoading = useAppSelector(getOrderDataLoadingStatus);
 
   let summaryPrice = 0;
 
@@ -80,7 +78,7 @@ export default function SummaryOrder({camerasInBasket, onOrderSuccessClick}: Sum
         </div>
       </div>
       {
-        isCouponDiscountDataLoading || isOrderDataLoading
+        isCouponDiscountDataLoading
           ?
           <Loader />
           :
