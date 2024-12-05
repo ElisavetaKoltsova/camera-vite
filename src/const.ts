@@ -9,6 +9,14 @@ export const months = [
   'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
 ];
 
+export const ReviewError = {
+  RATING: 'Нужно оценить товар',
+  NAME: 'Нужно указать имя',
+  ADVANTAGE: 'Нужно указать достоинства',
+  DISADVANTAGE: 'Нужно указать недостатки',
+  REVIEW: 'Нужно добавить комментарий'
+};
+
 export const Sorts = {
   POPULAR_LOW_TO_HIGH: 'sortPopular up',
   POPULAR_HIGH_TO_LOW: 'sortPopular down',
@@ -24,6 +32,14 @@ export const SortType = {
 export const SortOrder = {
   UP: 'up',
   DOWN: 'down'
+};
+
+export const ReviewRating = {
+  1: 'Ужасно',
+  2: 'Плохо',
+  3: 'Нормально',
+  4: 'Хорошо',
+  5: 'Отлично'
 };
 
 export const Discount = {

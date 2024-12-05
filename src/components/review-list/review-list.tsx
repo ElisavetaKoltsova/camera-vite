@@ -8,6 +8,7 @@ type ReviewListProps = {
 }
 
 const SCROLL_TO_UP_VALUE = 100;
+const START_NUMBER_REVIEW = 0;
 
 export default function ReviewList({reviews, onLeaveReviewClick}: ReviewListProps): JSX.Element {
   const [visibleReviews, setVisibleReviews] = useState<number>(3);
@@ -41,7 +42,7 @@ export default function ReviewList({reviews, onLeaveReviewClick}: ReviewListProp
           <button className="btn" type="button" onClick={onLeaveReviewClick}>Оставить свой отзыв</button>
         </div>
         <ul className="review-block__list">
-          {reviews.slice(0, countReviews).map((review) => <ReviewItem review={review} key={review.id}/>)}
+          {reviews.slice(START_NUMBER_REVIEW, countReviews).map((review) => <ReviewItem review={review} key={review.id}/>)}
         </ul>
         <div className="review-block__buttons">
           <button

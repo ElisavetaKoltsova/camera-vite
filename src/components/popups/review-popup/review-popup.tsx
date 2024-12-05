@@ -1,12 +1,37 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useScroll } from '../../../hooks/use-scroll';
+import { ReviewError, ReviewRating } from '../../../const';
+import { useAppDispatch } from '../../../hooks';
+import { ReviewToPost } from '../../../types/review';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import React from 'react';
+import { postReviewAction } from '../../../store/api-action';
 
 type ReviewPopupProps = {
+  cameraId: number;
   onCloseClick: () => void;
+  onSubmitClick: () => void;
 }
 
-export default function ReviewPopup({onCloseClick}: ReviewPopupProps): JSX.Element {
+const Rating = {
+  MIN: 1,
+  MAX: 5
+};
+const Name = {
+  MIN: 2,
+  MAX: 15
+};
+const Input = {
+  MIN: 10,
+  MAX: 160
+};
+const DEFAULT_RATING_VALUE = 0;
+
+export default function ReviewPopup({onCloseClick, cameraId, onSubmitClick}: ReviewPopupProps): JSX.Element {
+  const dispatch = useAppDispatch();
   const { disableScroll, enableScroll } = useScroll();
+  const { register, handleSubmit, formState: {errors} } = useForm<ReviewToPost>();
+  const [ratingValue, setRatingValue] = useState<number>(DEFAULT_RATING_VALUE);
 
   useEffect(() => {
     const handleEscKeyDown = (event: KeyboardEvent) => {
@@ -24,6 +49,63 @@ export default function ReviewPopup({onCloseClick}: ReviewPopupProps): JSX.Eleme
     };
   }, [disableScroll, enableScroll, onCloseClick]);
 
+  const onSubmit: SubmitHandler<ReviewToPost> = (data) => {
+    const {
+      userName,
+      advantage,
+      disadvantage,
+      review: dataReview,
+      rating
+    } = data;
+
+    const review: ReviewToPost = {
+      cameraId: cameraId,
+      userName: userName,
+      advantage: advantage,
+      disadvantage: disadvantage,
+      review: dataReview,
+      rating: Number(rating)
+    };
+
+    dispatch(postReviewAction(review));
+
+    onSubmitClick();
+  };
+
+  const handleRatingInputClick = (key: string) => {
+    setRatingValue(Number(key));
+  };
+
+  const checkCorrectnessOfRating = (value: number) => {
+    const isRatingValid = value >= Rating.MIN && value <= Rating.MAX;
+    return isRatingValid ? isRatingValid : ReviewError.RATING;
+  };
+
+  const checkCorrectnessOfUserName = (value: string) => {
+    if (value.length > 0) {
+      const isUserNameValid = value.length >= Name.MIN && value.length <= Name.MAX;
+      return isUserNameValid ? isUserNameValid : `Имя должно быть от ${Name.MIN} до ${Name.MAX} символов`;
+    }
+  };
+
+  const checkCorrectnessOfBigInput = (value: string) => {
+    if (value.length > 0) {
+      const isInputValid = value.length >= Input.MIN && value.length <= Input.MAX;
+      return isInputValid ? isInputValid : `От ${Input.MIN} до ${Input.MAX} символов`;
+    }
+  };
+
+  // const checkInputValue = (value: string) => {
+  //   if (value.length > 0) {
+  //     const isInputValid = value.length >= Input.MIN && value.length <= Input.MAX;
+  //     return isInputValid ? isInputValid : `От ${Input.MIN} до ${Input.MAX} символов`;
+  //   }
+  // };
+
+  // const checkCorrectnessOfAdvantage = (value: string) => checkInputValue(value);
+  // const checkCorrectnessOfDisadvantage = (value: string) => checkInputValue(value);
+  // const checkCorrectnessOfReview = (value: string) => checkInputValue(value);
+
   return (
     <div className="modal is-active">
       <div className="modal__wrapper">
@@ -31,9 +113,15 @@ export default function ReviewPopup({onCloseClick}: ReviewPopupProps): JSX.Eleme
         <div className="modal__content">
           <p className="title title--h4">Оставить отзыв</p>
           <div className="form-review">
-            <form method="post">
+            <form
+              // eslint-disable-next-line @typescript-eslint/no-misused-promises
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <div className="form-review__rate">
-                <fieldset className="rate form-review__item">
+                <fieldset
+                  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                  className={`rate form-review__item ${errors.rating && 'is-invalid'}`}
+                >
                   <legend className="rate__caption">Рейтинг
                     <svg width="9" height="9" aria-hidden="true">
                       <use xlinkHref="#icon-snowflake"></use>
@@ -41,65 +129,121 @@ export default function ReviewPopup({onCloseClick}: ReviewPopupProps): JSX.Eleme
                   </legend>
                   <div className="rate__bar">
                     <div className="rate__group">
-                      <input className="visually-hidden" id="star-5" name="rate" type="radio" value="5" />
-                      <label className="rate__label" htmlFor="star-5" title="Отлично"></label>
-                      <input className="visually-hidden" id="star-4" name="rate" type="radio" value="4" />
-                      <label className="rate__label" htmlFor="star-4" title="Хорошо"></label>
-                      <input className="visually-hidden" id="star-3" name="rate" type="radio" value="3" />
-                      <label className="rate__label" htmlFor="star-3" title="Нормально"></label>
-                      <input className="visually-hidden" id="star-2" name="rate" type="radio" value="2" />
-                      <label className="rate__label" htmlFor="star-2" title="Плохо"></label>
-                      <input className="visually-hidden" id="star-1" name="rate" type="radio" value="1" />
-                      <label className="rate__label" htmlFor="star-1" title="Ужасно"></label>
+                      {
+                        Object.entries(ReviewRating).map(([key, value]) => (
+                          <React.Fragment key={key + value}>
+                            <input
+                              className="visually-hidden"
+                              id={`star-${key}`}
+                              type="radio"
+                              value={key}
+                              {...register('rating', {
+                                validate: checkCorrectnessOfRating
+                              })}
+                            />
+                            <label
+                              className="rate__label"
+                              htmlFor={`star-${key}`}
+                              title={value}
+                              onClick={() => handleRatingInputClick(key)}
+                            >
+                            </label>
+                          </React.Fragment>
+                        )).reverse()
+                      }
                     </div>
-                    <div className="rate__progress"><span className="rate__stars">0</span> <span>/</span> <span className="rate__all-stars">5</span>
+                    <div className="rate__progress"><span className="rate__stars">{ratingValue}</span> <span>/</span> <span className="rate__all-stars">5</span>
                     </div>
                   </div>
-                  <p className="rate__message">Нужно оценить товар</p>
+                  {errors.rating && <p className="rate__message">{errors.rating.message}</p>}
                 </fieldset>
-                <div className="custom-input form-review__item">
+                <div
+                  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                  className={`custom-input form-review__item ${errors.userName && 'is-invalid'}`}
+                >
                   <label>
                     <span className="custom-input__label">Ваше имя
                       <svg width="9" height="9" aria-hidden="true">
                         <use xlinkHref="#icon-snowflake"></use>
                       </svg>
                     </span>
-                    <input type="text" name="user-name" placeholder="Введите ваше имя" required />
+                    <input
+                      type="text"
+                      placeholder="Введите ваше имя"
+                      //required
+                      {...register('userName', {
+                        required: {value: true, message: ReviewError.NAME},
+                        validate: checkCorrectnessOfUserName
+                      })}
+                    />
                   </label>
-                  <p className="custom-input__error">Нужно указать имя</p>
+                  {errors.userName && <p className="custom-input__error">{errors.userName.message}</p>}
                 </div>
-                <div className="custom-input form-review__item">
+                <div
+                  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                  className={`custom-input form-review__item ${errors.advantage && 'is-invalid'}`}
+                >
                   <label>
                     <span className="custom-input__label">Достоинства
                       <svg width="9" height="9" aria-hidden="true">
                         <use xlinkHref="#icon-snowflake"></use>
                       </svg>
                     </span>
-                    <input type="text" name="user-plus" placeholder="Основные преимущества товара" required />
+                    <input
+                      type="text"
+                      placeholder="Основные преимущества товара"
+                      //required
+                      {...register('advantage', {
+                        required: {value: true, message: ReviewError.ADVANTAGE},
+                        validate: checkCorrectnessOfBigInput
+                      })}
+                    />
                   </label>
-                  <p className="custom-input__error">Нужно указать достоинства</p>
+                  {errors.advantage && <p className="custom-input__error">{errors.advantage.message}</p>}
                 </div>
-                <div className="custom-input form-review__item">
+                <div
+                  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                  className={`custom-input form-review__item ${errors.disadvantage && 'is-invalid'}`}
+                >
                   <label>
                     <span className="custom-input__label">Недостатки
                       <svg width="9" height="9" aria-hidden="true">
                         <use xlinkHref="#icon-snowflake"></use>
                       </svg>
                     </span>
-                    <input type="text" name="user-minus" placeholder="Главные недостатки товара" required />
+                    <input
+                      type="text"
+                      placeholder="Главные недостатки товара"
+                      //required
+                      {...register('disadvantage', {
+                        required: {value: true, message: 'Это обязательное поле'},
+                        validate: checkCorrectnessOfBigInput
+                      })}
+                    />
                   </label>
-                  <p className="custom-input__error">Нужно указать недостатки</p>
+                  {errors.disadvantage && <p className="custom-input__error">{errors.disadvantage.message}</p>}
                 </div>
-                <div className="custom-textarea form-review__item">
+                <div
+                  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                  className={`custom-textarea form-review__item ${errors.review && 'is-invalid'}`}
+                >
                   <label>
                     <span className="custom-textarea__label">Комментарий
                       <svg width="9" height="9" aria-hidden="true">
                         <use xlinkHref="#icon-snowflake"></use>
                       </svg>
                     </span>
-                    <textarea name="user-comment" minLength={5} placeholder="Поделитесь своим опытом покупки"></textarea>
+                    <textarea
+                      minLength={5}
+                      placeholder="Поделитесь своим опытом покупки"
+                      {...register('review', {
+                        required: {value: true, message: ReviewError.REVIEW},
+                        validate: checkCorrectnessOfBigInput
+                      })}
+                    >
+                    </textarea>
                   </label>
-                  <div className="custom-textarea__error">Нужно добавить комментарий</div>
+                  {errors.review && <div className="custom-textarea__error">{errors.review?.message}</div>}
                 </div>
               </div>
               <button className="btn btn--purple form-review__btn" type="submit">Отправить отзыв</button>

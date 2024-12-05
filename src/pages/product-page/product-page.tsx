@@ -116,6 +116,7 @@ export default function ProductPage(): JSX.Element {
 
   if (currentProduct) {
     const {
+      id,
       name,
       previewImg,
       previewImg2x,
@@ -234,7 +235,11 @@ export default function ProductPage(): JSX.Element {
           {
             reviewPopupOpenStatus
               ?
-              <ReviewPopup onCloseClick={handleReviewPopupButtonOpenToggleClick} />
+              <ReviewPopup
+                cameraId={id}
+                onCloseClick={handleReviewPopupButtonOpenToggleClick}
+                onSubmitClick={handleReviewSuccessPopupButtonToggleClick}
+              />
               :
               ''
           }

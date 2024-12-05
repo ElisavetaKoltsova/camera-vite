@@ -1,6 +1,4 @@
-export type Review = {
-  id: string;
-  createAt: string;
+export type ReviewToPost = {
   cameraId: number;
   userName: string;
   advantage: string;
@@ -8,3 +6,10 @@ export type Review = {
   review: string;
   rating: number;
 };
+
+export type Review = ReviewToPost & {
+  id: string;
+  createAt: string;
+};
+
+

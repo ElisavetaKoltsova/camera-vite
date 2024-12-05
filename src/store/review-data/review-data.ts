@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { ReviewData } from '../../types/state';
 import { NameSpace } from '../../const';
-import { fetchReviewsAction } from '../api-action';
+import { fetchReviewsAction, postReviewAction } from '../api-action';
 import { sortReviewsByDate } from '../../utils/list';
 
 const initialState: ReviewData = {
@@ -20,6 +20,12 @@ export const reviewData = createSlice({
       })
       .addCase(fetchReviewsAction.fulfilled, (state, action) => {
         state.reviews = [...action.payload].sort(sortReviewsByDate);
+        state.isReviewsDataLoading = false;
+      })
+      .addCase(postReviewAction.pending, (state) => {
+        state.isReviewsDataLoading = true;
+      })
+      .addCase(postReviewAction.fulfilled, (state) => {
         state.isReviewsDataLoading = false;
       });
   }
