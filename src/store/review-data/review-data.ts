@@ -25,7 +25,9 @@ export const reviewData = createSlice({
       .addCase(postReviewAction.pending, (state) => {
         state.isReviewsDataLoading = true;
       })
-      .addCase(postReviewAction.fulfilled, (state) => {
+      .addCase(postReviewAction.fulfilled, (state, action) => {
+        state.reviews.push(action.payload);
+        state.reviews = [...state.reviews].sort(sortReviewsByDate);
         state.isReviewsDataLoading = false;
       });
   }

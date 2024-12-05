@@ -101,13 +101,14 @@ export const postCouponAction = createAsyncThunk<number, Coupon, {
   }
 );
 
-export const postReviewAction = createAsyncThunk<void, ReviewToPost, {
+export const postReviewAction = createAsyncThunk<Review, ReviewToPost, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
   APIAction.POST_REVIEW,
   async (review, {extra: api}) => {
-    await api.post(APIRoute.Reviews, review);
+    const {data} = await api.post<Review>(APIRoute.Reviews, review);
+    return data;
   }
 );
