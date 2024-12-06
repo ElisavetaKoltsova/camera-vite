@@ -170,7 +170,7 @@ export default function ReviewPopup({onCloseClick, cameraId, onSubmitClick}: Rev
                     <input
                       type="text"
                       placeholder="Введите ваше имя"
-                      //required
+                      autoFocus
                       {...register('userName', {
                         required: {value: true, message: ReviewError.NAME},
                         validate: checkCorrectnessOfUserName
@@ -192,7 +192,6 @@ export default function ReviewPopup({onCloseClick, cameraId, onSubmitClick}: Rev
                     <input
                       type="text"
                       placeholder="Основные преимущества товара"
-                      //required
                       {...register('advantage', {
                         required: {value: true, message: ReviewError.ADVANTAGE},
                         validate: checkCorrectnessOfBigInput
@@ -214,7 +213,6 @@ export default function ReviewPopup({onCloseClick, cameraId, onSubmitClick}: Rev
                     <input
                       type="text"
                       placeholder="Главные недостатки товара"
-                      //required
                       {...register('disadvantage', {
                         required: {value: true, message: 'Это обязательное поле'},
                         validate: checkCorrectnessOfBigInput
@@ -234,7 +232,6 @@ export default function ReviewPopup({onCloseClick, cameraId, onSubmitClick}: Rev
                       </svg>
                     </span>
                     <textarea
-                      minLength={5}
                       placeholder="Поделитесь своим опытом покупки"
                       {...register('review', {
                         required: {value: true, message: ReviewError.REVIEW},

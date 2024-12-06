@@ -56,7 +56,7 @@ export default function ReviewSuccessPopup({onCloseClick}: ReviewSuccessPopupPro
                   <button className="btn btn--purple modal__btn modal__btn--fit-width" type="button" onClick={handleBackToShopButtonClick}>Вернуться к покупкам
                   </button>
                 </div>
-                <button className="cross-btn" type="button" aria-label="Закрыть попап" onClick={onCloseClick}>
+                <button className="cross-btn" type="button" aria-label="Закрыть попап" onClick={onCloseClick} autoFocus>
                   <svg width="10" height="10" aria-hidden="true">
                     <use xlinkHref="#icon-close"></use>
                   </svg>

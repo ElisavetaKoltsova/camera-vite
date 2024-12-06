@@ -1,3 +1,4 @@
+import { MAX_COUNT_OF_CAMERAS, MIN_COUNT_OF_CAMERAS } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { addCameraToBasket, removeCameraInBasket } from '../../store/product-data/product-data';
 import { getCamerasInBasket } from '../../store/product-data/selectors';
@@ -8,9 +9,6 @@ type BasketItemProps = {
   camera: Camera;
   onDeleteClick: (id: number) => void;
 }
-
-const MIN_COUNT_OF_CAMERAS = 1;
-const MAX_COUNT_OF_CAMERAS = 9;
 
 export default function BasketItem({camera, onDeleteClick}: BasketItemProps): JSX.Element {
   const dispatch = useAppDispatch();

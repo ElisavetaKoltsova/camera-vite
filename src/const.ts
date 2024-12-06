@@ -4,6 +4,9 @@ export const PRICE_TO = 1000000;
 
 export const COUNT_OF_CAMERAS_ON_PAGE = 9;
 
+export const MIN_COUNT_OF_CAMERAS = 1;
+export const MAX_COUNT_OF_CAMERAS = 9;
+
 export const months = [
   'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
   'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'

@@ -195,7 +195,6 @@ export default function CatalogPage(): JSX.Element {
               <h1 className="title title--h2">Каталог фото- и видеотехники</h1>
               <div className="page-content__columns">
                 <div className="catalog__aside">
-                  {/* <img src="img/banner.png" /> */}
                   <CatalogFilter
                     usedCameras={usedCameras}
                     priceFromParam={validPriceFrom}

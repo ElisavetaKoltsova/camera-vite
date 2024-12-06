@@ -2,14 +2,14 @@ import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
 import Header from '../../components/header/header';
 import NotFoundPage from '../not-found-page/not-found-page';
 import Footer from '../../components/footer/footer';
-import { AppRoute, Tab, URLParam } from '../../const';
+import { AppRoute, MAX_COUNT_OF_CAMERAS, Tab, URLParam } from '../../const';
 import ProductRating from '../../components/product-rating/product-rating';
 import { convertNumberIntoMoneyFormat, navigateToUpOfPage } from '../../utils/list';
 import ReviewList from '../../components/review-list/review-list';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { fetchCurrentCameraAction, fetchReviewsAction, fetchSimilarCamerasAction } from '../../store/api-action';
-import { getCameras, getCamerasDataLoadingStatus, getCurrentCamera, getSimilarCameras } from '../../store/product-data/selectors';
+import { getCameras, getCamerasDataLoadingStatus, getCamerasInBasket, getCurrentCamera, getSimilarCameras } from '../../store/product-data/selectors';
 import Loader from '../../components/loader/loader';
 import { getReviews, getReviewsDataLoadingStatus } from '../../store/review-data/selectors';
 import { toggleAddItemPopupOpenStatus, toggleAddItemSuccessPopupOpenStatus, toggleReviewPopupOpen, toggleReviewSuccessPopupOpen } from '../../store/popup-process/popup-process';
@@ -33,7 +33,6 @@ export default function ProductPage(): JSX.Element {
   const isCorrectUrl = Object.values(Tab).includes(urlTabParam as Tab);
 
   const [currentTab, setCurrentTab] = useState<Tab>(Tab.Description);
-
   const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null);
 
   useEffect(() => {
@@ -62,6 +61,7 @@ export default function ProductPage(): JSX.Element {
   const reviews = useAppSelector(getReviews);
   const similarCameras = useAppSelector(getSimilarCameras);
   const cameras = useAppSelector(getCameras);
+  const camerasInBasket = useAppSelector(getCamerasInBasket);
 
   const isCameraDataLoading = useAppSelector(getCamerasDataLoadingStatus);
   const isReviewsDataLoading = useAppSelector(getReviewsDataLoadingStatus);
@@ -132,6 +132,8 @@ export default function ProductPage(): JSX.Element {
       level
     } = currentProduct;
 
+    const numberOfCurrentCameraInBasket = camerasInBasket.filter((camera) => camera.id === id);
+
     const convertedPrice = convertNumberIntoMoneyFormat(price);
 
     return (
@@ -176,10 +178,16 @@ export default function ProductPage(): JSX.Element {
                       <ProductRating rating={rating} reviewCount={reviewCount} />
                     </div>
                     <p className="product__price"><span className="visually-hidden">Цена:</span>{convertedPrice} ₽</p>
-                    <button className="btn btn--purple" type="button" onClick={() => handleAddItemPopupButtonOpenClick()}>
+                    <button
+                      className="btn btn--purple"
+                      type="button"
+                      onClick={() => handleAddItemPopupButtonOpenClick()}
+                      disabled={numberOfCurrentCameraInBasket.length >= MAX_COUNT_OF_CAMERAS}
+                    >
                       <svg width="24" height="16" aria-hidden="true">
                         <use xlinkHref="#icon-add-basket"></use>
-                      </svg>Добавить в корзину
+                      </svg>
+                      Добавить в корзину
                     </button>
                     <div className="tabs product__tabs">
                       <div className="tabs__controls product__tabs-controls">
