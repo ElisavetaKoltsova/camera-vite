@@ -1,6 +1,7 @@
+import { FormEvent, useEffect, useState } from 'react';
 import { MAX_COUNT_OF_CAMERAS, MIN_COUNT_OF_CAMERAS } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { addCameraToBasket, removeCameraInBasket } from '../../store/product-data/product-data';
+import { addCameraToBasket, changeNumberOfCamerasInBasket, removeCameraInBasket } from '../../store/product-data/product-data';
 import { getCamerasInBasket } from '../../store/product-data/selectors';
 import { Camera } from '../../types/camera';
 import { convertNumberIntoMoneyFormat } from '../../utils/list';
@@ -33,8 +34,29 @@ export default function BasketItem({camera, onDeleteClick}: BasketItemProps): JS
   const totalPrice = convertNumberIntoMoneyFormat(price * countOfProduct);
   const convertedPrice = convertNumberIntoMoneyFormat(price);
 
+  const [numberOfCameras, setNumberOfCameras] = useState(countOfProduct);
+
+  useEffect(() => {
+    setNumberOfCameras(countOfProduct);
+  }, [countOfProduct]);
+
   const handleIncreaseCountOfProductButtonClick = () => {
     dispatch(addCameraToBasket(camera));
+  };
+
+  const handleIncreaseCountOfProductInputBlur = (evt: FormEvent<HTMLInputElement>) => {
+    const inputValue = Number(evt.currentTarget.value);
+
+    if (inputValue >= MIN_COUNT_OF_CAMERAS && inputValue <= MAX_COUNT_OF_CAMERAS) {
+      setNumberOfCameras(inputValue);
+      dispatch(changeNumberOfCamerasInBasket({ camera, numberOfCameras: inputValue }));
+    } else {
+      const correctedValue = inputValue > MAX_COUNT_OF_CAMERAS ? MAX_COUNT_OF_CAMERAS : MIN_COUNT_OF_CAMERAS;
+      setNumberOfCameras(correctedValue);
+      dispatch(changeNumberOfCamerasInBasket({ camera, numberOfCameras: correctedValue }));
+    }
+
+    evt.currentTarget.value = '';
   };
 
   const handleDecreaseCountOfProductButtonClick = () => {
@@ -71,7 +93,13 @@ export default function BasketItem({camera, onDeleteClick}: BasketItemProps): JS
           </svg>
         </button>
         <label className="visually-hidden" htmlFor="counter1"></label>
-        <input type="number" id="counter1" value={countOfProduct} min="1" max="99" aria-label="количество товара" readOnly/>
+        <input
+          type="number"
+          id="counter1"
+          placeholder={numberOfCameras.toString()}
+          aria-label="количество товара"
+          onBlur={handleIncreaseCountOfProductInputBlur}
+        />
         <button
           className="btn-icon btn-icon--next"
           aria-label="увеличить количество товара"

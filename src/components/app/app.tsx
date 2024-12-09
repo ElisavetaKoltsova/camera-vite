@@ -16,7 +16,20 @@ export default function App(): JSX.Element {
 
   useEffect(() => {
     const localStorageData = localStorage.getItem(LocalStorageName.CamerasInBasket);
-    const cameraInBasket = JSON.parse(localStorageData ? localStorageData : '') as Camera[];
+
+    let cameraInBasket: Camera[] = [];
+
+    if (localStorageData) {
+      try {
+        cameraInBasket = JSON.parse(localStorageData) as Camera[];
+
+        if (!Array.isArray(cameraInBasket)) {
+          cameraInBasket = [];
+        }
+      } catch (error) {
+        cameraInBasket = [];
+      }
+    }
 
     if (cameraInBasket.length) {
       dispatch(setCamerasInBasket(cameraInBasket));

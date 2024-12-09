@@ -94,6 +94,16 @@ export const productData = createSlice({
       state.camerasInBasket.push(action.payload);
       localStorage.setItem(LocalStorageName.CamerasInBasket, JSON.stringify(state.camerasInBasket));
     },
+    changeNumberOfCamerasInBasket(state, action: PayloadAction<{camera: Camera; numberOfCameras: number}>) {
+      const {camera, numberOfCameras} = action.payload;
+
+      state.camerasInBasket = state.camerasInBasket.filter((cameraInBasket) => cameraInBasket.id !== camera.id);
+      for (let i = 0; i < numberOfCameras; i++) {
+        state.camerasInBasket.push(camera);
+      }
+
+      localStorage.setItem(LocalStorageName.CamerasInBasket, JSON.stringify(state.camerasInBasket));
+    },
     removeCameraInBasket(state, action: PayloadAction<{id: number; parameter?: string}>) {
       const { id, parameter } = action.payload;
       if (parameter) {
@@ -151,6 +161,7 @@ export const productData = createSlice({
 export const {
   setCamerasInBasket,
   addCameraToBasket,
+  changeNumberOfCamerasInBasket,
   removeCameraInBasket,
   clearBasket,
   sortCameras,
