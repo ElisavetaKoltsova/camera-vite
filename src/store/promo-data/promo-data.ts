@@ -6,7 +6,8 @@ import { fetchPromosAction, postCouponAction } from '../api-action';
 const initialState: PromoData = {
   promos: [],
   couponDiscount: 0,
-  isCouponDiscountDataLoading: false
+  isCouponDiscountDataLoading: false,
+  isPromoDataLoading: false
 };
 
 export const promoData = createSlice({
@@ -15,7 +16,11 @@ export const promoData = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
+      .addCase(fetchPromosAction.pending, (state) => {
+        state.isPromoDataLoading = true;
+      })
       .addCase(fetchPromosAction.fulfilled, (state, action) => {
+        state.isPromoDataLoading = false;
         state.promos = action.payload;
       })
       .addCase(postCouponAction.pending, (state) => {

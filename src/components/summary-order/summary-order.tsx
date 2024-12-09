@@ -1,9 +1,9 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { postCouponAction } from '../../store/api-action';
-import { getCouponDiscount, getCouponDiscountDataLoadingStatus } from '../../store/promo-data/selectors';
+import { getCouponDiscount, getCouponDiscountDataLoadingStatus, getPromoDataLoadingStatus } from '../../store/promo-data/selectors';
 import { Camera } from '../../types/camera';
-import { Coupon } from '../../types/promo';
+import { Coupon, Promo } from '../../types/promo';
 import { calculateDiscount, convertNumberIntoMoneyFormat } from '../../utils/list';
 import Loader from '../loader/loader';
 import { CouponName } from '../../const';
@@ -11,29 +11,49 @@ import { useState } from 'react';
 
 type SummaryOrderProps = {
   camerasInBasket: Camera[];
+  promos: Promo[];
   onOrderSuccessClick: (camerasToOrder: Camera[]) => void;
 }
 
 const SUCCESS_COUPON_MESSAGE_TIMEOUT = 2000;
 
-export default function SummaryOrder({camerasInBasket, onOrderSuccessClick}: SummaryOrderProps): JSX.Element {
+export default function SummaryOrder({camerasInBasket, onOrderSuccessClick, promos: promoCameras}: SummaryOrderProps): JSX.Element {
   const dispatch = useAppDispatch();
   const { register, handleSubmit, formState: {errors} } = useForm<Coupon>();
   const [couponSuccess, setCouponSuccess] = useState<boolean>(false);
 
   const couponDiscount = useAppSelector(getCouponDiscount);
   const isCouponDiscountDataLoading = useAppSelector(getCouponDiscountDataLoadingStatus);
+  const isPromoDataLoading = useAppSelector(getPromoDataLoadingStatus);
+
+  const camerasInBasketWithPromo: Camera[] = [];
 
   let summaryPrice = 0;
+  let summaryPriceOfPromo = 0;
+
+  camerasInBasket.forEach((camera) => {
+    promoCameras.forEach((promo) => {
+      if (promo.id === camera.id) {
+        camerasInBasketWithPromo.push(camera);
+      }
+    });
+  });
 
   camerasInBasket.forEach((camera) => {
     summaryPrice += camera.price;
   });
 
+  camerasInBasketWithPromo.forEach((camera) => {
+    summaryPriceOfPromo += camera.price;
+  });
+
+  const priceWithoutPromo = summaryPrice - summaryPriceOfPromo;
+  const numberOfCameras = camerasInBasket.length - camerasInBasketWithPromo.length;
+
   const convertedPrice = convertNumberIntoMoneyFormat(summaryPrice);
-  const priceWithDiscount = calculateDiscount(camerasInBasket, summaryPrice, couponDiscount);
-  const convertedPriceWithDiscount = convertNumberIntoMoneyFormat(priceWithDiscount);
-  const discount = convertNumberIntoMoneyFormat(summaryPrice - priceWithDiscount);
+  const priceWithDiscount = calculateDiscount(numberOfCameras, priceWithoutPromo, couponDiscount);
+  const convertedPriceWithDiscount = convertNumberIntoMoneyFormat(priceWithDiscount + summaryPriceOfPromo);
+  const discount = convertNumberIntoMoneyFormat(summaryPrice - priceWithDiscount - summaryPriceOfPromo);
 
   const onSubmit: SubmitHandler<Coupon> = (data) => {
     dispatch(postCouponAction(data));
@@ -78,7 +98,7 @@ export default function SummaryOrder({camerasInBasket, onOrderSuccessClick}: Sum
         </div>
       </div>
       {
-        isCouponDiscountDataLoading
+        isCouponDiscountDataLoading || isPromoDataLoading
           ?
           <Loader />
           :
@@ -92,7 +112,9 @@ export default function SummaryOrder({camerasInBasket, onOrderSuccessClick}: Sum
                 {discount} ₽
               </span>
             </p>
-            <p className="basket__summary-item"><span className="basket__summary-text basket__summary-text--total">К оплате:</span><span className="basket__summary-value basket__summary-value--total">{convertedPriceWithDiscount} ₽</span></p>
+            <p className="basket__summary-item"><span className="basket__summary-text basket__summary-text--total">К оплате:</span>
+              <span className="basket__summary-value basket__summary-value--total">{convertedPriceWithDiscount} ₽</span>
+            </p>
             <button
               className="btn btn--purple"
               type="submit"

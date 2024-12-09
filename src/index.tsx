@@ -8,8 +8,8 @@ import HistoryRouter from './components/history-route/history-route';
 import browserHistory from './browser-history';
 import ErrorMessage from './components/error-massage/error-massage';
 
-store.dispatch(fetchCamerasAction());
 store.dispatch(fetchPromosAction());
+store.dispatch(fetchCamerasAction());
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

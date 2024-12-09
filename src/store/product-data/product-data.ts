@@ -125,10 +125,6 @@ export const productData = createSlice({
         state.priceFrom = findMinimalPrice(state.cameras);
         state.priceTo = findMaximalPrice(state.cameras);
 
-        state.cameras.forEach((camera) => {
-          camera.countInBasket = 0;
-        });
-
         if (state.filterOfCategory || state.filterOfTypes.length || state.filterOfLevels.length) {
           changeAndApplyFilters(state);
         }

@@ -38,6 +38,7 @@ export type PromoData = {
   promos: Promo[];
   couponDiscount: number;
   isCouponDiscountDataLoading: boolean;
+  isPromoDataLoading: boolean;
 }
 
 export type ErrorProcess = {

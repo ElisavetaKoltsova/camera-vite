@@ -87,8 +87,7 @@ export const checkSearchQueryInCameras = (camera: Camera, searchQuery: string) =
   return successQuery;
 };
 
-export const calculateDiscount = (cameras: Camera[], totalPrice: number, couponDiscount: number) => {
-  const numberOfCameras = cameras.length;
+export const calculateDiscount = (numberOfCameras: number, totalPrice: number, couponDiscount: number) => {
   let discount = 0;
 
   const {
@@ -115,11 +114,6 @@ export const calculateDiscount = (cameras: Camera[], totalPrice: number, couponD
     discount = MORE_THEN_TEN_PRODUCT.discount;
   }
 
-  if (couponDiscount) {
-    discount += couponDiscount;
-    return totalPrice * (100 - discount) / 100;
-  }
-
   if (totalPrice > UP_TO_TEN_THOUSAND.totalPrice && totalPrice <= TEN_TO_TWO_THOUSAND.totalPrice) {
     if (discount > UP_TO_TEN_THOUSAND.discount) {
       discount -= TEN_TO_TWO_THOUSAND.discount;
@@ -136,6 +130,10 @@ export const calculateDiscount = (cameras: Camera[], totalPrice: number, couponD
     if (discount > TWO_TO_THREE_THOUSAND.discount) {
       discount -= MORE_THAN_THREE_THOUSAND.discount;
     }
+  }
+
+  if (couponDiscount) {
+    discount += couponDiscount;
   }
 
   return totalPrice * (100 - discount) / 100;

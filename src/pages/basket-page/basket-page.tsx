@@ -17,6 +17,7 @@ import { sort } from '../../utils/sort';
 import { postOrderAction } from '../../store/api-action';
 import { Order } from '../../types/order';
 import { getOrderDataLoadingStatus } from '../../store/order-data/selectors';
+import { getPromos } from '../../store/promo-data/selectors';
 
 export default function BasketPage(): JSX.Element {
   const { pathname } = useLocation();
@@ -29,6 +30,7 @@ export default function BasketPage(): JSX.Element {
   }, [pathname]);
 
   const camerasInBasket = useAppSelector(getCamerasInBasket);
+  const promos = useAppSelector(getPromos);
 
   const seenIds = new Set<number>();
   const uniqueCameras = camerasInBasket.filter((camera) => {
@@ -110,7 +112,7 @@ export default function BasketPage(): JSX.Element {
                   : <h2>Ваша карзина пуста</h2>
               }
 
-              <SummaryOrder camerasInBasket={camerasInBasket} onOrderSuccessClick={handleOrderSuccessPopupClick} />
+              <SummaryOrder camerasInBasket={camerasInBasket} promos={promos} onOrderSuccessClick={handleOrderSuccessPopupClick} />
             </div>
           </section>
         </div>

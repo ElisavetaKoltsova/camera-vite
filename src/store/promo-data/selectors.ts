@@ -9,3 +9,5 @@ export const getCouponDiscount = (state: Pick<State, NameSpace.Promo>) =>
 
 export const getCouponDiscountDataLoadingStatus = (state: Pick<State, NameSpace.Promo>) =>
   state[NameSpace.Promo].isCouponDiscountDataLoading;
+export const getPromoDataLoadingStatus = (state: Pick<State, NameSpace.Promo>) =>
+  state[NameSpace.Promo].isPromoDataLoading;
