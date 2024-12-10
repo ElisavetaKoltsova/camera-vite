@@ -12,6 +12,9 @@ export const getRemoveItemPopupOpenStatus = (state: Pick<State, NameSpace.Popup>
   state[NameSpace.Popup].isRemoveItemPopupOpen;
 export const getOrderSuccessPopupOpenStatus = (state: Pick<State, NameSpace.Popup>) =>
   state[NameSpace.Popup].isOrderSuccessPopupOpen;
+export const getOrderErrorPopupOpenStatus = (state: Pick<State, NameSpace.Popup>) =>
+  state[NameSpace.Popup].isOrderErrorPopupOpen;
+
 
 export const getReviewPopupOpenStatus = (state: Pick<State, NameSpace.Popup>) =>
   state[NameSpace.Popup].isReviewPopupOpen;

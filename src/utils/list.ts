@@ -1,4 +1,4 @@
-import { Discount, months, PRICE_FROM, PRICE_TO } from '../const';
+import { byProductCountDiscounts, byTotalPriceDiscounts, months, PRICE_FROM, PRICE_TO } from '../const';
 import { Camera } from '../types/camera';
 import { Review } from '../types/review';
 
@@ -88,53 +88,15 @@ export const checkSearchQueryInCameras = (camera: Camera, searchQuery: string) =
 };
 
 export const calculateDiscount = (numberOfCameras: number, totalPrice: number, couponDiscount: number) => {
-  let discount = 0;
+  const productDiscount = byProductCountDiscounts.find(
+    ({ minCount, maxCount }) => numberOfCameras >= minCount && numberOfCameras <= maxCount
+  )?.discount || 0;
 
-  const {
-    TWO_PRODUCT,
-    THREE_FIVE_PRODUCT,
-    SIX_TEN_PRODUCT,
-    MORE_THEN_TEN_PRODUCT,
-    UP_TO_TEN_THOUSAND,
-    TEN_TO_TWO_THOUSAND,
-    TWO_TO_THREE_THOUSAND,
-    MORE_THAN_THREE_THOUSAND
-  } = Discount;
+  const priceDiscount = byTotalPriceDiscounts.find(
+    ({ minPrice, maxPrice }) => totalPrice >= minPrice && totalPrice <= maxPrice
+  )?.discount || 0;
 
-  if (numberOfCameras === TWO_PRODUCT.productCount) {
-    discount = TWO_PRODUCT.discount;
-  }
-  if (numberOfCameras > TWO_PRODUCT.productCount && numberOfCameras <= THREE_FIVE_PRODUCT.productCount) {
-    discount = THREE_FIVE_PRODUCT.discount;
-  }
-  if (numberOfCameras > THREE_FIVE_PRODUCT.productCount && numberOfCameras <= SIX_TEN_PRODUCT.productCount) {
-    discount = SIX_TEN_PRODUCT.discount;
-  }
-  if (numberOfCameras > SIX_TEN_PRODUCT.productCount) {
-    discount = MORE_THEN_TEN_PRODUCT.discount;
-  }
+  const totalDiscount = productDiscount - priceDiscount + couponDiscount;
 
-  if (totalPrice > UP_TO_TEN_THOUSAND.totalPrice && totalPrice <= TEN_TO_TWO_THOUSAND.totalPrice) {
-    if (discount > UP_TO_TEN_THOUSAND.discount) {
-      discount -= TEN_TO_TWO_THOUSAND.discount;
-    }
-  }
-
-  if (totalPrice > TEN_TO_TWO_THOUSAND.totalPrice && totalPrice <= TWO_TO_THREE_THOUSAND.totalPrice) {
-    if (discount > TEN_TO_TWO_THOUSAND.discount) {
-      discount -= TWO_TO_THREE_THOUSAND.discount;
-    }
-  }
-
-  if (totalPrice > TWO_TO_THREE_THOUSAND.totalPrice) {
-    if (discount > TWO_TO_THREE_THOUSAND.discount) {
-      discount -= MORE_THAN_THREE_THOUSAND.discount;
-    }
-  }
-
-  if (couponDiscount) {
-    discount += couponDiscount;
-  }
-
-  return totalPrice * (100 - discount) / 100;
+  return totalPrice * (100 - totalDiscount) / 100;
 };

@@ -4,13 +4,18 @@ import { OrderData } from '../../types/state';
 import { postOrderAction } from '../api-action';
 
 const initialState: OrderData = {
-  isOrderDataLoading: false
+  isOrderDataLoading: false,
+  isErrorPostOrder: false,
 };
 
 export const orderData = createSlice({
   name: NameSpace.Order,
   initialState,
-  reducers: {},
+  reducers: {
+    setErrorStatus(state) {
+      state.isErrorPostOrder = false;
+    }
+  },
   extraReducers(builder) {
     builder
       .addCase(postOrderAction.pending, (state) => {
@@ -18,6 +23,12 @@ export const orderData = createSlice({
       })
       .addCase(postOrderAction.fulfilled, (state) => {
         state.isOrderDataLoading = false;
+      })
+      .addCase(postOrderAction.rejected, (state) => {
+        state.isErrorPostOrder = true;
+        state.isOrderDataLoading = false;
       });
   }
 });
+
+export const { setErrorStatus } = orderData.actions;

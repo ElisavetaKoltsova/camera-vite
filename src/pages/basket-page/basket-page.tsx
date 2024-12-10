@@ -6,8 +6,8 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 import { getCamerasInBasket } from '../../store/product-data/selectors';
 import BasketList from '../../components/basket-list/basket-list';
 import { Camera } from '../../types/camera';
-import { toggleOrderSuccessPopupOpen, toggleRemoveItemPopupOpenStatus } from '../../store/popup-process/popup-process';
-import { getOrderSuccessPopupOpenStatus, getRemoveItemPopupOpenStatus } from '../../store/popup-process/selectors';
+import { toggleOrderErrorPopupOpen, toggleOrderSuccessPopupOpen, toggleRemoveItemPopupOpenStatus } from '../../store/popup-process/popup-process';
+import { getOrderErrorPopupOpenStatus, getOrderSuccessPopupOpenStatus, getRemoveItemPopupOpenStatus } from '../../store/popup-process/selectors';
 import RemoveItemPopup from '../../components/popups/remove-item-popup/remove-item-popup';
 import OrderSuccessPopup from '../../components/popups/order-success-popup/order-success-popup';
 import SummaryOrder from '../../components/summary-order/summary-order';
@@ -16,8 +16,11 @@ import { AppRoute, Sorts } from '../../const';
 import { sort } from '../../utils/sort';
 import { postOrderAction } from '../../store/api-action';
 import { Order } from '../../types/order';
-import { getOrderDataLoadingStatus } from '../../store/order-data/selectors';
-import { getPromos } from '../../store/promo-data/selectors';
+import { getErrorStatus, getOrderDataLoadingStatus } from '../../store/order-data/selectors';
+import { getCoupon, getPromos } from '../../store/promo-data/selectors';
+import { setErrorStatus } from '../../store/order-data/order-data';
+import { processErrorHandle } from '../../services/process-error-handler';
+import OrderErrorPopup from '../../components/popups/order-error-popup/order-error-popup';
 
 export default function BasketPage(): JSX.Element {
   const { pathname } = useLocation();
@@ -31,6 +34,7 @@ export default function BasketPage(): JSX.Element {
 
   const camerasInBasket = useAppSelector(getCamerasInBasket);
   const promos = useAppSelector(getPromos);
+  const coupon = useAppSelector(getCoupon);
 
   const seenIds = new Set<number>();
   const uniqueCameras = camerasInBasket.filter((camera) => {
@@ -45,8 +49,10 @@ export default function BasketPage(): JSX.Element {
 
   const removeItemPopupOpenStatus = useAppSelector(getRemoveItemPopupOpenStatus);
   const orderSuccessPopupOpenStatus = useAppSelector(getOrderSuccessPopupOpenStatus);
+  const orderErrorPopupOpenStatus = useAppSelector(getOrderErrorPopupOpenStatus);
 
   const isOrderDataLoading = useAppSelector(getOrderDataLoadingStatus);
+  const isErrorPostOrder = useAppSelector(getErrorStatus);
 
   const handleRemoveItemPopupOpenClick = (id: number) => {
     const currentCamera = camerasInBasketToShow.find((camera) => camera.id === id);
@@ -66,13 +72,25 @@ export default function BasketPage(): JSX.Element {
       const orderCamerasId = camerasToOrder.map((cameraToOrder) => cameraToOrder.id);
       const order: Order = {
         camerasIds: orderCamerasId,
-        coupon: null
+        coupon: coupon
       };
-      dispatch(postOrderAction(order));
+      try {
+        dispatch(postOrderAction(order));
+      } catch (error) {
+        if (isErrorPostOrder) {
+          dispatch(toggleOrderErrorPopupOpen());
+          processErrorHandle('Не удалось создать заказ', dispatch);
+          dispatch(setErrorStatus());
+        }
+      }
     }
-    if (!isOrderDataLoading) {
+    if (!isOrderDataLoading && !isErrorPostOrder) {
       dispatch(toggleOrderSuccessPopupOpen());
     }
+  };
+
+  const handleOrderErrorPopupClick = () => {
+    dispatch(toggleOrderErrorPopupOpen());
   };
 
   return (
@@ -128,6 +146,13 @@ export default function BasketPage(): JSX.Element {
           orderSuccessPopupOpenStatus
             ?
             <OrderSuccessPopup onCloseClick={handleOrderSuccessPopupClick} />
+            :
+            ''
+        }
+        {
+          orderErrorPopupOpenStatus
+            ?
+            <OrderErrorPopup onCloseClick={handleOrderErrorPopupClick} />
             :
             ''
         }

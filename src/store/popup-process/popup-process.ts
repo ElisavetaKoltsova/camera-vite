@@ -9,7 +9,8 @@ const initialState: PopupProcess = {
   isReviewPopupOpen: false,
   isReviewSuccessPopupOpen: false,
   isRemoveItemPopupOpen: false,
-  isOrderSuccessPopupOpen: false
+  isOrderSuccessPopupOpen: false,
+  isOrderErrorPopupOpen: false
 };
 
 export const popupProcess = createSlice({
@@ -25,6 +26,7 @@ export const popupProcess = createSlice({
       state.isOrderSuccessPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isReviewPopupOpen = false;
+      state.isOrderErrorPopupOpen = false;
     },
     toggleAddItemPopupOpenStatus(state) {
       state.isAddItemPopupOpen = !state.isAddItemPopupOpen;
@@ -35,6 +37,7 @@ export const popupProcess = createSlice({
       state.isOrderSuccessPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isReviewPopupOpen = false;
+      state.isOrderErrorPopupOpen = false;
     },
     toggleAddItemSuccessPopupOpenStatus(state) {
       state.isAddItemSuccessPopupOpen = !state.isAddItemSuccessPopupOpen;
@@ -45,6 +48,7 @@ export const popupProcess = createSlice({
       state.isOrderSuccessPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isReviewPopupOpen = false;
+      state.isOrderErrorPopupOpen = false;
     },
     toggleRemoveItemPopupOpenStatus(state) {
       state.isRemoveItemPopupOpen = !state.isRemoveItemPopupOpen;
@@ -55,6 +59,7 @@ export const popupProcess = createSlice({
       state.isOrderSuccessPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isReviewPopupOpen = false;
+      state.isOrderErrorPopupOpen = false;
     },
     toggleOrderSuccessPopupOpen(state) {
       state.isOrderSuccessPopupOpen = !state.isOrderSuccessPopupOpen;
@@ -65,6 +70,7 @@ export const popupProcess = createSlice({
       state.isRemoveItemPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isReviewPopupOpen = false;
+      state.isOrderErrorPopupOpen = false;
     },
     toggleReviewPopupOpen(state) {
       state.isReviewPopupOpen = !state.isReviewPopupOpen;
@@ -75,6 +81,7 @@ export const popupProcess = createSlice({
       state.isRemoveItemPopupOpen = false;
       state.isReviewSuccessPopupOpen = false;
       state.isOrderSuccessPopupOpen = false;
+      state.isOrderErrorPopupOpen = false;
     },
     toggleReviewSuccessPopupOpen(state) {
       state.isReviewSuccessPopupOpen = !state.isReviewSuccessPopupOpen;
@@ -85,6 +92,18 @@ export const popupProcess = createSlice({
       state.isRemoveItemPopupOpen = false;
       state.isReviewPopupOpen = false;
       state.isOrderSuccessPopupOpen = false;
+      state.isOrderErrorPopupOpen = false;
+    },
+    toggleOrderErrorPopupOpen(state) {
+      state.isOrderErrorPopupOpen = !state.isOrderErrorPopupOpen;
+
+      state.isCallItemPopupOpen = false;
+      state.isAddItemPopupOpen = false;
+      state.isAddItemSuccessPopupOpen = false;
+      state.isRemoveItemPopupOpen = false;
+      state.isReviewPopupOpen = false;
+      state.isOrderSuccessPopupOpen = false;
+      state.isReviewSuccessPopupOpen = false;
     }
   }
 });
@@ -96,5 +115,6 @@ export const {
   toggleRemoveItemPopupOpenStatus,
   toggleOrderSuccessPopupOpen,
   toggleReviewPopupOpen,
-  toggleReviewSuccessPopupOpen
+  toggleReviewSuccessPopupOpen,
+  toggleOrderErrorPopupOpen
 } = popupProcess.actions;

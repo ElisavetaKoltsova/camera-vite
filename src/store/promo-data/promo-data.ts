@@ -7,7 +7,8 @@ const initialState: PromoData = {
   promos: [],
   couponDiscount: 0,
   isCouponDiscountDataLoading: false,
-  isPromoDataLoading: false
+  isPromoDataLoading: false,
+  coupon: null
 };
 
 export const promoData = createSlice({
@@ -27,7 +28,9 @@ export const promoData = createSlice({
         state.isCouponDiscountDataLoading = true;
       })
       .addCase(postCouponAction.fulfilled, (state, action) => {
-        state.couponDiscount = action.payload;
+        const { data, coupon } = action.payload;
+        state.couponDiscount = data;
+        state.coupon = coupon;
         state.isCouponDiscountDataLoading = false;
       })
       .addCase(postCouponAction.rejected, (state) => {

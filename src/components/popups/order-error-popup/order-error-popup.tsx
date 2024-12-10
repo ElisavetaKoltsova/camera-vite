@@ -2,29 +2,21 @@ import { useNavigate } from 'react-router-dom';
 import { AppRoute } from '../../../const';
 import { useScroll } from '../../../hooks/use-scroll';
 import { useEffect, useRef } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../hooks';
+import { useAppSelector } from '../../../hooks';
 import { getOrderDataLoadingStatus } from '../../../store/order-data/selectors';
 import Loader from '../../loader/loader';
-import { clearBasket } from '../../../store/product-data/product-data';
 
-type OrderSuccessPopupProps = {
+type OrderErrorPopupProps = {
   onCloseClick: () => void;
 }
 
-export default function OrderSuccessPopup({onCloseClick}: OrderSuccessPopupProps): JSX.Element {
+export default function OrderErrorPopup({onCloseClick}: OrderErrorPopupProps): JSX.Element {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
 
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const { disableScroll, enableScroll } = useScroll();
   const isOrderDataLoading = useAppSelector(getOrderDataLoadingStatus);
-
-  useEffect(() => {
-    if (!isOrderDataLoading) {
-      dispatch(clearBasket());
-    }
-  }, [dispatch, isOrderDataLoading]);
 
   useEffect(() => {
     const handleEscKeyDown = (event: KeyboardEvent) => {
@@ -64,10 +56,7 @@ export default function OrderSuccessPopup({onCloseClick}: OrderSuccessPopupProps
             ? <Loader />
             :
             <div className="modal__content">
-              <p className="title title--h4">Спасибо за покупку</p>
-              <svg className="modal__icon" width="80" height="78" aria-hidden="true">
-                <use xlinkHref="#icon-review-success"></use>
-              </svg>
+              <p className="title title--h4">Ошибка при оформлении заказа</p>
               <div className="modal__buttons">
                 <button
                   className="btn btn--purple modal__btn modal__btn--fit-width"

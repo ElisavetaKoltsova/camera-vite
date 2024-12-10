@@ -20,6 +20,7 @@ import Pagination from '../../components/pagination/pagination';
 import { filterPrice } from '../../utils/filter';
 import AddItemPopup from '../../components/popups/add-item-popup/add-item-popup';
 import AddItemSuccessPopup from '../../components/popups/add-item-success-popup/add-item-success-popup';
+import { fetchCamerasAction } from '../../store/api-action';
 
 export default function CatalogPage(): JSX.Element {
   const { pathname } = useLocation();
@@ -78,6 +79,10 @@ export default function CatalogPage(): JSX.Element {
   const camerasCountFrom = (currentPage - ONE_PAGE) * COUNT_OF_CAMERAS_ON_PAGE;
   const camerasCountTo = currentPage * COUNT_OF_CAMERAS_ON_PAGE > usedCameras.length ? usedCameras.length : currentPage * COUNT_OF_CAMERAS_ON_PAGE;
   const visibleCameras = usedCameras.slice(camerasCountFrom, camerasCountTo);
+
+  useEffect(() => {
+    dispatch(fetchCamerasAction());
+  }, [dispatch]);
 
   useEffect(() => {
     if (currentPage > countOfPage && countOfPage !== ZERO_PAGE) {

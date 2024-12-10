@@ -15,7 +15,7 @@ import { getReviews, getReviewsDataLoadingStatus } from '../../store/review-data
 import { toggleAddItemPopupOpenStatus, toggleAddItemSuccessPopupOpenStatus, toggleReviewPopupOpen, toggleReviewSuccessPopupOpen } from '../../store/popup-process/popup-process';
 import ReviewPopup from '../../components/popups/review-popup/review-popup';
 import { getAddItemPopupOpenStatus, getAddItemSuccessPopupOpenStatus, getReviewPopupOpenStatus, getReviewSuccessPopupOpenStatus } from '../../store/popup-process/selectors';
-import ReviewSuccessPopup from '../../components/popups/review-success/review-success-popup';
+import ReviewSuccessPopup from '../../components/popups/review-success-popup/review-success-popup';
 import ProductSimilarList from '../../components/product-similar-list/product-similar-list';
 import { Camera } from '../../types/camera';
 import { resetFilters } from '../../store/product-data/product-data';
@@ -71,6 +71,12 @@ export default function ProductPage(): JSX.Element {
 
   const addItemPopupOpenStatus = useAppSelector(getAddItemPopupOpenStatus);
   const addItemSuccessPopupOpenStatus = useAppSelector(getAddItemSuccessPopupOpenStatus);
+
+  useEffect(() => {
+    if (currentId) {
+      dispatch(fetchCurrentCameraAction(currentId));
+    }
+  }, [currentId, dispatch, reviews]);
 
   const handleTabButtonClick = (tab: Tab) => {
     setCurrentTab(tab);

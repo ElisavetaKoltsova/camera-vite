@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { Camera } from '../types/camera';
 import { AppDispatch, State } from '../types/state';
 import { AxiosInstance } from 'axios';
-import { APIRoute } from '../const';
+import { APIRoute, CouponName } from '../const';
 import { Review, ReviewToPost } from '../types/review';
 import { Coupon, Promo } from '../types/promo';
 import { Order } from '../types/order';
@@ -89,7 +89,7 @@ export const postOrderAction = createAsyncThunk<void, Order, {
   }
 );
 
-export const postCouponAction = createAsyncThunk<number, Coupon, {
+export const postCouponAction = createAsyncThunk<{data: number; coupon: CouponName}, Coupon, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
@@ -97,7 +97,7 @@ export const postCouponAction = createAsyncThunk<number, Coupon, {
   APIAction.POST_COUPON,
   async ({coupon}, {extra: api}) => {
     const { data } = await api.post<number>(APIRoute.Coupon, {coupon});
-    return data;
+    return { data, coupon };
   }
 );
 

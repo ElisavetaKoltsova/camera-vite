@@ -32,10 +32,12 @@ export type PopupProcess = {
   isReviewSuccessPopupOpen: boolean;
   isRemoveItemPopupOpen: boolean;
   isOrderSuccessPopupOpen: boolean;
+  isOrderErrorPopupOpen: boolean;
 }
 
 export type PromoData = {
   promos: Promo[];
+  coupon: string | null;
   couponDiscount: number;
   isCouponDiscountDataLoading: boolean;
   isPromoDataLoading: boolean;
@@ -47,6 +49,7 @@ export type ErrorProcess = {
 
 export type OrderData = {
   isOrderDataLoading: boolean;
+  isErrorPostOrder: boolean;
 }
 
 export type State = ReturnType<typeof store.getState>;
