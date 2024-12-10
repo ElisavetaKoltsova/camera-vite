@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useScroll } from '../../../hooks/use-scroll';
 import { Camera } from '../../../types/camera';
 import BasketShortItem from '../../basket-short-item/basket-short-item';
@@ -17,6 +17,7 @@ export default function RemoveItemPopup({selectedCamera, onCloseClick}: RemoveIt
   const { disableScroll, enableScroll } = useScroll();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const camerasInBasket = useAppSelector(getCamerasInBasket);
 
@@ -28,8 +29,12 @@ export default function RemoveItemPopup({selectedCamera, onCloseClick}: RemoveIt
     };
 
     document.addEventListener('keydown', handleEscKeyDown);
-
     disableScroll();
+
+    if (buttonRef.current) {
+      buttonRef.current.focus();
+    }
+
     return () => {
       enableScroll();
       document.removeEventListener('keydown', handleEscKeyDown);
@@ -59,7 +64,13 @@ export default function RemoveItemPopup({selectedCamera, onCloseClick}: RemoveIt
             <p className="title title--h4">Удалить этот товар?</p>
             <BasketShortItem selectedCamera={selectedCamera} />
             <div className="modal__buttons">
-              <button className="btn btn--purple modal__btn modal__btn--half-width" type="button" onClick={() => handleDeleteButtonClick(selectedCamera.id)}>Удалить
+              <button
+                className="btn btn--purple modal__btn modal__btn--half-width"
+                type="button"
+                onClick={() => handleDeleteButtonClick(selectedCamera.id)}
+                ref={buttonRef}
+              >
+                Удалить
               </button>
               <Link className="btn btn--transparent modal__btn modal__btn--half-width" to={AppRoute.Catalog}>Продолжить покупки
               </Link>

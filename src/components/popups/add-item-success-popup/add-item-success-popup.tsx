@@ -3,7 +3,7 @@ import { AppRoute } from '../../../const';
 import { useAppDispatch } from '../../../hooks';
 import { toggleAddItemSuccessPopupOpenStatus } from '../../../store/popup-process/popup-process';
 import { useScroll } from '../../../hooks/use-scroll';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 type AddItemSuccessPopupProps = {
   onCloseClick: () => void;
@@ -12,6 +12,7 @@ type AddItemSuccessPopupProps = {
 export default function AddItemSuccessPopup({onCloseClick}: AddItemSuccessPopupProps): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const { disableScroll, enableScroll } = useScroll();
 
@@ -23,8 +24,12 @@ export default function AddItemSuccessPopup({onCloseClick}: AddItemSuccessPopupP
     };
 
     document.addEventListener('keydown', handleEscKeyDown);
-
     disableScroll();
+
+    if (buttonRef.current) {
+      buttonRef.current.focus();
+    }
+
     return () => {
       enableScroll();
       document.removeEventListener('keydown', handleEscKeyDown);
@@ -46,7 +51,13 @@ export default function AddItemSuccessPopup({onCloseClick}: AddItemSuccessPopupP
             <use xlinkHref="#icon-success"></use>
           </svg>
           <div className="modal__buttons"><Link className="btn btn--transparent modal__btn" to={AppRoute.Catalog} onClick={onCloseClick}>Продолжить покупки</Link>
-            <button className="btn btn--purple modal__btn modal__btn--fit-width" onClick={handleToBasketButtonClick}>Перейти в корзину</button>
+            <button
+              className="btn btn--purple modal__btn modal__btn--fit-width"
+              onClick={handleToBasketButtonClick}
+              ref={buttonRef}
+            >
+              Перейти в корзину
+            </button>
           </div>
           <button className="cross-btn" type="button" aria-label="Закрыть попап" onClick={onCloseClick}>
             <svg width="10" height="10" aria-hidden="true">

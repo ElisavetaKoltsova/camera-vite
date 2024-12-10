@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useScroll } from '../../../hooks/use-scroll';
 import { Camera } from '../../../types/camera';
 import BasketShortItem from '../../basket-short-item/basket-short-item';
@@ -14,6 +14,7 @@ type AddItemPopupProps = {
 export default function AddItemPopup({selectedCamera, onCloseClick, onAddToBasketClick}: AddItemPopupProps): JSX.Element {
   const { disableScroll, enableScroll } = useScroll();
   const dispatch = useAppDispatch();
+  const addToBasketButtonRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     const handleEscKeyDown = (event: KeyboardEvent) => {
@@ -23,8 +24,12 @@ export default function AddItemPopup({selectedCamera, onCloseClick, onAddToBaske
     };
 
     document.addEventListener('keydown', handleEscKeyDown);
-
     disableScroll();
+
+    if (addToBasketButtonRef.current) {
+      addToBasketButtonRef.current.focus();
+    }
+
     return () => {
       enableScroll();
       document.removeEventListener('keydown', handleEscKeyDown);
@@ -47,7 +52,12 @@ export default function AddItemPopup({selectedCamera, onCloseClick, onAddToBaske
             <p className="title title--h4">Добавить товар в корзину</p>
             <BasketShortItem selectedCamera={selectedCamera} />
             <div className="modal__buttons">
-              <button className="btn btn--purple modal__btn modal__btn--fit-width" type="button" onClick={handleAddToBasketButtonClick}>
+              <button
+                className="btn btn--purple modal__btn modal__btn--fit-width"
+                type="button"
+                onClick={handleAddToBasketButtonClick}
+                ref={addToBasketButtonRef}
+              >
                 <svg width="24" height="16" aria-hidden="true">
                   <use xlinkHref="#icon-add-basket"></use>
                 </svg>Добавить в корзину
