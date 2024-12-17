@@ -52,7 +52,7 @@ describe('Application Routing', () => {
     expect(screen.getByTestId(expectedTestId)).toBeInTheDocument();
   });
 
-  it('should render "BasketPage" when user navigate to "/basket"', () => {
+  it('should render "BasketPage" when user navigate to "/card"', () => {
     const expectedTestId = 'basket-page';
     const { withStoreComponent } = withStore(
       withHistory(

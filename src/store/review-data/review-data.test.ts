@@ -1,5 +1,6 @@
-import { makeFakeReviews } from '../../utils/mock';
-import { fetchReviewsAction } from '../api-action';
+import { sortReviewsByDate } from '../../utils/list';
+import { makeFakeReview, makeFakeReviews } from '../../utils/mock';
+import { fetchReviewsAction, postReviewAction } from '../api-action';
 import { reviewData } from './review-data';
 
 describe('ReviewData Slice', () => {
@@ -50,5 +51,33 @@ describe('ReviewData Slice', () => {
     const result = reviewData.reducer(undefined, fetchReviewsAction.fulfilled(mockReviews, '', ''));
 
     expect(result).toEqual(expectedState);
+  });
+
+  it('should set "isReviewsDataLoading" to "true" with "postReviewAction.pending"', () => {
+    const expectedState = {
+      reviews: [],
+      isReviewsDataLoading: true
+    };
+
+    const result = reviewData.reducer(undefined, postReviewAction.pending);
+
+    expect(result).toEqual(expectedState);
+  });
+
+  it('should set "isReviewsDataLoading" to "false" with "postReviewAction.fulfilled"', () => {
+    const fakeReviews = makeFakeReviews(3);
+    const fakeReview = makeFakeReview();
+
+    fakeReviews.push(fakeReview);
+
+    const expectedState = {
+      reviews: [...fakeReviews].sort(sortReviewsByDate),
+      isReviewsDataLoading: false
+    };
+
+    const resultReview = reviewData.reducer(undefined, postReviewAction.fulfilled(fakeReview, '', fakeReview));
+    const result = expectedState.reviews.includes(resultReview.reviews[0]);
+
+    expect(result).toEqual(true);
   });
 });

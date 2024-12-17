@@ -1,7 +1,7 @@
 import { NameSpace } from '../../const';
 import { State } from '../../types/state';
 import { makeFakePromos } from '../../utils/mock';
-import { getCouponDiscount, getCouponDiscountDataLoadingStatus, getPromos } from './selectors';
+import { getCoupon, getCouponDiscount, getCouponDiscountDataLoadingStatus, getPromoDataLoadingStatus, getPromos } from './selectors';
 
 describe('PromoData selectors', () => {
   const COUNT_OF_PROMOS = 10;
@@ -11,7 +11,9 @@ describe('PromoData selectors', () => {
     [NameSpace.Promo]: {
       promos: makeFakePromos(COUNT_OF_PROMOS),
       couponDiscount: COUPON_DISCOUNT,
-      isCouponDiscountDataLoading: false
+      isCouponDiscountDataLoading: false,
+      coupon: null,
+      isPromoDataLoading: false
     }
   };
 
@@ -29,10 +31,24 @@ describe('PromoData selectors', () => {
     expect(result).toBe(couponDiscount);
   });
 
+  it('should return coupon from state', () => {
+    const { coupon } = state[NameSpace.Promo];
+    const result = getCoupon(state);
+
+    expect(result).toBe(coupon);
+  });
+
   it('should return isCouponDiscountDataLoading from state', () => {
     const { isCouponDiscountDataLoading } = state[NameSpace.Promo];
     const result = getCouponDiscountDataLoadingStatus(state);
 
     expect(result).toBe(isCouponDiscountDataLoading);
+  });
+
+  it('should return isPromoDataLoading from state', () => {
+    const { isPromoDataLoading } = state[NameSpace.Promo];
+    const result = getPromoDataLoadingStatus(state);
+
+    expect(result).toBe(isPromoDataLoading);
   });
 });

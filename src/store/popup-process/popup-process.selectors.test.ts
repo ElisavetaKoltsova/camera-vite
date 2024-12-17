@@ -11,7 +11,8 @@ describe('PopupProcess selectors', () => {
       isReviewPopupOpen: false,
       isReviewSuccessPopupOpen: false,
       isRemoveItemPopupOpen: false,
-      isOrderSuccessPopupOpen: false
+      isOrderSuccessPopupOpen: false,
+      isOrderErrorPopupOpen: false
     }
   };
 

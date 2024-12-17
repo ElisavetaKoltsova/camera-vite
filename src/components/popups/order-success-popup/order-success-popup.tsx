@@ -56,9 +56,9 @@ export default function OrderSuccessPopup({onCloseClick}: OrderSuccessPopupProps
   };
 
   return (
-    <div className="modal is-active modal--narrow">
+    <div className="modal is-active modal--narrow" data-testid="order-success-popup">
       <div className="modal__wrapper">
-        <div className="modal__overlay" onClick={handleCloseButtonClick}></div>
+        <div className="modal__overlay" onClick={handleCloseButtonClick} data-testid="overlay-darkened"></div>
         {
           isOrderDataLoading
             ? <Loader />

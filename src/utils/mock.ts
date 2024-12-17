@@ -4,7 +4,7 @@ import { createAPI } from '../services/api';
 import { Promo } from '../types/promo';
 import { datatype, internet, name } from 'faker';
 import { Camera } from '../types/camera';
-import { Review } from '../types/review';
+import { Review, ReviewToPost } from '../types/review';
 import { CameraCategory, CameraLevel, CameraType, PRICE_FROM, PRICE_TO, Sorts } from '../const';
 
 export type AppThunkDispatch = ThunkDispatch<State, ReturnType<typeof createAPI>, Action>;
@@ -24,6 +24,15 @@ export const makeFakeReview = (): Review => ({
   id: name.title(),
   createAt: String(new Date()),
   cameraId: datatype.number(),
+  userName: name.firstName(),
+  advantage: name.title(),
+  disadvantage: name.title(),
+  review: name.title(),
+  rating: datatype.number()
+});
+
+export const makeFakeReviewToPost = (): ReviewToPost => ({
+  cameraId: Number(name.title()),
   userName: name.firstName(),
   advantage: name.title(),
   disadvantage: name.title(),
@@ -127,7 +136,9 @@ export const makeFakeStore = (initialState?: Partial<State>): State => ({
   PROMO: {
     promos: [],
     couponDiscount: 0,
-    isCouponDiscountDataLoading: false
+    isCouponDiscountDataLoading: false,
+    coupon: null,
+    isPromoDataLoading: false
   },
   POPUP: {
     isCallItemPopupOpen: false,
@@ -136,7 +147,8 @@ export const makeFakeStore = (initialState?: Partial<State>): State => ({
     isReviewPopupOpen: false,
     isReviewSuccessPopupOpen: false,
     isRemoveItemPopupOpen: false,
-    isOrderSuccessPopupOpen: false
+    isOrderSuccessPopupOpen: false,
+    isOrderErrorPopupOpen: false
   },
   REVIEW: {
     reviews: [],
@@ -144,6 +156,10 @@ export const makeFakeStore = (initialState?: Partial<State>): State => ({
   },
   ERROR: {
     errorMessage: 'Some error'
+  },
+  ORDER: {
+    isOrderDataLoading: false,
+    isErrorPostOrder: false
   },
   ...initialState ?? {}
 });

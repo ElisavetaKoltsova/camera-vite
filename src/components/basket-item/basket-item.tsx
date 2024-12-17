@@ -1,10 +1,11 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { MAX_COUNT_OF_CAMERAS, MIN_COUNT_OF_CAMERAS } from '../../const';
+import { AppRoute, CameraRemoveParameter, MAX_COUNT_OF_CAMERAS, MIN_COUNT_OF_CAMERAS } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { addCameraToBasket, changeNumberOfCamerasInBasket, removeCameraInBasket } from '../../store/product-data/product-data';
 import { getCamerasInBasket } from '../../store/product-data/selectors';
 import { Camera } from '../../types/camera';
 import { convertNumberIntoMoneyFormat } from '../../utils/list';
+import { Link } from 'react-router-dom';
 
 type BasketItemProps = {
   camera: Camera;
@@ -60,19 +61,23 @@ export default function BasketItem({camera, onDeleteClick}: BasketItemProps): JS
   };
 
   const handleDecreaseCountOfProductButtonClick = () => {
-    dispatch(removeCameraInBasket({id, parameter: 'parameter'}));
+    dispatch(removeCameraInBasket({id, parameter: CameraRemoveParameter.PARAMETER}));
   };
 
   return (
-    <li className="basket-item">
+    <li className="basket-item" data-testid="basket-item">
       <div className="basket-item__img">
         <picture>
-          <source type="image/webp" srcSet={`${previewImgWebp}, ${previewImgWebp2x}`} />
-          <img src={previewImg} srcSet={`${previewImg2x} 2x`} width="140" height="120" alt={name} />
+          <Link to={`${AppRoute.Product}/${id}`}>
+            <source type="image/webp" srcSet={`${previewImgWebp}, ${previewImgWebp2x}`} />
+            <img src={previewImg} srcSet={`${previewImg2x} 2x`} width="140" height="120" alt={name} />
+          </Link>
         </picture>
       </div>
       <div className="basket-item__description">
-        <p className="basket-item__title">{name}</p>
+        <Link to={`${AppRoute.Product}/${id}`}>
+          <p className="basket-item__title">{name}</p>
+        </Link>
         <ul className="basket-item__list">
           <li className="basket-item__list-item"><span className="basket-item__article">Артикул:</span> <span className="basket-item__number">{vendorCode}</span>
           </li>

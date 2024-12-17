@@ -12,7 +12,9 @@ describe('PromoData Slice', () => {
     const expectedState = {
       promos: makeFakePromos(COUNT_OF_PROMOS),
       couponDiscount: COUPON_DISCOUNT,
-      isCouponDiscountDataLoading: false
+      isCouponDiscountDataLoading: false,
+      coupon: null,
+      isPromoDataLoading: false
     };
 
     const result = promoData.reducer(expectedState, emptyAction);
@@ -25,10 +27,58 @@ describe('PromoData Slice', () => {
     const expectedState = {
       promos: [],
       couponDiscount: COUPON_DISCOUNT,
-      isCouponDiscountDataLoading: false
+      isCouponDiscountDataLoading: false,
+      coupon: null,
+      isPromoDataLoading: false
     };
 
     const result = promoData.reducer(undefined, emptyAction);
+
+    expect(result).toEqual(expectedState);
+  });
+
+  it('should set "isCouponDiscountDataLoading" to "true" with "postCouponAction.pending"', () => {
+    const expectedState = {
+      promos: [],
+      couponDiscount: COUPON_DISCOUNT,
+      isCouponDiscountDataLoading: true,
+      coupon: null,
+      isPromoDataLoading: false
+    };
+
+    const result = promoData.reducer(undefined, postCouponAction.pending);
+
+    expect(result).toEqual(expectedState);
+  });
+
+  it('should set "couponDiscount" to couponDiscount, "isCouponDiscountDataLoading" to "true" with "postCouponAction.fulfilled"', () => {
+    const discount = 15;
+    const expectedState = {
+      promos: [],
+      couponDiscount: discount,
+      isCouponDiscountDataLoading: false,
+      coupon: CouponName.Coupon333,
+      isPromoDataLoading: false
+    };
+
+    const result = promoData.reducer(undefined, postCouponAction.fulfilled({
+      data: discount,
+      coupon: CouponName.Coupon333
+    }, '', {coupon: CouponName.Coupon333}));
+
+    expect(result).toEqual(expectedState);
+  });
+
+  it('should set "couponDiscount" to "0", "isCouponDiscountDataLoading" to "false" with "postCouponAction.rejected"', () => {
+    const expectedState = {
+      promos: [],
+      couponDiscount: COUPON_DISCOUNT,
+      isCouponDiscountDataLoading: false,
+      coupon: null,
+      isPromoDataLoading: false
+    };
+
+    const result = promoData.reducer(undefined, postCouponAction.rejected);
 
     expect(result).toEqual(expectedState);
   });
@@ -37,35 +87,12 @@ describe('PromoData Slice', () => {
     const expectedState = {
       promos: [],
       couponDiscount: COUPON_DISCOUNT,
-      isCouponDiscountDataLoading: true
+      isCouponDiscountDataLoading: false,
+      coupon: null,
+      isPromoDataLoading: true
     };
 
-    const result = promoData.reducer(undefined, postCouponAction.pending);
-
-    expect(result).toEqual(expectedState);
-  });
-
-  it('should set "couponDiscount" to couponDiscount, "isCouponDiscountDataLoading" to "true" with "fetchPromosAction.fulfilled"', () => {
-    const discount = 15;
-    const expectedState = {
-      promos: [],
-      couponDiscount: discount,
-      isCouponDiscountDataLoading: false
-    };
-
-    const result = promoData.reducer(undefined, postCouponAction.fulfilled(discount, '', {coupon: CouponName.Coupon333}));
-
-    expect(result).toEqual(expectedState);
-  });
-
-  it('should set "couponDiscount" to "0", "isCouponDiscountDataLoading" to "false" with "fetchPromosAction.rejected"', () => {
-    const expectedState = {
-      promos: [],
-      couponDiscount: COUPON_DISCOUNT,
-      isCouponDiscountDataLoading: false
-    };
-
-    const result = promoData.reducer(undefined, postCouponAction.rejected);
+    const result = promoData.reducer(undefined, fetchPromosAction.pending);
 
     expect(result).toEqual(expectedState);
   });
@@ -75,7 +102,9 @@ describe('PromoData Slice', () => {
     const expectedState = {
       promos: [...mockPromos],
       couponDiscount: COUPON_DISCOUNT,
-      isCouponDiscountDataLoading: false
+      isCouponDiscountDataLoading: false,
+      coupon: null,
+      isPromoDataLoading: false
     };
 
     const result = promoData.reducer(undefined, fetchPromosAction.fulfilled(mockPromos, '', undefined));

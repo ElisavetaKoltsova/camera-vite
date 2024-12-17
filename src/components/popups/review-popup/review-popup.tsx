@@ -95,21 +95,10 @@ export default function ReviewPopup({onCloseClick, cameraId, onSubmitClick}: Rev
     }
   };
 
-  // const checkInputValue = (value: string) => {
-  //   if (value.length > 0) {
-  //     const isInputValid = value.length >= Input.MIN && value.length <= Input.MAX;
-  //     return isInputValid ? isInputValid : `От ${Input.MIN} до ${Input.MAX} символов`;
-  //   }
-  // };
-
-  // const checkCorrectnessOfAdvantage = (value: string) => checkInputValue(value);
-  // const checkCorrectnessOfDisadvantage = (value: string) => checkInputValue(value);
-  // const checkCorrectnessOfReview = (value: string) => checkInputValue(value);
-
   return (
-    <div className="modal is-active">
+    <div className="modal is-active" data-testid="review-popup">
       <div className="modal__wrapper">
-        <div className="modal__overlay" onClick={onCloseClick}></div>
+        <div className="modal__overlay" onClick={onCloseClick} data-testid="overlay-darkened"></div>
         <div className="modal__content">
           <p className="title title--h4">Оставить отзыв</p>
           <div className="form-review">

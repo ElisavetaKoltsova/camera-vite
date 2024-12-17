@@ -45,9 +45,9 @@ export default function AddItemPopup({selectedCamera, onCloseClick, onAddToBaske
 
   if (selectedCamera) {
     return (
-      <div className="modal is-active">
+      <div className="modal is-active" data-testid="add-item-popup">
         <div className="modal__wrapper">
-          <div className="modal__overlay" onClick={onCloseClick}></div>
+          <div className="modal__overlay" onClick={onCloseClick} data-testid="overlay-darkened"></div>
           <div className="modal__content">
             <p className="title title--h4">Добавить товар в корзину</p>
             <BasketShortItem selectedCamera={selectedCamera} />

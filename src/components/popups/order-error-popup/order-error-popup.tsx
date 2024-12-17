@@ -48,9 +48,9 @@ export default function OrderErrorPopup({onCloseClick}: OrderErrorPopupProps): J
   };
 
   return (
-    <div className="modal is-active modal--narrow">
+    <div className="modal is-active modal--narrow" data-testid="order-error-popup">
       <div className="modal__wrapper">
-        <div className="modal__overlay" onClick={handleCloseButtonClick}></div>
+        <div className="modal__overlay" onClick={handleCloseButtonClick} data-testid="overlay-darkened"></div>
         {
           isOrderDataLoading
             ? <Loader />

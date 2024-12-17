@@ -3,6 +3,7 @@ import {
   toggleAddItemPopupOpenStatus,
   toggleAddItemSuccessPopupOpenStatus,
   toggleCallItemPopupOpenStatus,
+  toggleOrderErrorPopupOpen,
   toggleOrderSuccessPopupOpen,
   toggleRemoveItemPopupOpenStatus,
   toggleReviewPopupOpen,
@@ -17,7 +18,8 @@ describe('PopupProcess Slice', () => {
     isReviewPopupOpen: false,
     isReviewSuccessPopupOpen: false,
     isRemoveItemPopupOpen: false,
-    isOrderSuccessPopupOpen: false
+    isOrderSuccessPopupOpen: false,
+    isOrderErrorPopupOpen: false
   };
 
   it('should set all on false except "isCallItemPopupOpen"', () => {
@@ -28,7 +30,8 @@ describe('PopupProcess Slice', () => {
       isReviewPopupOpen: false,
       isReviewSuccessPopupOpen: false,
       isRemoveItemPopupOpen: false,
-      isOrderSuccessPopupOpen: false
+      isOrderSuccessPopupOpen: false,
+      isOrderErrorPopupOpen: false
     };
 
     const result = popupProcess.reducer(
@@ -47,7 +50,8 @@ describe('PopupProcess Slice', () => {
       isReviewPopupOpen: false,
       isReviewSuccessPopupOpen: false,
       isRemoveItemPopupOpen: false,
-      isOrderSuccessPopupOpen: false
+      isOrderSuccessPopupOpen: false,
+      isOrderErrorPopupOpen: false
     };
 
     const result = popupProcess.reducer(
@@ -66,7 +70,8 @@ describe('PopupProcess Slice', () => {
       isReviewPopupOpen: false,
       isReviewSuccessPopupOpen: false,
       isRemoveItemPopupOpen: false,
-      isOrderSuccessPopupOpen: false
+      isOrderSuccessPopupOpen: false,
+      isOrderErrorPopupOpen: false
     };
 
     const result = popupProcess.reducer(
@@ -85,7 +90,8 @@ describe('PopupProcess Slice', () => {
       isReviewPopupOpen: true,
       isReviewSuccessPopupOpen: false,
       isRemoveItemPopupOpen: false,
-      isOrderSuccessPopupOpen: false
+      isOrderSuccessPopupOpen: false,
+      isOrderErrorPopupOpen: false
     };
 
     const result = popupProcess.reducer(
@@ -104,7 +110,8 @@ describe('PopupProcess Slice', () => {
       isReviewPopupOpen: false,
       isReviewSuccessPopupOpen: true,
       isRemoveItemPopupOpen: false,
-      isOrderSuccessPopupOpen: false
+      isOrderSuccessPopupOpen: false,
+      isOrderErrorPopupOpen: false
     };
 
     const result = popupProcess.reducer(
@@ -123,7 +130,8 @@ describe('PopupProcess Slice', () => {
       isReviewPopupOpen: false,
       isReviewSuccessPopupOpen: false,
       isRemoveItemPopupOpen: true,
-      isOrderSuccessPopupOpen: false
+      isOrderSuccessPopupOpen: false,
+      isOrderErrorPopupOpen: false
     };
 
     const result = popupProcess.reducer(
@@ -142,12 +150,33 @@ describe('PopupProcess Slice', () => {
       isReviewPopupOpen: false,
       isReviewSuccessPopupOpen: false,
       isRemoveItemPopupOpen: false,
-      isOrderSuccessPopupOpen: true
+      isOrderSuccessPopupOpen: true,
+      isOrderErrorPopupOpen: false
     };
 
     const result = popupProcess.reducer(
       initialState,
       toggleOrderSuccessPopupOpen()
+    );
+
+    expect(result).toEqual(expectedState);
+  });
+
+  it('should set all on false except "isOrderErrorPopupOpen"', () => {
+    const expectedState = {
+      isCallItemPopupOpen: false,
+      isAddItemPopupOpen: false,
+      isAddItemSuccessPopupOpen: false,
+      isReviewPopupOpen: false,
+      isReviewSuccessPopupOpen: false,
+      isRemoveItemPopupOpen: false,
+      isOrderSuccessPopupOpen: false,
+      isOrderErrorPopupOpen: true
+    };
+
+    const result = popupProcess.reducer(
+      initialState,
+      toggleOrderErrorPopupOpen()
     );
 
     expect(result).toEqual(expectedState);

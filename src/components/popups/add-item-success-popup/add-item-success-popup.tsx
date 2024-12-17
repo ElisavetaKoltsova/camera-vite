@@ -42,9 +42,9 @@ export default function AddItemSuccessPopup({onCloseClick}: AddItemSuccessPopupP
   };
 
   return (
-    <div className="modal is-active modal--narrow">
+    <div className="modal is-active modal--narrow" data-testid="add-item-success-popup">
       <div className="modal__wrapper">
-        <div className="modal__overlay" onClick={onCloseClick}></div>
+        <div className="modal__overlay" onClick={onCloseClick} data-testid="overlay-darkened"></div>
         <div className="modal__content">
           <p className="title title--h4">Товар успешно добавлен в корзину</p>
           <svg className="modal__icon" width="86" height="80" aria-hidden="true">

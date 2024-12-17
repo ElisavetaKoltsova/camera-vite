@@ -57,9 +57,9 @@ export default function RemoveItemPopup({selectedCamera, onCloseClick}: RemoveIt
 
   if (selectedCamera) {
     return (
-      <div className="modal is-active">
+      <div className="modal is-active" data-testid="remove-item-popup">
         <div className="modal__wrapper">
-          <div className="modal__overlay" onClick={onCloseClick}></div>
+          <div className="modal__overlay" onClick={onCloseClick} data-testid="overlay-darkened"></div>
           <div className="modal__content">
             <p className="title title--h4">Удалить этот товар?</p>
             <BasketShortItem selectedCamera={selectedCamera} />

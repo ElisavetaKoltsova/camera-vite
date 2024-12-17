@@ -67,7 +67,7 @@ export default function SummaryOrder({camerasInBasket, onOrderSuccessClick, prom
   const checkCorrectnessOfCoupon = (value: string) => Object.values(CouponName).includes(value as CouponName);
 
   return (
-    <div className="basket__summary">
+    <div className="basket__summary" data-testid="summary-order">
       <div className="basket__promo">
         <p className="title title&#45;&#45;h4">Если у вас есть промокод на скидку, примените его в этом поле</p>
         <div className="basket-form">

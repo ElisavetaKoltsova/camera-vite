@@ -37,6 +37,10 @@ export const SortOrder = {
   DOWN: 'down'
 };
 
+export const CameraRemoveParameter = {
+  PARAMETER: 'remove'
+};
+
 export const ReviewRating = {
   1: 'Ужасно',
   2: 'Плохо',

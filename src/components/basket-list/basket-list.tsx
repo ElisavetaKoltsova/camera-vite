@@ -18,6 +18,7 @@ export default function BasketList({cameras, onDeleteClick}: BasketListProps): J
         pointerEvents: isOrderDataLoading ? 'none' : 'auto',
         opacity: isOrderDataLoading ? 0.5 : 1,
       }}
+      data-testid="basket-list"
     >
       {cameras.map((camera) => <BasketItem camera={camera} onDeleteClick={onDeleteClick} key={camera.id + camera.price} />)}
     </ul>

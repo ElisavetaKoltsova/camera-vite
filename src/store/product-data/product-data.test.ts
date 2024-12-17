@@ -6,21 +6,24 @@ import { findMaximalPrice, findMinimalPrice } from '../../utils/list';
 import { makeFakeCameras, makeFakeCamera } from '../../utils/mock';
 import { sort } from '../../utils/sort';
 import { fetchCamerasAction, fetchCurrentCameraAction, fetchSimilarCamerasAction } from '../api-action';
-import { filterCamerasCategory, filterCamerasLevel, filterCamerasPrice, filterCamerasType, productData, resetFilters, sortCameras } from './product-data';
+import { addCameraToBasket, changeNumberOfCamerasInBasket, clearBasket, filterCamerasCategory, filterCamerasLevel, filterCamerasPrice, filterCamerasType, productData, removeCameraInBasket, resetFilters, sortCameras } from './product-data';
 
 describe('ProductData Slice', () => {
   const COUNT_OF_CAMERAS = 10;
-  const COUNT_OF_CAMERAS_IN_BASKET = 5;
   const COUNT_OF_SIMILAR_CAMERAS = 9;
 
   const initialMockCameras = sort[Sorts.POPULAR_LOW_TO_HIGH](makeFakeCameras(COUNT_OF_CAMERAS));
+  const initialMockCamera = initialMockCameras[0];
+
+  const initialNumberOfCameras = 3;
+  const initialCamerasInBasket = new Array(initialNumberOfCameras).fill(null).map(() => initialMockCamera);
 
   const initialState: ProductData = {
     cameras: [...initialMockCameras],
     filteredCameras: [],
     currentCamera: null,
     similarCameras: [],
-    camerasInBasket: [],
+    camerasInBasket: [...initialCamerasInBasket],
     isCamerasDataLoading: false,
     sort: Sorts.PRICE_LOW_TO_HIGH,
     priceFrom: findMinimalPrice(initialMockCameras),
@@ -35,7 +38,7 @@ describe('ProductData Slice', () => {
     const expectedState = {
       cameras: makeFakeCameras(COUNT_OF_CAMERAS),
       filteredCameras: makeFakeCameras(COUNT_OF_CAMERAS),
-      camerasInBasket:  makeFakeCameras(COUNT_OF_CAMERAS_IN_BASKET),
+      camerasInBasket: [...initialCamerasInBasket],
       isCamerasDataLoading: false,
       currentCamera: makeFakeCamera(),
       similarCameras:  makeFakeCameras(COUNT_OF_SIMILAR_CAMERAS),
@@ -77,7 +80,7 @@ describe('ProductData Slice', () => {
   it('should set "isCamerasDataLoading" to "true" with "fetchCamerasAction.pending"', () => {
     const expectedState = {
       cameras: [],
-      camerasInBasket:  [],
+      camerasInBasket: [],
       isCamerasDataLoading: true,
       currentCamera: null,
       similarCameras:  [],
@@ -98,7 +101,7 @@ describe('ProductData Slice', () => {
   it('should set "isCamerasDataLoading" to "true" with "fetchCurrentCameraAction.pending"', () => {
     const expectedState = {
       cameras: [],
-      camerasInBasket:  [],
+      camerasInBasket: [],
       isCamerasDataLoading: true,
       currentCamera: null,
       similarCameras:  [],
@@ -118,7 +121,7 @@ describe('ProductData Slice', () => {
   it('should set "isCamerasDataLoading" to "true" with "fetchSimilarCamerasAction.pending"', () => {
     const expectedState = {
       cameras: [],
-      camerasInBasket:  [],
+      camerasInBasket: [],
       isCamerasDataLoading: true,
       currentCamera: null,
       similarCameras:  [],
@@ -140,7 +143,7 @@ describe('ProductData Slice', () => {
     const mockCameras = sort[Sorts.PRICE_LOW_TO_HIGH](makeFakeCameras(COUNT_OF_CAMERAS));
     const expectedState = {
       cameras: [...mockCameras],
-      camerasInBasket:  [],
+      camerasInBasket: [],
       isCamerasDataLoading: false,
       currentCamera: null,
       similarCameras:  [],
@@ -162,7 +165,7 @@ describe('ProductData Slice', () => {
     const mockCamera = makeFakeCamera();
     const expectedState = {
       cameras: [],
-      camerasInBasket:  [],
+      camerasInBasket: [],
       isCamerasDataLoading: false,
       currentCamera: mockCamera,
       similarCameras:  [],
@@ -184,7 +187,7 @@ describe('ProductData Slice', () => {
     const mockCameras = makeFakeCameras(COUNT_OF_CAMERAS);
     const expectedState = {
       cameras: [],
-      camerasInBasket:  [],
+      camerasInBasket: [],
       isCamerasDataLoading: false,
       currentCamera: null,
       similarCameras:  [...mockCameras],
@@ -205,12 +208,12 @@ describe('ProductData Slice', () => {
   it('"SortCameras" should change "sort" and sort "cameras"', () => {
     const mockCameras = [...initialState.cameras];
 
-    const exceptedState = {
+    const expectedState = {
       cameras: [...mockCameras],
       filteredCameras: [],
       currentCamera: null,
       similarCameras: [],
-      camerasInBasket: [],
+      camerasInBasket: [...initialCamerasInBasket],
       isCamerasDataLoading: false,
       sort: Sorts.POPULAR_LOW_TO_HIGH,
       priceFrom: findMinimalPrice(mockCameras),
@@ -225,7 +228,7 @@ describe('ProductData Slice', () => {
       sortCameras(Sorts.POPULAR_LOW_TO_HIGH)
     );
 
-    expect(result).toEqual(exceptedState);
+    expect(result).toEqual(expectedState);
   });
 
   it('"filterCamerasPrice" should change "priceFrom" and "priceTo", and filter "filteredCameras" by price', () => {
@@ -239,12 +242,12 @@ describe('ProductData Slice', () => {
         camera.price >= mockPriceFrom && camera.price <= mockPriceTo
       );
 
-    const exceptedState = {
+    const expectedState = {
       cameras: [...mockCameras],
       filteredCameras: [...mockFilteredCameras],
       currentCamera: null,
       similarCameras: [],
-      camerasInBasket: [],
+      camerasInBasket: [...initialCamerasInBasket],
       isCamerasDataLoading: false,
       sort: Sorts.PRICE_LOW_TO_HIGH,
       priceFrom: findMinimalPrice(mockFilteredCameras),
@@ -262,7 +265,7 @@ describe('ProductData Slice', () => {
       })
     );
 
-    expect(result).toEqual(exceptedState);
+    expect(result).toEqual(expectedState);
   });
 
   it('"filterCamerasCategory" should change "filterOfCategory", "priceFrom" and "priceTo", and filter "filteredCameras" by category', () => {
@@ -270,12 +273,12 @@ describe('ProductData Slice', () => {
 
     const mockFilteredCameras = filterCategory[CameraCategory.photocamera]([...mockCameras]);
 
-    const exceptedState = {
+    const expectedState = {
       cameras: [...mockCameras],
       filteredCameras: [...mockFilteredCameras],
       currentCamera: null,
       similarCameras: [],
-      camerasInBasket: [],
+      camerasInBasket: [...initialCamerasInBasket],
       isCamerasDataLoading: false,
       sort: Sorts.PRICE_LOW_TO_HIGH,
       priceFrom: findMinimalPrice(mockFilteredCameras),
@@ -290,7 +293,7 @@ describe('ProductData Slice', () => {
       filterCamerasCategory(CameraCategory.photocamera)
     );
 
-    expect(result).toEqual(exceptedState);
+    expect(result).toEqual(expectedState);
   });
 
   it('"filterCamerasType" should change "filterOfType", "priceFrom" and "priceTo", and filter "filteredCameras" by type', () => {
@@ -307,12 +310,12 @@ describe('ProductData Slice', () => {
       );
     }, [] as Camera[]);
 
-    const exceptedState = {
+    const expectedState = {
       cameras: [...mockCameras],
       filteredCameras: [...mockFilteredCameras],
       currentCamera: null,
       similarCameras: [],
-      camerasInBasket: [],
+      camerasInBasket: [...initialCamerasInBasket],
       isCamerasDataLoading: false,
       sort: Sorts.PRICE_LOW_TO_HIGH,
       priceFrom: findMinimalPrice(mockFilteredCameras),
@@ -327,7 +330,7 @@ describe('ProductData Slice', () => {
       filterCamerasType([CameraType.film, CameraType.digital])
     );
 
-    expect(result).toEqual(exceptedState);
+    expect(result).toEqual(expectedState);
   });
 
   it('"filterCamerasLevel" should change "filterOfLevel", "priceFrom" and "priceTo", and filter "filteredCameras" by level', () => {
@@ -344,12 +347,12 @@ describe('ProductData Slice', () => {
       );
     }, [] as Camera[]);
 
-    const exceptedState = {
+    const expectedState = {
       cameras: [...mockCameras],
       filteredCameras: [...mockFilteredCameras],
       currentCamera: null,
       similarCameras: [],
-      camerasInBasket: [],
+      camerasInBasket: [...initialCamerasInBasket],
       isCamerasDataLoading: false,
       sort: Sorts.PRICE_LOW_TO_HIGH,
       priceFrom: findMinimalPrice(mockFilteredCameras),
@@ -364,13 +367,97 @@ describe('ProductData Slice', () => {
       filterCamerasLevel([CameraLevel.Любительский])
     );
 
-    expect(result).toEqual(exceptedState);
+    expect(result).toEqual(expectedState);
   });
 
   it('"resetFilters" should reset all filters', () => {
     const mockCameras = [...initialState.cameras];
 
-    const exceptedState = {
+    const expectedState = {
+      cameras: [...mockCameras],
+      filteredCameras: [],
+      currentCamera: null,
+      similarCameras: [],
+      camerasInBasket: [...initialCamerasInBasket],
+      isCamerasDataLoading: false,
+      sort: Sorts.PRICE_LOW_TO_HIGH,
+      priceFrom: findMinimalPrice(mockCameras),
+      priceTo: findMaximalPrice(mockCameras),
+      filterOfCategory: null,
+      filterOfTypes: [],
+      filterOfLevels: []
+    };
+
+    const result = productData.reducer(
+      initialState,
+      resetFilters()
+    );
+
+    expect(result).toEqual(expectedState);
+  });
+
+  it('"addCameraToBasket" should add camera in basket', () => {
+    const mockCameras = [...initialState.cameras];
+    const mockCamera = mockCameras[0];
+
+    const expectedState = {
+      cameras: [...mockCameras],
+      filteredCameras: [],
+      currentCamera: null,
+      similarCameras: [],
+      camerasInBasket: [...initialCamerasInBasket, mockCamera],
+      isCamerasDataLoading: false,
+      sort: Sorts.PRICE_LOW_TO_HIGH,
+      priceFrom: findMinimalPrice(mockCameras),
+      priceTo: findMaximalPrice(mockCameras),
+      filterOfCategory: null,
+      filterOfTypes: [],
+      filterOfLevels: []
+    };
+
+    const result = productData.reducer(
+      initialState,
+      addCameraToBasket(mockCamera)
+    );
+
+    expect(result).toEqual(expectedState);
+  });
+
+  it('"changeNumberOfCamerasInBasket" should add camera in basket by number', () => {
+    const mockCameras = [...initialState.cameras];
+    const mockCamera = mockCameras[0];
+    const numberOfCameras = 3;
+
+    const camerasInBasket = new Array(numberOfCameras).fill(null).map(() => mockCamera);
+
+    const expectedState = {
+      cameras: [...mockCameras],
+      filteredCameras: [],
+      currentCamera: null,
+      similarCameras: [],
+      camerasInBasket: [...camerasInBasket],
+      isCamerasDataLoading: false,
+      sort: Sorts.PRICE_LOW_TO_HIGH,
+      priceFrom: findMinimalPrice(mockCameras),
+      priceTo: findMaximalPrice(mockCameras),
+      filterOfCategory: null,
+      filterOfTypes: [],
+      filterOfLevels: []
+    };
+
+    const result = productData.reducer(
+      initialState,
+      changeNumberOfCamerasInBasket({camera: mockCamera, numberOfCameras})
+    );
+
+    expect(result).toEqual(expectedState);
+  });
+
+  it('"removeCameraInBasket" should remove camera in basket', () => {
+    const mockCameras = [...initialState.cameras];
+    const mockCamera = mockCameras[0];
+
+    const expectedState = {
       cameras: [...mockCameras],
       filteredCameras: [],
       currentCamera: null,
@@ -387,9 +474,35 @@ describe('ProductData Slice', () => {
 
     const result = productData.reducer(
       initialState,
-      resetFilters()
+      removeCameraInBasket({id: mockCamera.id})
     );
 
-    expect(result).toEqual(exceptedState);
+    expect(result).toEqual(expectedState);
+  });
+
+  it('"removeCameraInBasket" should remove camera in basket', () => {
+    const mockCameras = [...initialState.cameras];
+
+    const expectedState = {
+      cameras: [...mockCameras],
+      filteredCameras: [],
+      currentCamera: null,
+      similarCameras: [],
+      camerasInBasket: [],
+      isCamerasDataLoading: false,
+      sort: Sorts.PRICE_LOW_TO_HIGH,
+      priceFrom: findMinimalPrice(mockCameras),
+      priceTo: findMaximalPrice(mockCameras),
+      filterOfCategory: null,
+      filterOfTypes: [],
+      filterOfLevels: []
+    };
+
+    const result = productData.reducer(
+      initialState,
+      clearBasket()
+    );
+
+    expect(result).toEqual(expectedState);
   });
 });

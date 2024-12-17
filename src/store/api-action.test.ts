@@ -1,10 +1,10 @@
 import { configureMockStore } from '@jedmao/redux-mock-store';
 import { createAPI } from '../services/api';
 import thunk from 'redux-thunk';
-import { AppThunkDispatch, extractActionsTypes, makeFakeCamera, makeFakeCameras, makeFakePromos, makeFakeReviews } from '../utils/mock';
+import { AppThunkDispatch, extractActionsTypes, makeFakeCamera, makeFakeCameras, makeFakePromos, makeFakeReviews, makeFakeReviewToPost } from '../utils/mock';
 import { State } from '../types/state';
 import { Action } from '@reduxjs/toolkit';
-import { fetchCamerasAction, fetchCurrentCameraAction, fetchPromosAction, fetchReviewsAction, fetchSimilarCamerasAction, postCouponAction, postOrderAction } from './api-action';
+import { fetchCamerasAction, fetchCurrentCameraAction, fetchPromosAction, fetchReviewsAction, fetchSimilarCamerasAction, postCouponAction, postOrderAction, postReviewAction } from './api-action';
 import { APIRoute, CouponName } from '../const';
 import MockAdapter from 'axios-mock-adapter';
 import { Order } from '../types/order';
@@ -167,6 +167,22 @@ describe('Async actions', () => {
       expect(actions).toEqual([
         postCouponAction.pending.type,
         postCouponAction.fulfilled.type,
+      ]);
+    });
+  });
+
+  describe('postReviewAction', () => {
+    it('should dispatch "postReviewAction.pending", "postReviewAction.fulfilled" when server response 200', async() => {
+      const fakeReview = makeFakeReviewToPost();
+
+      mockAxiosAdapter.onPost(APIRoute.Reviews).reply(200, fakeReview);
+
+      await store.dispatch(postReviewAction(fakeReview));
+      const actions = extractActionsTypes(store.getActions());
+
+      expect(actions).toEqual([
+        postReviewAction.pending.type,
+        postReviewAction.fulfilled.type,
       ]);
     });
   });

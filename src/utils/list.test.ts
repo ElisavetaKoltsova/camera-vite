@@ -1,6 +1,6 @@
 import { CameraCategory, CameraLevel, CameraType, PRICE_FROM } from '../const';
 import { Camera } from '../types/camera';
-import { checkSearchQueryInCameras, convertNumberIntoMoneyFormat, findMaximalPrice, findMinimalPrice, formatDateToDayMonth, formatDateToYearMonthDay, sortByAscendingPrice, sortByAscendingRating, sortByDescendingPrice, sortByDescendingRating, sortReviewsByDate } from './list';
+import { calculateDiscount, checkSearchQueryInCameras, convertNumberIntoMoneyFormat, findMaximalPrice, findMinimalPrice, formatDateToDayMonth, formatDateToYearMonthDay, sortByAscendingPrice, sortByAscendingRating, sortByDescendingPrice, sortByDescendingRating, sortReviewsByDate } from './list';
 import { makeFakeCameras, makeFakeReviews, makeFakeStore } from './mock';
 
 describe('Function: convertNumberIntoMoneyFormat', () => {
@@ -201,5 +201,106 @@ describe('Function: checkSearchQueryInCameras', () => {
     const result = checkSearchQueryInCameras(camera, expectedNameOfCamera);
 
     expect(result).toEqual(false);
+  });
+});
+
+describe('Function: calculateDiscount', () => {
+  it('should return "0" when there are not cameras in basket', () => {
+    const expectedDiscount = 0;
+    const cameras = [];
+    const totalPrice = 0;
+    const couponDiscount = 0;
+
+    const result = calculateDiscount(cameras.length, totalPrice, couponDiscount);
+
+    expect(result).toEqual(expectedDiscount);
+  });
+
+  it('should return "3" when there are 2 cameras in basket', () => {
+    const expectedDiscount = 3;
+    const cameras = makeFakeCameras(2);
+    const totalPrice = 2000;
+    const couponDiscount = 0;
+
+    const result = 100 - calculateDiscount(cameras.length, totalPrice, couponDiscount) * 100 / totalPrice;
+
+    expect(result).toEqual(expectedDiscount);
+  });
+
+  it('should return "5" when there are 3-5 cameras in basket', () => {
+    const expectedDiscount = 5;
+    const cameras = makeFakeCameras(4);
+    const totalPrice = 5000;
+    const couponDiscount = 0;
+
+    const result = 100 - calculateDiscount(cameras.length, totalPrice, couponDiscount) * 100 / totalPrice;
+
+    expect(result).toEqual(expectedDiscount);
+  });
+
+  it('should return "10" when there are 6-10 cameras in basket', () => {
+    const expectedDiscount = 10;
+    const cameras = makeFakeCameras(7);
+    const totalPrice = 8000;
+    const couponDiscount = 0;
+
+    const result = 100 - calculateDiscount(cameras.length, totalPrice, couponDiscount) * 100 / totalPrice;
+
+    expect(result).toEqual(expectedDiscount);
+  });
+
+  it('should return "15" when there are >10 cameras in basket', () => {
+    const expectedDiscount = 15;
+    const cameras = makeFakeCameras(11);
+    const totalPrice = 9000;
+    const couponDiscount = 0;
+
+    const result = 100 - calculateDiscount(cameras.length, totalPrice, couponDiscount) * 100 / totalPrice;
+
+    expect(result).toEqual(expectedDiscount);
+  });
+
+  it('should return "14" when there are >10 cameras in basket and total price >10000', () => {
+    const expectedDiscount = 14;
+    const cameras = makeFakeCameras(11);
+    const totalPrice = 11000;
+    const couponDiscount = 0;
+
+    const result = 100 - calculateDiscount(cameras.length, totalPrice, couponDiscount) * 100 / totalPrice;
+
+    expect(result).toEqual(expectedDiscount);
+  });
+
+  it('should return "13" when there are >10 cameras in basket and total price >20000', () => {
+    const expectedDiscount = 13;
+    const cameras = makeFakeCameras(11);
+    const totalPrice = 22000;
+    const couponDiscount = 0;
+
+    const result = 100 - calculateDiscount(cameras.length, totalPrice, couponDiscount) * 100 / totalPrice;
+
+    expect(result).toEqual(expectedDiscount);
+  });
+
+  it('should return "12" when there are >10 cameras in basket and total price >30000', () => {
+    const expectedDiscount = 12;
+    const cameras = makeFakeCameras(11);
+    const totalPrice = 33000;
+    const couponDiscount = 0;
+
+    const result = 100 - calculateDiscount(cameras.length, totalPrice, couponDiscount) * 100 / totalPrice;
+
+    expect(result).toEqual(expectedDiscount);
+  });
+
+  it('should return "30" when there are >10 cameras in basket and total price >30000 and coupon', () => {
+    const expectedDiscount = 30;
+    const cameras = makeFakeCameras(11);
+    const totalPrice = 33000;
+    const couponDiscount = 18;
+
+    const result = 100 - calculateDiscount(cameras.length, totalPrice, couponDiscount) * 100 / totalPrice;
+
+    expect(result).toEqual(expectedDiscount);
   });
 });

@@ -44,9 +44,9 @@ export default function ReviewSuccessPopup({onCloseClick}: ReviewSuccessPopupPro
   };
 
   return (
-    <div className="modal is-active modal--narrow">
+    <div className="modal is-active modal--narrow" data-testid="review-success-popup">
       <div className="modal__wrapper">
-        <div className="modal__overlay" onClick={onCloseClick}></div>
+        <div className="modal__overlay" onClick={onCloseClick} data-testid="overlay-darkened"></div>
         <div className="modal__content">
           {
             isReviewsDataLoading
