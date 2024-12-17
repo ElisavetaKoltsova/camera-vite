@@ -124,7 +124,7 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
   const handleFilterTypeInputChange = (type: CameraType) => {
     const updatedTypes =
       typeFilters.includes(type)
-        ? typeFilters.filter((t) => t !== type)
+        ? typeFilters.filter((typeFilter) => typeFilter !== type)
         : [...typeFilters, type];
 
     dispatch(filterCamerasType(updatedTypes));
@@ -140,7 +140,7 @@ export default function CatalogFilter({usedCameras, priceFromParam, priceToParam
 
     const updatedLevels =
       levelFilters.includes(level)
-        ? levelFilters.filter((l) => l !== level)
+        ? levelFilters.filter((levelFilter) => levelFilter !== level)
         : [...levelFilters, level];
 
     dispatch(filterCamerasLevel(updatedLevels));
