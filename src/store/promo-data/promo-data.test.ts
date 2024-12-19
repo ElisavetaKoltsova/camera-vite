@@ -1,11 +1,19 @@
 import { CouponName } from '../../const';
 import { makeFakePromos } from '../../utils/mock';
 import { fetchPromosAction, postCouponAction } from '../api-action';
-import { promoData } from './promo-data';
+import { promoData, resetCoupon } from './promo-data';
 
 describe('PromoData Slice', () => {
   const COUNT_OF_PROMOS = 10;
   const COUPON_DISCOUNT = 0;
+
+  const initialState = {
+    promos: [],
+    couponDiscount: COUPON_DISCOUNT,
+    isCouponDiscountDataLoading: false,
+    coupon: 'camera-333',
+    isPromoDataLoading: false
+  };
 
   it('should return initial state with empty action', () => {
     const emptyAction = { type: '' };
@@ -108,6 +116,23 @@ describe('PromoData Slice', () => {
     };
 
     const result = promoData.reducer(undefined, fetchPromosAction.fulfilled(mockPromos, '', undefined));
+
+    expect(result).toEqual(expectedState);
+  });
+
+  it('should reset coupon by "resetCoupon"', () => {
+    const expectedState = {
+      promos: [],
+      couponDiscount: COUPON_DISCOUNT,
+      isCouponDiscountDataLoading: false,
+      coupon: null,
+      isPromoDataLoading: false
+    };
+
+    const result = promoData.reducer(
+      initialState,
+      resetCoupon()
+    );
 
     expect(result).toEqual(expectedState);
   });

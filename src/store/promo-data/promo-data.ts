@@ -14,7 +14,12 @@ const initialState: PromoData = {
 export const promoData = createSlice({
   name: NameSpace.Promo,
   initialState,
-  reducers: {},
+  reducers: {
+    resetCoupon(state) {
+      state.coupon = null;
+      state.couponDiscount = 0;
+    }
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchPromosAction.pending, (state) => {
@@ -39,3 +44,5 @@ export const promoData = createSlice({
       });
   }
 });
+
+export const { resetCoupon } = promoData.actions;

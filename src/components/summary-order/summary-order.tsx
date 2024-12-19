@@ -19,7 +19,7 @@ const SUCCESS_COUPON_MESSAGE_TIMEOUT = 2000;
 
 export default function SummaryOrder({camerasInBasket, onOrderSuccessClick, promos: promoCameras}: SummaryOrderProps): JSX.Element {
   const dispatch = useAppDispatch();
-  const { register, handleSubmit, formState: {errors} } = useForm<Coupon>();
+  const { register, handleSubmit, formState: {errors}, reset } = useForm<Coupon>();
   const [couponSuccess, setCouponSuccess] = useState<boolean>(false);
 
   const couponDiscount = useAppSelector(getCouponDiscount);
@@ -85,7 +85,7 @@ export default function SummaryOrder({camerasInBasket, onOrderSuccessClick, prom
                   placeholder="Введите промокод"
                   {...register('coupon', {
                     required: false,
-                    validate: checkCorrectnessOfCoupon
+                    validate: checkCorrectnessOfCoupon,
                   })}
                 />
               </label>
@@ -118,7 +118,10 @@ export default function SummaryOrder({camerasInBasket, onOrderSuccessClick, prom
             <button
               className="btn btn--purple"
               type="submit"
-              onClick={() => onOrderSuccessClick(camerasInBasket)}
+              onClick={() => {
+                reset();
+                onOrderSuccessClick(camerasInBasket);
+              }}
               disabled={!camerasInBasket.length}
             >
               Оформить заказ

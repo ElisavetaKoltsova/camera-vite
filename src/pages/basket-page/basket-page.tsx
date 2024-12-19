@@ -21,6 +21,7 @@ import { getCoupon, getPromos } from '../../store/promo-data/selectors';
 import { setErrorStatus } from '../../store/order-data/order-data';
 import { processErrorHandle } from '../../services/process-error-handler';
 import OrderErrorPopup from '../../components/popups/order-error-popup/order-error-popup';
+import { resetCoupon } from '../../store/promo-data/promo-data';
 
 export default function BasketPage(): JSX.Element {
   const { pathname } = useLocation();
@@ -76,6 +77,7 @@ export default function BasketPage(): JSX.Element {
       };
       try {
         dispatch(postOrderAction(order));
+        dispatch(resetCoupon());
       } catch (error) {
         if (isErrorPostOrder) {
           dispatch(toggleOrderErrorPopupOpen());
