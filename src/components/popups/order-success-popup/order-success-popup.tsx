@@ -46,10 +46,6 @@ export default function OrderSuccessPopup({onCloseClick}: OrderSuccessPopupProps
     };
   }, [disableScroll, enableScroll, onCloseClick]);
 
-  const handleCloseButtonClick = () => {
-    onCloseClick();
-  };
-
   const handleBackToShopButtonClick = () => {
     onCloseClick();
     navigate(AppRoute.Catalog);
@@ -58,7 +54,7 @@ export default function OrderSuccessPopup({onCloseClick}: OrderSuccessPopupProps
   return (
     <div className="modal is-active modal--narrow" data-testid="order-success-popup">
       <div className="modal__wrapper">
-        <div className="modal__overlay" onClick={handleCloseButtonClick} data-testid="overlay-darkened"></div>
+        <div className="modal__overlay" onClick={handleBackToShopButtonClick} data-testid="overlay-darkened"></div>
         {
           isOrderDataLoading
             ? <Loader />
@@ -78,7 +74,7 @@ export default function OrderSuccessPopup({onCloseClick}: OrderSuccessPopupProps
                   Вернуться к покупкам
                 </button>
               </div>
-              <button className="cross-btn" type="button" aria-label="Закрыть попап" onClick={handleCloseButtonClick}>
+              <button className="cross-btn" type="button" aria-label="Закрыть попап" onClick={handleBackToShopButtonClick}>
                 <svg width="10" height="10" aria-hidden="true">
                   <use xlinkHref="#icon-close"></use>
                 </svg>
